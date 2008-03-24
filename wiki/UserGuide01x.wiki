@@ -42,18 +42,18 @@ Note: on Linux and Mac, EXPAT_INCDIR defaults to `/usr/local/include` and EXPAT_
 If you want to create bindings for the supported scripting languages you need to install the Simplified Wrapper and Interface Generator (SWIG) version 1.3.33. Once SWIG is installed the language bindings are created by default. You may explicitly disable the building of the SWIG extensions by using the RUNSWIG option in SCons as follows:
 
 {{{
-scons RUNSWIG=0  # 0 means to not build SWIG extensions
+scons RUNSWIG=0  # 0 means to not run SWIG to build scripting language bindings
 }}}
 
 = Running the unit tests =
 
-The libkml system includes a large suite of unit tests, written against the CppUnit framework available at [http://cppunit.sourceforge.net sourceforge]. Once you have have installed CppUnit you can build the tests as follows:
+The libkml system includes a large suite of unit tests, written against the !CppUnit framework available at [http://cppunit.sourceforge.net sourceforge]. Once you have have installed !CppUnit you can build the tests as follows:
 
 {{{
 scons CPPUNIT_LIBDIR=/your/root/lib CPPUNIT_INCDIR=/your/root/include
 }}}
 
-Note: on Linux and Mac, CPPUNIT_INCDIR defaults to /usr/local/include and CPPUNIT_LIBDIR defaults to /usr/local/lib. This matches CppUnit's own installation defaults.
+Note: on Linux and Mac, CPPUNIT_INCDIR defaults to /usr/local/include and CPPUNIT_LIBDIR defaults to /usr/local/lib. This matches !CppUnit's own installation defaults.
 
 To run the tests, invoke SCons as follows:
 
@@ -190,7 +190,12 @@ kmldom::Folder* folder = factory->CreateFolder();
 
 == Memory management ==
 
-The caller owns any element created by the factory. Ownership is transferred to the KML DOM if and when set_xxx() or add_xxx is used to make the element a child of the given parent. An element has at most one parent. Once an element is set to a given parent, it cannot be detached. The clear_xxx() method both removes the child from the parent and released its storage. Removing a given element also releases the storage of all of its children.
+The caller owns any element created by the factory.
+Ownership is transferred to the KML DOM if and when `set_xxx()` or `add_xxx()`
+is used to make the element a child of the given parent.
+An element has at most one parent. Once an element is set to a given parent, it cannot be detached.
+The `clear_xxx()` method both removes the child from the parent and released its storage.
+Removing a given element also releases the storage of all of its children.
 
 Storage of owned elements is released as follows:
 

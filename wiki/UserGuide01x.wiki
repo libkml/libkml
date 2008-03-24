@@ -178,9 +178,9 @@ The libkml DOM implements KML 2.2 as documented [http://code.google.com/apis/kml
 
 == Creating complex elements ==
 
-Each complex element in KML 2.2 has a C++ type whose name is the same as the element. For example, <Placemark> is kmldom::Placemark, and <GroundOverlay> is kmldom::GroundOverlay.
+Each complex element in KML 2.2 has a C++ type whose name is the same as the element. For example, <Placemark> is kmldom::Placemark, and <GroundOverlay> is kmldom::!GroundOverlay.
 
-The KmlFactory singleton has a method to create each complex element:
+The !KmlFactory singleton has a method to create each complex element:
 
 {{{
 KmlFactory* factory = kmldom::KmlFactory::GetFactory();
@@ -245,7 +245,8 @@ bool has_north() const;
 void set_north(bool north);
 }}}
 
-Here is how to access the <drawOrder> element. Note that the name of the element in the accessor function is folded to all lower case:
+Here is how to access the <drawOrder> element. Note that the name of the element in the accessor
+method is folded to all lower case:
 
 {{{
 int draworder() const;
@@ -284,7 +285,7 @@ typedef enum {
 } AltitudeModeEnum;
 }}}
 
-The `enum` type name is the element name with a leading capital and the string 'Enum' appended to it. Thus <colorMode> is of ColorModeEnum, and <listItemType> is ListItemTypeEnum.
+The `enum` type name is the element name with a leading capital and the string 'Enum' appended to it. Thus <colorMode> is of !ColorModeEnum, and <listItemType> is !ListItemTypeEnum.
 
 == More on complex elements ==
 
@@ -301,7 +302,7 @@ bool has_latlonbox() const;
 void clear_latlonbox();
 }}}
 
-The AbstractView child of Feature is an example of a complex child of a group type. Both <LookAt> and <Camera> can be used with these accessors.
+The !AbstractView child of Feature is an example of a complex child of a group type. Both <LookAt> and <Camera> can be used with these accessors.
 
 {{{
 const AbstractView* abstractview() const;
@@ -318,7 +319,7 @@ size_t feature_array_size() const;
 const kmldom::Feature* feature_array_at(unsigned int index) const;
 }}}
 
-(Note that in KML 2.2 the following elements are all of Feature type: Placemark, NetworkLink, GroundOverlay, ScreenOverlay, PhotoOverlay, Folder, and Document).
+(Note that in KML 2.2 the following elements are all of Feature type: Placemark, !NetworkLink, !GroundOverlay, !ScreenOverlay, !PhotoOverlay, Folder, and Document).
 Type inspection and conversion
 
 All complex elements are derived from `kmldom::Element`. There is a type conversion and inspection function for each complex type. The libkml system is not built with run-time type information (RTTI), hence `dynamic_cast` is not used. If the element is of the desired type, then a pointer of that type is returned, else NULL.
@@ -359,7 +360,16 @@ assert(overlay->IsA(kmldom::Type_GroundOverlay));
 
 = Future development =
 
-As the PREVIEW and "0.1" language indicates we have much more in mind for the future. While parsing to, and serializing from and programmatic access to the raw KML DOM are reasonably useful and encode some important KML semantics, there are higher level semantics and functionality of KML to support. These include resolving the Style for a Feature, expanding the balloon text, managing the id's in a KML file, fetching a NetworkLink, finding the Features in a given bounding box, etc. We intend to offer such higher level semantics and processing functionality in future releases of libkml.
+As the PREVIEW language and "0.1" numerology indicates we have much more in mind for the future.
+
+While parsing to, and serializing from and programmatic access to the raw KML DOM are reasonably useful and encode some important KML semantics, there are higher level semantics and functionality of KML to support.
+These include resolving the Style for a Feature, expanding the balloon text,
+managing the id's in a KML file, fetching a !NetworkLink,
+finding the Features in a given bounding box, etc.
+
+We intend to offer a variety of enhancements such as these higher level semantics
+and processing functionality in future releases of libkml.
+
 Feedback?
 
 = Found a bug? =

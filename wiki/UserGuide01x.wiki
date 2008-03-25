@@ -37,7 +37,7 @@ Expat version 2.0.1 is the XML parser used in libkml. Expat is available at [htt
 scons EXPAT_LIBDIR=/your/root/lib EXPAT_INCDIR=/your/root/include
 }}}
 
-Note: on Linux and Mac, EXPAT_INCDIR defaults to `/usr/local/include` and EXPAT_LIBDIR defaults to `/usr/local/lib`. This matches Expat's own installation defaults.
+Note: on Linux and Mac, we try to make reasonable guesses at whether your system will prefer /usr or /usr/local as a prefix to the default include and lib directories it takes as defaults. If we find expat.h at /usr/include, we assume the /usr prefix for all other third-party system libraries and headers. You can override this with the explicit command line flags seen by running `scons -h`.
 
 If you want to create bindings for the supported scripting languages you need to install the Simplified Wrapper and Interface Generator (SWIG) version 1.3.33. Once SWIG is installed the language bindings are created by default. You may explicitly disable the building of the SWIG extensions by using the RUNSWIG option in SCons as follows:
 

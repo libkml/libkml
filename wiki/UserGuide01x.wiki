@@ -79,6 +79,7 @@ xsd_test PASSED (Test Binaries: 42 passed, 0 failed)
 Here are some small sample programs to show you how to program with libkml.
 
 {{{
+// parsekml.cc
 // This program parses a KML Placemark from a memory buffer and prints
 // the value of the <name> element on standard output.
 
@@ -108,6 +109,7 @@ int main() {
 Another example:
 
 {{{
+// createkml.cc
 // This program uses the KmlFactory to create a Point Placemark and
 // prints the resultant KML on standard output.
 

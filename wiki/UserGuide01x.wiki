@@ -192,19 +192,57 @@ kmldom::Folder* folder = factory->CreateFolder();
 
 == Memory management ==
 
-The caller owns any element created by the factory.
-Ownership is transferred to the KML DOM if and when `set_xxx()` or `add_xxx()`
-is used to make the element a child of the given parent.
-An element has at most one parent. Once an element is set to a given parent, it cannot be detached.
-The `clear_xxx()` method both removes the child from the parent and released its storage.
-Removing a given element also releases the storage of all of its children.
+This PREVIEW release of libkml provides no automatic memory management.
+Thus special consideration is required to prevent memory leaks and corruption.
+(Future revisions of libkml may offer more sophistication in this
+area such as the facilities of "smart pointers", etc).
 
-Storage of owned elements is released as follows:
+The general rules are that anything returning a non-const Element is also
+handing you ownership and anything returning a const Element is retaining
+ownership.  Thus you must either delete any non-const Element you are
+handed (such as from the factory) or you must attach the Element to another
+via that Element's set or add method.
+
+(In this discussion Element refers to any type derived from Element such
+as all KML complex elements.  For example, Placemark is an Element,
+Folder is an Element, etc.)
+
+You own an Element until such time that you delete it or pass it to a
+`set_xxx()` or `add_xxx()`method of another Element.  For example,
+passing a placemark to folder->add_feature(placemark) gives up ownership
+to that folder.  The folder will delete all of its children when the folder is deleted.
+
+To help enforce the tree nature of XML no Element can be set to more than
+one parent.   That is, a given Placemark can be added at most once to
+a given Folder and never to a 2nd Folder.
+
+Once an element is set to a given parent, it cannot be detached.  The getter
+will return a const "read-only" view of the element, but as the const nature
+suggests it can no longer be altered.  (Full read-write capability of the KML DOM
+is envisioned for future versions).
+
+The `clear_xxx()` method both removes the child from the parent and releases its storage.
+As always any deleting of a given element also releases the storage of all of its children.
+Any pointers into the hierarchy of elements rooted at the delete element must
+no longer be used.  (Future KML DOM enhancements may include "smart pointers"
+that reference count such usage).
+
+For the benefit of permitting memory management of the underlying DOM through
+the SWIG interface the following method is also available to delete a given element
+and its children:
 
 {{{
 factory->DeleteElement(placemark);
 factory->DeleteElement(folder);
 }}}
+
+The KML DOM in this PREVIEW 0.1 version has two overall main patterns of use:
+1) parse and examine, 2) bottom-up creation.  Both result in a KML Element hierachy
+that can be walked and serialized.  Neither permits fine-grain editting.  The general
+pattern for "bottom-up creation" is to create the children and set their fields before
+attaching to a parent: for example, you create a Coordinates, set the points, then
+give that to a Point and in turn give the Point to a Placemark which in turn is
+given to a Folder, for example.
 
 == Setting simple elements ==
 

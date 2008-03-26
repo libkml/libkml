@@ -77,6 +77,11 @@ xsd_test PASSED (Test Binaries: 42 passed, 0 failed)
 = Hello libkml =
 
 Here are some small sample programs to show you how to program with libkml.
+(These are
+[http://code.google.com/p/libkml/source/browse/trunk/examples/helloworld/parsekml.cc parse.cc]
+and
+[http://code.google.com/p/libkml/source/browse/trunk/examples/helloworld/createkml.cc createkml.cc]
+from the sample suite available [http://code.google.com/p/libkml/source/browse/trunk/examples here].)
 
 {{{
 // parsekml.cc

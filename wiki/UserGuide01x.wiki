@@ -1,4 +1,4 @@
-#summary release notes for the initial 0.1 version of libkml
+#summary Release notes for the initial 0.1 version of libkml
 #labels Featured,Phase-Implementation,Phase-Deploy
 
 = Introduction =
@@ -7,7 +7,7 @@ Welcome to the first public PREVIEW release of libkml!
 
 THIS IS ALHPA SOFTWARE. Expect changes. We do not yet recommend use in production code.
 
-This is an initial preview of libkml and while the interfaces described are now fairly stable, there is the potential for change! However, as KML 2.2 advances through the OGC to a full standard, the language itself is stable and it is the intention of libkml to adhere strictly to the OGC KML 2.2 standard. 
+This is an initial preview of libkml, and while the general interfaces described are now fairly stable, there is the potential for change! As a result of KML 2.2 advancing through the [http://www.opengeospatial.org/ Open Geospatial Consortium] (OGC) to become a standard, the language itself is now stable. It is the intention of libkml to adhere strictly to the OGC KML 2.2 standard. 
 
 = What is libkml? =
 
@@ -15,15 +15,15 @@ This is a library to parse, serialize and programmatically access a KML document
 
 = Licensing =
 
-The libkml software is distributed under the new BSD license whose text is found at the top of each file.
+The libkml software is distributed under the new BSD license, whose text is found at the top of each file.
 
 = Supported platforms =
 
-This library supports Windows XP, Mac OS X 10.4 and 10.5, and Linux.
+This library has been compiled and tested on Windows XP, Mac OS X 10.4 and 10.5, and various flavors of Linux.
 
 = Building and installing libkml =
 
-To build and install libkml from source you first need to install SCons version 0.97 available at [http://www.scons.org/ scons.org].
+To build and install libkml from source you first need to install [http://www.scons.org/ SCons version 0.97].
 
 For many people, building libkml from source will be as simple as typing:
 
@@ -39,7 +39,7 @@ scons PREFIX=/your/root install
 
 You may also use LIBDIR and INCDIR to specify completely separate lib and include directories.
 
-Expat version 2.0.1 is the XML parser used in libkml. Expat is available at [http://expat.sourceforge.net/ sourceforge]. You tell SCons where to find the Expat library and header files like so:
+[http://expat.sourceforge.net/ Expat version 2.0.1] is the XML parser used in libkml, and must be installed separately. You tell SCons where to find the Expat library and header files like so:
 
 {{{
 scons EXPAT_LIBDIR=/your/root/lib EXPAT_INCDIR=/your/root/include
@@ -47,7 +47,7 @@ scons EXPAT_LIBDIR=/your/root/lib EXPAT_INCDIR=/your/root/include
 
 Note: on Linux and Mac, we try to make reasonable guesses at whether your system will prefer /usr or /usr/local as a prefix to the default include and lib directories it takes as defaults. If we find expat.h at /usr/include, we assume the /usr prefix for all other third-party system libraries and headers. You can override this with the explicit command line flags seen by running `scons -h`.
 
-If you want to create bindings for the supported scripting languages you need to install the Simplified Wrapper and Interface Generator (SWIG) version 1.3.33. Once SWIG is installed the language bindings are created by default. You may explicitly disable the building of the SWIG extensions by using the RUNSWIG option in SCons as follows:
+If you want to create bindings for the additional supported languages, you need to install the Simplified Wrapper and Interface Generator ([http://www.swig.org/ SWIG]) version 1.3.33. Once SWIG is installed the language bindings are created by default. You may explicitly disable the building of the SWIG extensions by using the RUNSWIG option in SCons as follows:
 
 {{{
 scons RUNSWIG=0  # 0 means to not run SWIG to build scripting language bindings
@@ -55,7 +55,7 @@ scons RUNSWIG=0  # 0 means to not run SWIG to build scripting language bindings
 
 = Running the unit tests =
 
-The libkml system includes a large suite of unit tests, written against the !CppUnit framework available at [http://cppunit.sourceforge.net sourceforge]. Once you have have installed !CppUnit you can build the tests as follows:
+The libkml system includes a large suite of unit tests, written against the [http://cppunit.sourceforge.net CppUnit framework]. Once you have have installed !CppUnit you can build the tests as follows:
 
 {{{
 scons CPPUNIT_LIBDIR=/your/root/lib CPPUNIT_INCDIR=/your/root/include
@@ -85,11 +85,11 @@ xsd_test PASSED (Test Binaries: 42 passed, 0 failed)
 = Hello libkml =
 
 Here are some small sample programs to show you how to program with libkml.
-(These are
+These are
 [http://code.google.com/p/libkml/source/browse/trunk/examples/helloworld/parsekml.cc parse.cc]
 and
 [http://code.google.com/p/libkml/source/browse/trunk/examples/helloworld/createkml.cc createkml.cc]
-from the sample suite available [http://code.google.com/p/libkml/source/browse/trunk/examples here].)
+from the sample suite available [http://code.google.com/p/libkml/source/browse/trunk/examples here].
 
 {{{
 // parsekml.cc
@@ -189,7 +189,7 @@ The libkml system presently consists of the KML DOM. All classes and functions i
 
 == KML 2.2 ==
 
-The libkml DOM implements KML 2.2 as documented [http://code.google.com/apis/kml/documentation/kml_tags_beta1.html here]. Note that this is the version of candidate OGC KML 2.2 standard [http://www.opengeospatial.org/standards/requests/45 here].
+The libkml DOM implements KML 2.2, which is currently pending acceptance as an OGC Standard. Google's [http://code.google.com/apis/kml/documentation/ KML documentation] is useful for tutorials, examples, and reference material.
 
 == Creating complex elements ==
 
@@ -207,8 +207,8 @@ kmldom::Folder* folder = factory->CreateFolder();
 
 This PREVIEW release of libkml provides no automatic memory management.
 Thus special consideration is required to prevent memory leaks and corruption.
-(Future revisions of libkml may offer more sophistication in this
-area such as the facilities of "smart pointers", etc).
+Future revisions of libkml may offer more sophistication in this
+area such as the facilities of "smart pointers", etc.
 
 The general rules are that anything returning a non-const Element is also
 handing you ownership and anything returning a const Element is retaining
@@ -235,13 +235,13 @@ suggests it can no longer be altered.  (Full read-write capability of the KML DO
 is envisioned for future versions).
 
 The `clear_xxx()` method both removes the child from the parent and releases its storage.
-As always any deleting of a given element also releases the storage of all of its children.
-Any pointers into the hierarchy of elements rooted at the delete element must
-no longer be used.  (Future KML DOM enhancements may include "smart pointers"
-that reference count such usage).
+As always any deletion of an element also releases the storage of all of its children.
+Any pointers into the hierarchy of elements rooted at the deleted element must
+no longer be used. Future KML DOM enhancements may include "smart pointers"
+that reference count such usage.
 
 For the benefit of permitting memory management of the underlying DOM through
-the SWIG interface the following method is also available to delete a given element
+the SWIG interface, the following method is also available to delete a given element
 and its children:
 
 {{{
@@ -253,7 +253,7 @@ The KML DOM in this PREVIEW 0.1 version has two overall main patterns of use:
 1) parse and examine, 2) bottom-up creation.  Both result in a KML Element hierachy
 that can be walked and serialized.  Neither permits fine-grain editting.  The general
 pattern for "bottom-up creation" is to create the children and set their fields before
-attaching to a parent: for example, you create a Coordinates, set the points, then
+attaching them to a parent: for example, you create a Coordinates, set the points, then
 give that to a Point and in turn give the Point to a Placemark which in turn is
 given to a Folder, for example.
 
@@ -272,11 +272,11 @@ void clear_name();
 
 Note that the getter is always `const`.
 
-The `has_xxx()` method returns true if this element was in the parsed KML or if it was previously set using `set_xxx()`.
+The `has_xxx()` method returns true if this element was present in the parsed KML or if it was previously set using `set_xxx()`.
 
 The `clear_xxx()` method removes any value set either by the parser or by the `set_xxx()` method. On serialization, no element is emitted for an element that has been cleared.
 
-The getter always returns a value, irrespective of the state returned by `has_xxx()`. If `has_xxx()` is false the getter returns the default for this element, as specifed in the KML Reference.
+The getter always returns a value, irrespective of the state returned by `has_xxx()`. If `has_xxx()` is false, then the getter returns the default for this element, as specifed in the KML Reference.
 
 Simple elements are of either `std::string`, `double`, `int`, `boolean` or `enum` type.
 
@@ -342,7 +342,7 @@ The `enum` type name is the element name with a leading capital and the string '
 
 == More on complex elements ==
 
-Note that the `get_xxx()` method for a complex element returns a `const` pointer. This is to help indicate that the element is now owned by the parent and cannot be manipulated further.
+Note that the `get_xxx()` method for a complex element returns a `const` pointer. This is to help indicate that the element is owned by the parent and cannot be manipulated further.
 
 There are 3 kinds of complex child accessors: 1) single value of a specific type, 2) single value of a group type, and 3) an array value of either a specific or group type. Here are examples of each.
 
@@ -372,10 +372,11 @@ size_t feature_array_size() const;
 const kmldom::Feature* feature_array_at(unsigned int index) const;
 }}}
 
-(Note that in KML 2.2 the following elements are all of Feature type: Placemark, !NetworkLink, !GroundOverlay, !ScreenOverlay, !PhotoOverlay, Folder, and Document).
-Type inspection and conversion
+(Note that in KML 2.2 the following elements are all of Feature type: Placemark, !NetworkLink, !GroundOverlay, !ScreenOverlay, !PhotoOverlay, Folder, and Document)
 
-All complex elements are derived from `kmldom::Element`. There is a type conversion and inspection function for each complex type. The libkml system is not built with run-time type information (RTTI), hence `dynamic_cast` is not used. If the element is of the desired type, then a pointer of that type is returned, else NULL.
+== Type inspection and conversion ==
+
+All complex elements are derived from `kmldom::Element`. There is a type conversion and an inspection function for each complex type. The libkml system is not built with run-time type information (RTTI), hence `dynamic_cast` is not used. If the element is of the desired type, then a pointer of that type is returned, else NULL.
 
 For example, the following code accesses the Geometry of a Placemark to discover if it is a Point:
 
@@ -401,7 +402,7 @@ if (feature->Type() == Type_Placemark) {
 }
 }}}
 
-Every element has a IsA() method to inquire the specific or group type of an element:
+Every element has an IsA() method to inquire the specific or group type of an element:
 
 {{{
 GroundOverlay* overlay = KmlFactory()->CreateGroundOverlay();
@@ -413,17 +414,15 @@ assert(overlay->IsA(kmldom::Type_GroundOverlay));
 
 = Future development =
 
-As the PREVIEW language and "0.1" numerology indicates we have much more in mind for the future.
+As the PREVIEW language and "0.1" numerology indicates, we have much more in mind for the future.
 
-While parsing to, and serializing from and programmatic access to the raw KML DOM are reasonably useful and encode some important KML semantics, there are higher level semantics and functionality of KML to support.
+While parsing to, serializing from, and programmatic access to the raw KML DOM are reasonably useful operations that encode some important KML semantics, there are higher-level semantics and functionality of KML that aren't yet supported.
 These include resolving the Style for a Feature, expanding the balloon text,
 managing the id's in a KML file, fetching a !NetworkLink,
 finding the Features in a given bounding box, etc.
 
-We intend to offer a variety of enhancements such as these higher level semantics
+We intend to offer a variety of enhancements such as these higher-level semantics
 and processing functionality in future releases of libkml.
-
-Feedback?
 
 = Found a bug? =
 

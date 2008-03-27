@@ -23,7 +23,15 @@ This library supports Windows XP, Mac OS X 10.4 and 10.5, and Linux.
 
 = Building and installing libkml =
 
-To build and install libkml from source you first need to install SCons version 0.97 available at [http://www.scons.org/ scons.org]. Use the PREFIX argument as follows to install libkml in a location other than the default:
+To build and install libkml from source you first need to install SCons version 0.97 available at [http://www.scons.org/ scons.org].
+
+For many people, building libkml from source will be as simple as typing:
+
+{{{
+scons
+}}}
+
+Use the PREFIX argument as follows to install libkml in a location other than the default:
 
 {{{
 scons PREFIX=/your/root install

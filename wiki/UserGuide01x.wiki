@@ -5,7 +5,7 @@
 
 Welcome to the first public PREVIEW release of libkml! 
 
-THIS IS ALHPA SOFTWARE. Expect changes. We do not yet recommend use in production code.
+THIS IS ALPHA SOFTWARE. Expect changes. We do not yet recommend use in production code.
 
 This is an initial preview of libkml, and while the general interfaces described are now fairly stable, there is the potential for change! As a result of KML 2.2 advancing through the [http://www.opengeospatial.org/ Open Geospatial Consortium] (OGC) to become a standard, the language itself is now stable. It is the intention of libkml to adhere strictly to the OGC KML 2.2 standard. 
 

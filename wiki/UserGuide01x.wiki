@@ -55,6 +55,8 @@ scons RUNSWIG=0  # 0 means to not run SWIG to build scripting language bindings
 
 = Running the unit tests =
 
+IMPORTANT: since libkml does not use RTTI, you _must_ configure cppunit accordingly. On Mac OS X the command is `./configure --disable-typeinfo-name`. On Linux the command is: `./configure --disable-typeinfo-name LIBS="-ldl"`. See the top-level DEPENDENCIES file.
+
 The libkml system includes a large suite of unit tests, written against the [http://cppunit.sourceforge.net CppUnit framework]. Once you have have installed !CppUnit you can build the tests as follows:
 
 {{{

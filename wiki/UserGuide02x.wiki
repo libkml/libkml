@@ -1,5 +1,4 @@
 #summary Release notes for the 0.2 version of libkml
-#labels Featured,Phase-Implementation,Phase-Deploy
 
 = Introduction =
 

@@ -267,7 +267,7 @@ As such the factory returns a "smart pointer" to the created Element
 and there is a typedef for each pointer to each complex type in the language.
 While this is now a value type it is actually still the same size as a regular
 pointer and is also used as a pointer.  (Thus upgrading from 0.1 to 0.2 should
-simply require changing any kmldom::Foo* to kmldom::FooPtr, removing any explicit
+simply require changing any `kmldom::Foo*` to `kmldom::FooPtr`, removing any explicit
 calls of delete and recompiling).
 
 The "smart pointer" maintains a reference on your behalf to an Element while the pointer remains in scope.  Passing the Element to set it as a child of another Element gives the parent element a reference.  The reference count decreases when either the parent is deleted or when your smart pointer goes out of scope.
@@ -447,16 +447,16 @@ assert(overlay->IsA(kmldom::Type_GroundOverlay));
 With this 0.2 release we hope to soon freeze the API to the kmldom namespace.
 Future development will be on the KML "Engine" built on the KML DOM.
 
--full kmz read and write
--object id management
--xml namespace support
--style resolution
--balloon template expansion
--networklink fetching
--feature and geometry bounding box and lookat/camera computation
--region visibility computation
--NetworkLinkControl/Update processing
--regionator framework
+  * full kmz read and write
+  * object id management
+  * xml namespace support
+  * style resolution
+  * balloon template expansion
+  * networklink fetching
+  * feature and geometry bounding box and lookat/camera computation
+  * region visibility computation
+  * NetworkLinkControl/Update processing
+  * regionator framework
 
 = Found a bug? =
 

@@ -6,68 +6,102 @@ Welcome to the second public release of libkml!
 
 THIS IS ALPHA SOFTWARE. Expect changes. We recommend caution in use in production code.
 
-This is an initial preview of libkml, and while the general interfaces described are now fairly stable, there is the potential for change! As KML 2.2 is now an [http://www.opengeospatial.org/ Open Geospatial Consortium] (OGC) standard, the language itself is now stable. It is the intention of libkml to adhere strictly to the OGC KML 2.2 standard. 
+This is an initial preview of libkml, and while the general interfaces described are now
+fairly stable, there is the potential for change! As KML 2.2 is now an
+[http://www.opengeospatial.org/ Open Geospatial Consortium] (OGC) standard, the language
+itself is now stable. It is the intention of libkml to adhere strictly to the OGC KML 2.2 
+standard. 
 
 = What is libkml? =
 
-This is a library to parse, serialize and programmatically access a KML document object model (DOM). The main API is C++, and there are bindings to Python, and Java.
+This is a library to parse, serialize and programmatically access a KML document object
+model (DOM). The main API is C++, and there are bindings to Python and Java.
 
 = Who uses libkml? =
 
-We do!  We regularily process the millions of KML files crawled by Google using
-this software.  We verify correctness of the KML we publish as Google Earth layers
-using libkml.
+We do! We regularly process the millions of KML files crawled by Google using this
+software.  We verify correctness of the KML we publish as Google Earth layers using
+libkml.
 
 = Licensing =
 
-The libkml software is distributed under the new BSD license, whose text is found at the top of each file.
+The libkml software is distributed under the new BSD license, whose text is found at the
+top of each file.
 
 = Supported platforms =
 
-This library has been compiled and tested on Windows XP, Mac OS X 10.4 and 10.5, and various flavors of Linux.
+This library has been compiled and tested on Windows XP, Mac OS X 10.4 and 10.5, and
+various flavors of Linux.
 
 = Changes since 0.1 =
 
-Two main things have changed since 0.1: we have upgraded to a memory management
-scheme based on "smart pointers", and we have upgraded to automake.
+Two main things have changed since 0.1: we have upgraded to a memory management scheme
+based on "smart pointers", and we have deprecated the use of SCons. On Linux and Mac OS X we now use the traditional automake, and on Windows we use Microsoft Visual Studio.
 
-Note that our "smart pointer" scheme is currently only supported by SWIG in Java and Python. Consequently, libkml version 0.2 represents a temporary drop of support for PHP, Perl, and Ruby. It is not our intention to leave these scripting languages behind permanently, what you're witnessing is live development progress. A future release will rectify this issue.
-
-We also provide Microsoft Visual Studio project files.
+Note that the "smart pointer" scheme presently restricts support for alternate language
+bindings to Python and Java.
 
 = Building and installing libkml =
 
-TODO: update this to automake
+Please read the DEPENDENCIES file carefully and ensure you have the correct versions of
+all required software.
 
-To build and install libkml from source you first need to install [http://www.scons.org/ SCons version 0.97].
+There are now two separate build systems: one for GNU/Linux and Mac OS X, and another for 
+Microsoft Windows.
 
-For many people, building libkml from source will be as simple as typing:
+== Linux and Mac OS X ==
 
+We assume you have a reasonable GCC/autotools environment installation. Performing a
+basic build should be as simple as:
 {{{
-scons
+cd libkml-0.2.x
+mkdir build
+cd build
+../configure
+make
+sudo make install
 }}}
 
-Use the PREFIX argument as follows to install libkml in a location other than the default:
+In addition to the usual GNU build system configure options like --prefix, you may
+fine-tune the building of libkml as follows. (Use ./configure --help to see all extra
+options.)
+
+=== SWIG bindings ===
+
+If you want to create bindings for the additional supported languages, you need to install the Simplified Wrapper and Interface Generator ([http://www.swig.org/ SWIG]) version 1.3.33. Once SWIG is installed, the configure program will check for the existence of development versions of Python and Java. If either is found, we attempt to build the SWIG bindings. If you have either language installed in a non-default location, you can specify the location(s) of your headers and libs like so:
 
 {{{
-scons PREFIX=/your/root install
+../configure --with-java-include-dir=DIR \
+             --with-java-lib-dir=DIR \
+             --with-python-include-dir=DIR \
+             --with-python-lib-dir=DIR
 }}}
 
-You may also use LIBDIR and INCDIR to specify completely separate lib and include directories.
-
-[http://expat.sourceforge.net/ Expat version 2.0.1] is the XML parser used in libkml, and must be installed separately. You tell SCons where to find the Expat library and header files like so:
+If possible, SWIG bindings are always built. You can disable this by:
 
 {{{
-scons EXPAT_LIBDIR=/your/root/lib EXPAT_INCDIR=/your/root/include
+../configure --disable-swig
 }}}
 
-Note: on Linux and Mac, we try to make reasonable guesses at whether your system will prefer /usr or /usr/local as a prefix to the default include and lib directories it takes as defaults. If we find expat.h at /usr/include, we assume the /usr prefix for all other third-party system libraries and headers. You can override this with the explicit command line flags seen by running `scons -h`.
-
-If you want to create bindings for the additional supported languages, you need to install the Simplified Wrapper and Interface Generator ([http://www.swig.org/ SWIG]) version 1.3.33. Once SWIG is installed the language bindings are created by default. You may explicitly disable the building of the SWIG extensions by using the RUNSWIG option in SCons as follows:
+Or you can disable specific languages:
 
 {{{
-scons RUNSWIG=0  # 0 means to not run SWIG to build scripting language bindings
+../configure --disable-java --disable-python
 }}}
+
+By default we do not install the Python SWIG bindings in the system Python extension directory. This is because writing to that directory likely requires root privileges. You can override this behavior like so:
+
+{{{
+../configure --enable-systempython
+}}}
+
+Otherwise, the Python bindings will be installed to a directory relative to configure's prefix. This will likely be similar to `/usr/local/lib/python2.5/site-packages/`. Your `PYTHONPATH` will of course have to know about this directory.
+
+
+== Microsoft Windows XP ==
+
+The top-level libkml.sln is the main solution file and will build both the kmldom and kmlutil libraries. You can also build the examples from the solution file in the examples directory.
+
 
 = Running the unit tests =
 
@@ -75,30 +109,55 @@ IMPORTANT: since libkml does not use RTTI, you _must_ configure cppunit accordin
 
 The libkml system includes a large suite of unit tests, written against the [http://cppunit.sourceforge.net CppUnit framework]. Once you have have installed !CppUnit you can build the tests as follows:
 
+We have provided a large suite of unit tests to verify the correct behavior of libkml. We
+use the [http://cppunit.sourceforge.net CppUnit framework]. If you have installed cppunit 
+in its default location (a prefix of /usr/local) the existence of such should be
+discovered automatically. If you have a custom installation, you can specify where the
+headers and libraries are installed as:
+
 {{{
-scons CPPUNIT_LIBDIR=/your/root/lib CPPUNIT_INCDIR=/your/root/include
+../configure --with-cppunit-prefix=PFX --with-cppunit-exec-prefix=PFX
 }}}
 
-Note: on Linux and Mac, CPPUNIT_INCDIR defaults to /usr/local/include and CPPUNIT_LIBDIR defaults to /usr/local/lib. This matches !CppUnit's own installation defaults.
-
-To run the tests, invoke SCons as follows:
+You can run the tests like so:
 
 {{{
-scons runtests
+make check
 }}}
 
 The test output looks as follows:
 
 {{{
+make  check-TESTS
+AbstractLatLonBoxTest::TestType : OK
+AbstractLatLonBoxTest::TestDefaults : OK
+AbstractLatLonBoxTest::TestSetToDefaultValues : OK
+AbstractLatLonBoxTest::TestSetGetHasClear : OK
+OK (4)
 ...
-kmz_test PASSED (Test Binaries: 1 passed, 0 failed)
+XsdTest::TestGoodElement : OK
+XsdTest::TestBadElement : OK
+XsdTest::TestUglyElement : OK
+XsdTest::TestGoodEnum : OK
+XsdTest::TestBadEnum : OK
+XsdTest::TestUglyEnum : OK
+OK (6)
+PASS: xsd_test
+===================
+All 43 tests passed
+===================
 ...
-abstractlatlonbox_test PASSED (Test Binaries: 2 passed, 0 failed)
-...
-...
-xsd_test PASSED (Test Binaries: 42 passed, 0 failed)
-...
+make  check-TESTS
+KmzTest::TestDataIsKmz : OK
+KmzTest::TestReadFileFromKmz : OK
+KmzTest::TestReadKmlFromKmz : OK
+OK (3)
+PASS: kmz_test
+==================
+All 1 tests passed
+==================
 }}}
+
 
 = Hello libkml =
 

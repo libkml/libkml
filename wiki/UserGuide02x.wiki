@@ -31,8 +31,7 @@ This library has been compiled and tested on Windows XP, Mac OS X 10.4 and 10.5,
 Two main things have changed since 0.1: we have upgraded to a memory management
 scheme based on "smart pointers", and we have upgraded to automake.
 
-Note that the "smart pointer" scheme presently restricts support for alternate
-language bindings to Python and Java.
+Note that our "smart pointer" scheme is currently only supported by SWIG in Java and Python. Consequently, libkml version 0.2 represents a temporary drop of support for PHP, Perl, and Ruby. It is not our intention to leave these scripting languages behind permanently, what you're witnessing is live development progress. A future release will rectify this issue.
 
 We also provide Microsoft Visual Studio project files.
 

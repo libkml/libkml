@@ -507,7 +507,7 @@ Future development will be on the KML "Engine" built on the KML DOM.
   * networklink fetching
   * feature and geometry bounding box and lookat/camera computation
   * region visibility computation
-  * NetworkLinkControl/Update processing
+  * !NetworkLinkControl/Update processing
   * regionator framework
 
 = Found a bug? =

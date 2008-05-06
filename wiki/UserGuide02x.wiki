@@ -284,16 +284,7 @@ struct ComparePlacemarks
 
 = Example programs =
 
-The libkml system comes with a small suite of [http://libkml.googlecode.com/svn/trunk/examples/ example programs] to help you get started. First build and install libkml as described above. Then build the 'helloworld' examples as follows:
-
-TODO: update build instructions to automake
-
-{{{
-cd examples/helloworld
-scons LIBKML_LIBDIR=/your/root/lib LIBKML_INCDIR=/your/root/include
-}}}
-
-If you do not supply an explicit LIBKML_LIBDIR or LIBKML_INCDIR, the libraries and headers in the build directory will be used. 
+The libkml system comes with a small suite of [http://libkml.googlecode.com/svn/trunk/examples/ example programs] to help you get started. First build and install libkml as described above.
 
 = Quick reference =
 

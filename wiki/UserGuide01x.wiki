@@ -1,5 +1,5 @@
 #summary Release notes for the initial 0.1 version of libkml
-#labels Featured,Phase-Implementation,Phase-Deploy
+#labels Deprecated
 
 = Introduction =
 

@@ -302,7 +302,7 @@ The libkml DOM implements standard OGC KML 2.2. Google's [http://code.google.com
 
 == Creating complex elements ==
 
-Each complex element in KML 2.2 has a C++ type whose name is the same as the element. For example, <Placemark> is kmldom::PlacemarkPtr, and <GroundOverlay> is kmldom::!GroundOverlayPtr.
+Each complex element in KML 2.2 has a C++ type whose name is the same as the element. For example, <Placemark> is kmldom::!PlacemarkPtr, and <GroundOverlay> is kmldom::!GroundOverlayPtr.
 
 The !KmlFactory singleton has a method to create each complex element:
 

@@ -101,7 +101,10 @@ Otherwise, the Python bindings will be installed to a directory relative to conf
 
 == Microsoft Windows XP ==
 
-The top-level libkml.sln is the main solution file and will build both the kmldom and kmlutil libraries. You can also build the examples from the solution file in the examples directory.
+We have used Microsoft Visual Studio 2005 to create the project files. The top-level
+libkml.sln is the main solution file and will build both the kmldom and kmlutil
+libraries. You can also build the examples from the solution file in the examples 
+directory.
 
 
 = Running the unit tests =

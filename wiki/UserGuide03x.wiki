@@ -39,9 +39,9 @@ various flavors of Linux.
 
 The KML DOM is unchanged since 0.2, however there are now 3 new libraries:
 
-  * kmlengine
-  * kmlconvenience
-  * kmlregionator
+  * KML Engine
+  * KML Convenience
+  * KML Regionator
 
 = Building and installing libkml =
 
@@ -300,7 +300,7 @@ The libkml system consists of:
   * KML Convenience
   * KML Regionator
 
-== kmldom ==
+= KML DOM =
 
 All classes and functions in the KML DOM are in the kmldom namespace.
 
@@ -500,11 +500,11 @@ assert(overlay->IsA(kmldom::Type_Overlay));
 assert(overlay->IsA(kmldom::Type_GroundOverlay));
 }}}
 
-== KML Engine ==
+= KML Engine =
 
-== KML Convenience ==
+= KML Convenience =
 
-== KML Regionator ==
+= KML Regionator =
 
 = Future development =
 

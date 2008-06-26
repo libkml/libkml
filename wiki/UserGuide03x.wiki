@@ -502,6 +502,67 @@ assert(overlay->IsA(kmldom::Type_GroundOverlay));
 
 = KML Engine =
 
+All classes and functions in the KML Engine are within the kmlengine namespace.
+Use the "kml/engine.h" header and link with libkmlengine.
+
+Here is an overview of the KML Engine functions and classes:
+
+  * Bbox - class to manage bounding boxes
+  * Clone - function to deep copy Elements
+  * FeatureVisitor - walk the Feature hierarchy in a KML file
+  * Find - find 
+  * GetLinks -
+  * Href - parse the contents of <href>
+  * KmlFile - Object ID and shared style support
+  * KmzFile - KMZ read/write
+  * Location
+  * Merge - merge one Element into another
+  * Style resolution
+
+== Bounding box ==
+
+== Element clone ==
+
+{{{
+kmldom::ElementPtr element;
+kmldom::ElementPtr deep_copy = kmlengine::Clone(element);
+}}}
+
+== Feature support ==
+
+{{{
+kmldom::Element root;
+klmdom::FeaturePtr feature = kmlengine::GetRootFeature(root);
+}}}
+
+{{{
+class YourFeatureVisitor : public kmlengine::FeatureVisitor {
+  public:
+    virtual void VisitFeature(const kmldom::FeaturePtr& feature) {
+      ...your per-feature code...
+    }
+};
+YourFeatureVisitor your_feature_visitor;
+kmldom::FeaturePtr feature;
+kmlengine::VisitFeatureHierarchy(feature, your_feature_visitor);
+}}}
+
+== Finding Elements ==
+
+== Finding links ==
+
+== Href parsing ==
+
+== KML File ==
+
+== KMZ File ==
+
+== Finding Feature and Geometry location ==
+
+== Element merge ==
+
+== Style resolution ==
+
 = KML Convenience =
 
 = KML Regionator =

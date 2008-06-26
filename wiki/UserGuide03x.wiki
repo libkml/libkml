@@ -521,6 +521,17 @@ Here is an overview of the KML Engine functions and classes:
 
 == Bounding box ==
 
+{{{
+Bbox bbox;
+bbox.ExpandLatLon(lat, lon);  // 0 or more times for a set of lat,lon.
+
+// Inquire some things about the bounding box:
+double mid_lat, mid_lon;
+bbox.GetCenter(&mid_lat, &mid_lon);
+double north = bbox.get_north()  // Same for s,e,w
+bool contains = bbox.Contains(lat, lon);
+}}}
+
 == Element clone ==
 
 {{{
@@ -530,10 +541,18 @@ kmldom::ElementPtr deep_copy = kmlengine::Clone(element);
 
 == Feature support ==
 
+A KML file is a hierarchy of Features.   Thus there is (possibly) a "root" Feature.
+(As with all things KML this is optional.  For example, a KML file may have
+only a NetworkLinkControl or even be a "null" <kml/> element).
+
 {{{
-kmldom::Element root;
+kmldom::Element root = kmldom::Parse(kmldata, NULL);
 klmdom::FeaturePtr feature = kmlengine::GetRootFeature(root);
 }}}
+
+The VisitFeatureHierachy() function makes a depth-first walk of
+all Features rooted at the given feature.  The feature can be the "root"
+Feature of a KML file or any other Feature within.
 
 {{{
 class YourFeatureVisitor : public kmlengine::FeatureVisitor {
@@ -549,9 +568,39 @@ kmlengine::VisitFeatureHierarchy(feature, your_feature_visitor);
 
 == Finding Elements ==
 
+It is possible to get a flat list (in depth-first order) of
+all Elements of a given type.  For example, find all
+the Placemarks in a KML file.
+
+{{{
+kmldom::ElementPtr element;
+element_vector_t placemarks;
+GetElementsById(element, kmldom::Type_Placemark, &placemarks);
+}}}
+
 == Finding links ==
 
+A KML file may have 0 or more of many types of links such
+as NetworkLink/Link/href, styleUrl, IconStyle/Icon/href, etc.
+This function finds them all.
+
+{{{
+href_vector_t hrefs;
+GetLinks(kml_data, *hrefs);
+}}}
+
 == Href parsing ==
+
+The content of any link element such as <href> can be parsed into
+its scheme:://net_loc/path#fragment using this:
+
+{{{
+Href href(link->get_href());
+const std::string scheme = href.get_scheme();  // "http", for example
+const std::string net_loc = href.get_net_loc();  // "www.google.com", for example
+const std::string path = href.get_path();  // "my/cool/file.kml"
+const std::string fragment = href.get_fragment();  // "shared-style-id"
+}}}
 
 == KML File ==
 

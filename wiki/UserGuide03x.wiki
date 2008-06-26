@@ -635,9 +635,48 @@ for those applications with special needs).
 
 == Finding Feature and Geometry location ==
 
+Any Feature may have a location.
+
+{{{
+double lat, lon;
+if (GetFeatureLatLon(feature, &lat, &lon)) {
+  ... yup, it has a location...
+}
+}}}
+
 == Element merge ==
 
+The simple element children of an Element maybe be merged
+into those in another Element.
+
+Two Elements may be merged together.
+
+{{{
+ElementPtr some_new_values;
+ElementPtr override_me;
+MergeFields(some_new_values, override_me);
+}}}
+
+{{{
+ElementPtr inline_style;
+ElementPtr shared_style;
+MergeElements(inline_style, shared_style);
+}}}
+ 
 == Style resolution ==
+
+Every Feature has a resolved Style.  CreateResolvedStyle() creates a <Style>,
+based on resolving the styleUrl and inline StyleSelector of the given Feature.
+The StyleStateEnum argument is used to indicate which state of any StyleMaps
+to resolve.
+
+Note that this requires use of KmlFile to parse the KML file.
+
+{{{
+KmlFile kml_file;
+FeaturePtr feature;
+kmldom::StylePtr style = CreateResolvedStyle(feature, kml_file, normal or highlight);
+}}}
 
 = KML Convenience =
 

@@ -1,5 +1,4 @@
 #summary Release notes for the 0.3 version of libkml
-#labels
 
 = Introduction =
 
@@ -36,20 +35,20 @@ top of each file.
 This library has been compiled and tested on Windows XP, Mac OS X 10.4 and 10.5, and
 various flavors of Linux.
 
-= Changes since 0.1 =
+= Changes since 0.2 =
 
-Two main things have changed since 0.1: we have upgraded to a memory management scheme
-based on "smart pointers", and we have deprecated the use of SCons. On Linux and Mac OS X we now use the traditional automake, and on Windows we use Microsoft Visual Studio.
+The KML DOM is unchanged since 0.2, however there are now 3 new libraries:
 
-Note that the "smart pointer" scheme presently restricts support for alternate language
-bindings to Python and Java.
+  * kmlengine
+  * kmlconvenience
+  * kmlregionator
 
 = Building and installing libkml =
 
 Please read the DEPENDENCIES file carefully and ensure you have the correct versions of
 all required software.
 
-There are now two separate build systems: one for GNU/Linux and Mac OS X, and another for 
+There are two separate build systems: one for GNU/Linux and Mac OS X, and another for 
 Microsoft Windows.
 
 == Linux and Mac OS X ==
@@ -294,9 +293,16 @@ The libkml system comes with a small suite of [http://libkml.googlecode.com/svn/
 
 = Quick reference =
 
+The libkml system consists of:
+
+  * KML DOM
+  * KML Engine
+  * KML Convenience
+  * KML Regionator
+
 == kmldom ==
 
-The libkml system presently consists of the KML DOM. All classes and functions in the KML DOM are in the kmldom namespace.
+All classes and functions in the KML DOM are in the kmldom namespace.
 
 == KML 2.2 ==
 
@@ -316,13 +322,11 @@ kmldom::FolderPtr folder = factory->CreateFolder();
 
 == Memory management ==
 
-This release of libkml provides "smart pointer" memory management.
+The KML DOM provides "smart pointer" memory management.
 As such the factory returns a "smart pointer" to the created Element
 and there is a typedef for each pointer to each complex type in the language.
-While this is now a value type it is actually still the same size as a regular
-pointer and is also used as a pointer.  (Thus upgrading from 0.1 to 0.2 should
-simply require changing any `kmldom::Foo*` to `kmldom::FooPtr`, removing any explicit
-calls of delete and recompiling).
+While this is a value type it is actually still the same size as a regular
+pointer and is also used as a pointer.
 
 The "smart pointer" maintains a reference on your behalf to an Element while the pointer remains in scope.  Passing the Element to set it as a child of another Element gives the parent element a reference.  The reference count decreases when either the parent is deleted or when your smart pointer goes out of scope.
 
@@ -496,21 +500,26 @@ assert(overlay->IsA(kmldom::Type_Overlay));
 assert(overlay->IsA(kmldom::Type_GroundOverlay));
 }}}
 
+== KML Engine ==
+
+== KML Convenience ==
+
+== KML Regionator ==
+
 = Future development =
 
-With this 0.2 release we hope to soon freeze the API to the kmldom namespace.
-Future development will be on the KML "Engine" built on the KML DOM.
+With this 0.3 release we consider the API to the kmldom namespace quite stable.
+Future development will be on further expansion of the KML Engine
+and Convenience libraries built on the KML DOM.
 
-  * full kmz read and write
-  * object id management
+  * even better kmz read and write
+  * even more object id management
   * xml namespace support
-  * style resolution
   * balloon template expansion
   * networklink fetching
   * feature and geometry bounding box and lookat/camera computation
   * region visibility computation
   * !NetworkLinkControl/Update processing
-  * regionator framework
 
 = Found a bug? =
 

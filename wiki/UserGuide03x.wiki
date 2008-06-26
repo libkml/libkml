@@ -604,6 +604,33 @@ const std::string fragment = href.get_fragment();  // "shared-style-id"
 
 == KML File ==
 
+A KML file is the domain of id space as for any XML file.
+(We use the term "file" instead of "document" to not confuse
+with the KML <Document> element.  Note that a given KML file
+may have 0, 1 or many <Document> elements and that <Document>
+is not necessarily the root Feature of a KML file).
+
+A KML file also has an encoding and default namespace (and someday
+a set of pairs of namespace prefixes and namespaces).
+
+The KmlFile class provides a parse method and efficient object and
+shared style lookup methods.
+
+{{{
+KmlFile kml_file;
+ElementPtr root = kml_file.ParseFromString(kmldata, &errors);
+ObjectPtr object = kml_file.GetObjectById(id);
+StyleSelectorPtr shared_style = kml_file.GetSharedStyleById(id);
+}}}
+
+Note that KmlFile's parser will reject the KML if there are duplicate ids.
+
+(Future revisions of KmlFile in are expected to enhance this class
+as the main parser and serializer of most common KML applications.
+Future revisions are anticipated to support unique object id management.
+The kmldom parse and serializer are expected to remain available
+for those applications with special needs).
+
 == KMZ File ==
 
 == Finding Feature and Geometry location ==

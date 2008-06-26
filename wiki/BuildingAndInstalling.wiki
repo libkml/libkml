@@ -2,16 +2,16 @@
 
 = Building and Installing libkml =
 
-Please read the DEPENDENCIES file carefully and ensure you have the correct versions of
-all required software.
+Please read the DEPENDENCIES file carefully and ensure you have the correct
+versions of all required software.
 
-There are two separate build systems: one for GNU/Linux and Mac OS X, and another for 
-Microsoft Windows.
+There are two separate build systems: one for GNU/Linux and Mac OS X, and
+another for Microsoft Windows.
 
 == Linux and Mac OS X ==
 
-We assume you have a reasonable GCC/autotools environment installation. Performing a
-basic build should be as simple as:
+We assume you have a reasonable GCC/autotools environment installation.
+Performing a basic build should be as simple as:
 
 {{{
 cd libkml-0.x.x
@@ -22,13 +22,19 @@ make
 sudo make install
 }}}
 
-In addition to the usual GNU build system configure options like --prefix, you may
-fine-tune the building of libkml as follows. (Use ./configure --help to see all extra
-options.)
+In addition to the usual GNU build system configure options like --prefix, you
+may fine-tune the building of libkml as follows. (Use ./configure --help to see
+all extra options.)
 
 === SWIG bindings ===
 
-If you want to create bindings for the additional supported languages, you need to install the Simplified Wrapper and Interface Generator ([http://www.swig.org/ SWIG]) version 1.3.35. Once SWIG is installed, the configure program will check for the existence of development versions of Python and Java. If either is found, we attempt to build the SWIG bindings. If you have either language installed in a non-default location, you can specify the location(s) of your headers and libs like so:
+If you want to create bindings for the additional supported languages, you need
+to install the Simplified Wrapper and Interface Generator
+([http://www.swig.org/ SWIG]) version 1.3.35. Once SWIG is installed, the
+configure program will check for the existence of development versions of
+Python and Java. If either is found, we attempt to build the SWIG bindings. If
+you have either language installed in a non-default location, you can specify
+the location(s) of your headers and libs like so:
 
 {{{
 ../configure --with-java-include-dir=DIR \
@@ -49,33 +55,41 @@ Or you can disable specific languages:
 ../configure --disable-java --disable-python
 }}}
 
-By default we do not install the Python SWIG bindings in the system Python extension directory. This is because writing to that directory likely requires root privileges. You can override this behavior as follows. Installation must
+By default we do not install the Python SWIG bindings in the system Python
+extension directory. This is because writing to that directory likely requires
+root privileges. You can override this behavior as follows. Installation must
 then be performed by `sudo make install`.
 
 {{{
 ../configure --enable-systempython
 }}}
 
-Otherwise, the Python bindings will be installed to a directory relative to configure's prefix. This will likely be similar to `/usr/local/lib/python2.5/site-packages/`. Your `PYTHONPATH` will of course have to know about this directory.
+Otherwise, the Python bindings will be installed to a directory relative to
+configure's prefix. This will likely be similar to
+`/usr/local/lib/python2.5/site-packages/`. Your `PYTHONPATH` will of course
+have to know about this directory.
 
 
 == Microsoft Windows XP ==
 
-We have used Microsoft Visual Studio 2005 to create the project files. The top-level
-libkml.sln is the main solution file and will build both the kmldom and kmlutil
-libraries. You can also build the examples from the solution file in the examples 
-directory.
+We have used Microsoft Visual Studio 2005 to create the project files. The
+top-level libkml.sln is the main solution file and will build both the kmldom
+and kmlutil libraries. You can also build the examples from the solution file
+in the examples directory.
 
 
 = Running the unit tests =
 
-IMPORTANT: since libkml does not use RTTI, you _must_ configure cppunit accordingly. On Mac OS X the command is `./configure --disable-typeinfo-name`. On Linux the command is: `./configure --disable-typeinfo-name LIBS="-ldl"`. See the top-level DEPENDENCIES file.
+IMPORTANT: since libkml does not use RTTI, you _must_ configure cppunit
+accordingly. On Mac OS X the command is `./configure --disable-typeinfo-name`.
+On Linux the command is: `./configure --disable-typeinfo-name LIBS="-ldl"`. See
+the top-level DEPENDENCIES file.
 
-We have provided a large suite of unit tests to verify the correct behavior of libkml. We
-use the [http://cppunit.sourceforge.net CppUnit framework]. If you have installed cppunit 
-in its default location (a prefix of /usr/local) the existence of such should be
-discovered automatically. If you have a custom installation, you can specify where the
-headers and libraries are installed as:
+We have provided a large suite of unit tests to verify the correct behavior of
+libkml. We use the [http://cppunit.sourceforge.net CppUnit framework]. If you
+have installed cppunit in its default location (a prefix of /usr/local) the
+existence of such should be discovered automatically. If you have a custom
+installation, you can specify where the headers and libraries are installed as:
 
 {{{
 ../configure --with-cppunit-prefix=PFX --with-cppunit-exec-prefix=PFX
@@ -120,4 +134,5 @@ All 1 tests passed
 ==================
 }}}
 
-And so on. If any tests fail to pass, you will be asked to report the issue to this project's issue tracker.
+And so on. If any tests fail to pass, you will be asked to report the issue to
+this project's issue tracker.

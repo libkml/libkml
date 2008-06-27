@@ -1,0 +1,7 @@
+#summary The C++ style guide for this project.
+
+For the most part we follow the [http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml Google C++ style guide]. The exceptions are:
+
+  * We prefix getters with `get_` for clarification
+  * We disallow use of "using std::string" because it can cause conflicts in codebases that define a modified string class
+  * TODO: others

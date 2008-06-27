@@ -1,4 +1,4 @@
-#summary Release notes for the 0.3 version of libkml
+﻿#summary Release notes for the 0.3 version of libkml
 
 = Introduction =
 
@@ -462,14 +462,14 @@ kmldom::ElementPtr deep_copy = kmlengine::Clone(element);
 
 A KML file is a hierarchy of Features.   Thus there is (possibly) a "root"
 Feature.  (As with all things KML this is optional.  For example, a KML file
-may have only a NetworkLinkControl or even be a "null" <kml/> element).
+may have only a !NetworkLinkControl or even be a "null" <kml/> element).
 
 {{{
 kmldom::Element root = kmldom::Parse(kmldata, NULL);
 klmdom::FeaturePtr feature = kmlengine::GetRootFeature(root);
 }}}
 
-The VisitFeatureHierachy() function makes a depth-first walk of all Features
+The !VisitFeatureHierachy() function makes a depth-first walk of all Features
 rooted at the given feature.  The feature can be the "root" Feature of a KML
 file or any other Feature within.
 
@@ -530,7 +530,7 @@ Note that a given KML file may have 0, 1 or many <Document> elements and that
 A KML file also has an encoding and default namespace (and someday a set of
 pairs of namespace prefixes and namespaces).
 
-The KmlFile class provides a parse method and efficient object and shared style
+The !KmlFile class provides a parse method and efficient object and shared style
 lookup methods.
 
 {{{
@@ -540,9 +540,9 @@ ObjectPtr object = kml_file.GetObjectById(id);
 StyleSelectorPtr shared_style = kml_file.GetSharedStyleById(id);
 }}}
 
-Note that KmlFile's parser will reject the KML if there are duplicate ids.
+Note that !KmlFile's parser will reject the KML if there are duplicate ids.
 
-(Future revisions of KmlFile in are expected to enhance this class as the main
+(Future revisions of !KmlFile in are expected to enhance this class as the main
 parser and serializer of most common KML applications.  Future revisions are
 anticipated to support unique object id management.  The kmldom parse and
 serializer are expected to remain available for those applications with special
@@ -550,9 +550,9 @@ needs).
 
 == KMZ File ==
 
-The KmzFile class allows for reading and writing of KMZ files and provides some
+The !KmzFile class allows for reading and writing of KMZ files and provides some
 useful utility functions. Historically, Google Earth has always read the
-"default KML file" from a loaded KMZ file. The KmzFile class now defines
+"default KML file" from a loaded KMZ file. The !KmzFile class now defines
 what is meant by "default KML file".
 
 Some example code to illustrate use:
@@ -621,12 +621,12 @@ MergeElements(inline_style, shared_style);
  
 == Style resolution ==
 
-Every Feature has a resolved Style.  CreateResolvedStyle() creates a <Style>,
-based on resolving the styleUrl and inline StyleSelector of the given Feature.
-The StyleStateEnum argument is used to indicate which state of any StyleMaps
+Every Feature has a resolved Style. !CreateResolvedStyle() creates a <Style>,
+based on resolving the styleUrl and inline !StyleSelector of the given Feature.
+The !StyleStateEnum argument is used to indicate which state of any !StyleMaps
 to resolve.
 
-Note that this requires use of KmlFile to parse the KML file.
+Note that this requires use of !KmlFile to parse the KML file.
 
 {{{
 KmlFile kml_file;

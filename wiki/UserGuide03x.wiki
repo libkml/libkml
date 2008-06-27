@@ -183,14 +183,34 @@ get started. First build and install libkml as described above.
 
 The libkml system consists of:
 
+  * KML base
   * KML DOM
   * KML Engine
   * KML Convenience
   * KML Regionator
 
+The KML base library is internal to the libkml system.  There is no public API
+to this module, but this must be linked with any use of libkml.
+
+The KML DOM is a direct representation of the XML.  Everything you can
+do in XML you can do in the DOM API.  KML DOM requires KML base.
+
+The KML Engine encodes higher level KML semantics and behavior
+specified by the KML standard beyond the basic XML file format.
+KML Engine requires KML DOM and KML base.
+
+The KML Convenience library consists of useful and common
+utility code not directly part of the KML standard.  KML Convenience
+requires KML Engine, KML DOM and KML base.
+
+The KML Regionator library consists of code useful for creating
+Region-based !NetworkLink hierarchies.  KML Regionator depends
+on KML Convenience, KML Engine, KML DOM, and KML base.
+
 = KML DOM =
 
 All classes and functions in the KML DOM are in the kmldom namespace.
+Use "kml/dom.h" in your code and link with libkmldom.
 
 == KML 2.2 ==
 
@@ -453,6 +473,12 @@ bool contains = bbox.Contains(lat, lon);
 
 == Element clone ==
 
+Any Element can be deep-copied using kmlengine::Clone().
+The newly created Element is a complete copy of all simple element
+and complex element children of the original.  Just as one would
+"copy-paste" the XML within a file to exactly duplicate an element,
+kmlengine::Clone() provides such functionality within libkml.
+
 {{{
 kmldom::ElementPtr element;
 kmldom::ElementPtr deep_copy = kmlengine::Clone(element);
@@ -493,7 +519,7 @@ given type.  For example, find all the Placemarks in a KML file.
 {{{
 kmldom::ElementPtr element;
 element_vector_t placemarks;
-GetElementsById(element, kmldom::Type_Placemark, &placemarks);
+kmlengine::GetElementsById(element, kmldom::Type_Placemark, &placemarks);
 }}}
 
 == Finding links ==
@@ -513,11 +539,15 @@ The content of any link element such as <href> can be parsed into
 its scheme:://net_loc/path#fragment using this:
 
 {{{
+// For example:
+// <Link>
+//   <href>http://example.com/cool/stuff.kml#object-id</href>
+// </Link>
 Href href(link->get_href());
-const std::string scheme = href.get_scheme();  // "http", for example
-const std::string net_loc = href.get_net_loc();  // "www.google.com"
-const std::string path = href.get_path();  // "my/cool/file.kml"
-const std::string fragment = href.get_fragment();  // "shared-style-id"
+const std::string scheme = href.get_scheme();  // "http"
+const std::string net_loc = href.get_net_loc();  // "example.com"
+const std::string path = href.get_path();  // "cool/stuff.kml"
+const std::string fragment = href.get_fragment();  // "object-id"
 }}}
 
 == KML File ==
@@ -534,10 +564,10 @@ The !KmlFile class provides a parse method and efficient object and shared style
 lookup methods.
 
 {{{
-KmlFile kml_file;
-ElementPtr root = kml_file.ParseFromString(kmldata, &errors);
-ObjectPtr object = kml_file.GetObjectById(id);
-StyleSelectorPtr shared_style = kml_file.GetSharedStyleById(id);
+kmlengine::KmlFile kml_file;
+kmldom::ElementPtr root = kml_file.ParseFromString(kmldata, &errors);
+kmldom::ObjectPtr object = kml_file.GetObjectById(id);
+kmldom::StyleSelectorPtr shared_style = kml_file.GetSharedStyleById(id);
 }}}
 
 Note that !KmlFile's parser will reject the KML if there are duplicate ids.
@@ -571,7 +601,7 @@ if (!KmzFile::IsKmz(file_data)) {
   // Handle error.
 }
 // Instantiate the KmzFile object.
-KmzFile* kmz_file = KmzFile::OpenFromString(file_data);
+kmlengine::KmzFile* kmz_file = kmlengine::KmzFile::OpenFromString(file_data);
 if (!kmz_file) {
   // Handle error.
 }
@@ -595,7 +625,7 @@ Any Feature may have a location.
 
 {{{
 double lat, lon;
-if (GetFeatureLatLon(feature, &lat, &lon)) {
+if (kmlengine::GetFeatureLatLon(feature, &lat, &lon)) {
   ... yup, it has a location...
 }
 }}}
@@ -605,18 +635,20 @@ if (GetFeatureLatLon(feature, &lat, &lon)) {
 The simple element children of an Element maybe be merged
 into those in another Element.
 
-Two Elements may be merged together.
-
 {{{
-ElementPtr some_new_values;
-ElementPtr override_me;
-MergeFields(some_new_values, override_me);
+kmldom::ElementPtr some_new_values;
+kmldom::ElementPtr override_me;
+kmlengine::MergeFields(some_new_values, override_me);
 }}}
 
+Two Elements may be merged together.
+This does a deep merge including all simple elements and
+recursing on all complex elements.
+
 {{{
-ElementPtr inline_style;
-ElementPtr shared_style;
-MergeElements(inline_style, shared_style);
+kmldom::ElementPtr inline_style;
+kmldom::ElementPtr shared_style;
+kmlengine::MergeElements(inline_style, shared_style);
 }}}
  
 == Style resolution ==
@@ -631,7 +663,7 @@ Note that this requires use of !KmlFile to parse the KML file.
 {{{
 KmlFile kml_file;
 FeaturePtr feature;
-kmldom::StylePtr style = CreateResolvedStyle(feature, kml_file, normal or highlight);
+kmldom::StylePtr style = kmlengine::CreateResolvedStyle(feature, kml_file, normal or highlight);
 }}}
 
 = KML Convenience =
@@ -660,12 +692,21 @@ This creates:
 
 == CSV file ==
 
+The !CsvFile class parses a "CSV" file of this format:
+
+score|lat|lon|name|description[|style_url]
+
 {{{
 CsvFile csv_file(&feature_list);
 csv_file.ParseCsvFile("input.csv");
 }}}
 
 == Feature list ==
+
+The !FeatureList class provides an efficient container to
+operate on a set of Features including bounding box computation,
+splitting by bounding box, sorting on score and saving
+to a Container.
 
 {{{
 FeatureList feature_list;
@@ -674,6 +715,62 @@ feature_list.ComputeBoundingBox(&bbox);
 }}}
 
 = KML Regionator =
+
+The KML Regionator library creates Region-based !NetworkLink KML
+hierarchies.
+
+The csvregionator.cc example shows how this library is used to create
+a Region-based !NetworkLink KML hierarchy from a CSV file.
+
+== RegionHander ==
+
+This abstract class defines the interface which the Regionator algorithm
+uses to walk a Region-hierarchy.
+
+{{{
+class kmlregionator::RegionHandler {
+ public:
+  // This method is the first one called for a given Region.  The implementation
+  // of this method should return true if there is data in this Region and/or
+  // below this Region.  The implementation must eventually return false
+  // for the Region walk to complete.  This method is called _before_ all
+  // children are visited.
+  virtual bool HasData(const kmldom::RegionPtr& region) = 0;
+
+  // This method is always called if the HasData() method returned true.
+  // The implementation of this method should return the Feature for this
+  // Region.  This method is called _after_ all children are visited.
+  virtual kmldom::FeaturePtr GetFeature(const kmldom::RegionPtr& region) = 0;
+
+  // This method is called for each Region with the KML data for a given
+  // Region along with the file name that the parent NetworkLink will use
+  // to fetch the file.  It is implementation dependent just how the KML
+  // is saved, but the exact name in the filename argument should be used
+  // with no modification.
+  virtual void SaveKml(const kmldom::KmlPtr& kml,
+                       const std::string& filename) = 0;
+};
+}}}
+== Regionator ==
+
+This class is the API to the "regionator" algorithm.
+
+{{{
+// Create a specific RegionHandler:
+class MyRegionHandler : public RegionHandler {...};
+MyRegionHandler my_region_handler;
+// The Regionator walks down the Region hierarchy starting at the
+// specified Region calling the RegionHandler methods for each child
+// Region in the hierarchy.  It is up to the HasData() method to
+// eventually terminate the walk of the Region hierarchy.
+kmldom::RegionPtr root_region;
+Regionator regionator(&my_region_handler, root_region);
+regionator.Regionate();
+// All "regionated" KML is now available wherever MyRegionHandler
+// saved each file passed in to SaveKml().
+}}}
+
+== FeatureListRegionHandler ==
 
 = Future development =
 
@@ -696,4 +793,3 @@ You can file a bug using this project's
 [http://code.google.com/p/libkml/issues/list issue tracker]. Please follow
 basic [http://www.google.com/search?q=bug+reporting+guidelines bug reporting
 procedure] and provide as much information as possible.
-

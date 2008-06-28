@@ -2,8 +2,6 @@
 
 = Introduction =
 
-TODO TODO TODO
-
 Welcome to the third public release of libkml! 
 
 THIS IS ALPHA SOFTWARE. Expect changes. We recommend caution in use in
@@ -690,17 +688,6 @@ This creates:
 </Placemark>
 }}}
 
-== CSV file ==
-
-The !CsvFile class parses a "CSV" file of this format:
-
-score|lat|lon|name|description[|style_url]
-
-{{{
-CsvFile csv_file(&feature_list);
-csv_file.ParseCsvFile("input.csv");
-}}}
-
 == Feature list ==
 
 The !FeatureList class provides an efficient container to
@@ -708,10 +695,47 @@ operate on a set of Features including bounding box computation,
 splitting by bounding box, sorting on score and saving
 to a Container.
 
+Put a bunch of Features in the FeatureList and sort on score.
+
 {{{
-FeatureList feature_list;
-Bbox bbox;
-feature_list.ComputeBoundingBox(&bbox);
+kmlconvenience::FeatureList feature_list;
+for each feature:
+  kmlconvenience::SetFeatureScore(the_features_score, feature);
+  feature_list.PushBack(feature);
+feature_list.Sort()
+}}}
+
+Split out the first N features within the given bounding box.
+
+{{{
+kmlconvenience::FeatureList features_in_some_bbox;
+kmlengine::Bbox some_bbox;
+feature_list.BboxSplit(bbox, how_many, &features_in_some_bbox);
+}}}
+
+Put the split out Features in a <Folder> and set the <Region> from
+the bounding box.
+
+{{{
+kmldom::FolderPtr folder = factory->CreateFolder();
+features_in_some_bbox.Save(folder);
+kmldom::RegionPtr region = create-from-bbox(features_in_some_bbox);
+folder->set_region(region);
+}}}
+
+== CSV file ==
+
+The !CsvFile class parses a "CSV" file of this format:
+
+score|lat|lon|name|description[|style_url]
+
+A Point Placemark is created for each CSV entry.  !CsvFile stores its result
+into a !FeatureList.
+
+{{{
+kmlconvenience::FeatureList feature_list;
+kmlconvenience::CsvFile csv_file(&feature_list);
+csv_file.ParseCsvFile("input.csv");
 }}}
 
 = KML Regionator =
@@ -771,6 +795,41 @@ regionator.Regionate();
 }}}
 
 == FeatureListRegionHandler ==
+
+This is a !RegionHandler for use with kmlconvenience::!FeatureList.
+
+Create a !FeatureList of Point Placemarks from a CSV file:
+
+{{{
+kmlconvenience::FeatureList feature_list;
+kmlconvenience::CsvFile csv_file;
+csv_file.ParseCsvFile("input.csv");
+}}}
+
+Create a !FeatureListRegionHandler for this !FeatureList:
+
+{{{
+kmlregionator::FeatureListRegionHandler feature_list_region_handler(&feature_list);
+}}}
+
+Create a Region based on the !FeatureList's bounding box:
+
+{{{
+Bbox bbox;
+feature_list.ComputeBoundingBox(&bbox);
+RegionPtr root = kmlconvenience::CreateRegion2d(bbox.get_north(),
+                                                                                           bbox.get_south(),
+                                                                                           bbox.get_east(),
+                                                                                           bbox.get_west(),
+                                                                                           256, -1);
+}}}
+
+Walk the Region hierarchy generating KML files:
+
+{{{
+kmlregionator::Regionator regionator(feature_list_region_handler, root);
+regionator.Regionate();
+}}}
 
 = Future development =
 

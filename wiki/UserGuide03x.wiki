@@ -687,6 +687,9 @@ std::string pic_data;;
 if (!kmz_file_->ReadFile("images/pic", &pice_data)) {
   // Handle error.
 }
+// Now delete the KmzFile instance when we're done with it.
+// There's a handy scoped_ptr in third_party you could use instead.
+delete kmz_file;
 }}}
 
 == Finding Feature and Geometry location ==

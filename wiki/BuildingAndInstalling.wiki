@@ -49,6 +49,20 @@ the location(s) of your headers and libs like so:
              --with-python-lib-dir=DIR
 }}}
 
+It is likely that the Python installation and headers will be discovered
+automatically. If you want to build the Java bindings you will almost
+certainly have to tell configure where to find the headers it needs.
+
+For Mac OS X the command is probably quite close to this:
+{{{
+../configure --with-java-include-dir=/System/Library/Frameworks/JavaVM.framework/Headers
+}}}
+
+For Linux is it is something like:
+{{{
+../configure --with-java-include-dir=/usr/lib/jvm/include
+}}}
+
 If possible, SWIG bindings are always built. You can disable this by:
 
 {{{

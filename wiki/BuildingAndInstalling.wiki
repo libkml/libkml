@@ -91,7 +91,7 @@ module often far exceed that module in raw lines of code.
 
 NOTE: the Microsoft Visual Studio .vcproj's have no knowledge of these tests.
 
-== Building cppunit without RTTI
+== Build cppunit without RTTI ==
 
 Since libkml does not use RTTI, you _must_ configure cppunit accordingly.
 
@@ -109,7 +109,7 @@ On Linux the command is:
 
 See the top-level DEPENDENCIES file.
 
-== Build and run the libkml unit tests
+== Build and run the libkml unit tests ==
 
 We have provided a large suite of unit tests to verify the correct behavior of
 libkml. We use the [http://cppunit.sourceforge.net CppUnit framework]. If you

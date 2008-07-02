@@ -506,9 +506,9 @@ examples for how this may be used.
 The KML DOM fully constructed assuming no !ParserObserver method
 terminated the parse.
 
-The kmlengine::!ObjectIdParserObserver uses this to flag duplicate ids during parse within kmlengine::KmlFile.
+The kmlengine::!ObjectIdParserObserver uses this to flag duplicate ids during parse within kmlengine::!KmlFile.
 The kmlengine::!SharedStyleParserObserver uses this to gather shared styles in a KML file.
-More on kmlengine::KmlFile below.
+More on kmlengine::!KmlFile below.
 
 = KML Engine =
 

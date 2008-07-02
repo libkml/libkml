@@ -8,6 +8,8 @@ versions of all required software.
 There are two separate build systems: one for GNU/Linux and Mac OS X, and
 another for Microsoft Windows.
 
+This is lasted upated for version 0.3.0.  There may be changes within the svn tree.
+
 == Linux and Mac OS X ==
 
 We assume you have a reasonable GCC/autotools environment installation.
@@ -73,17 +75,41 @@ have to know about this directory.
 == Microsoft Windows XP ==
 
 We have used Microsoft Visual Studio 2005 to create the project files. The
-top-level libkml.sln is the main solution file and will build both the kmldom
-and kmlutil libraries. You can also build the examples from the solution file
+top-level libkml.sln is the main solution file and will build all libraries in
+the libkml system. You can also build the examples from the solution file
 in the examples directory.
 
+(It is known that Microsoft Visual Studio 2008 does not work with libkml)
 
 = Running the unit tests =
 
-IMPORTANT: since libkml does not use RTTI, you _must_ configure cppunit
-accordingly. On Mac OS X the command is `./configure --disable-typeinfo-name`.
-On Linux the command is: `./configure --disable-typeinfo-name LIBS="-ldl"`. See
-the top-level DEPENDENCIES file.
+It is HIGHLY recommended that you build and run all unit tests.
+We consider the unit tests of libkml as important as the code itself
+given these assert semantics about the KML language itself and not
+just the libkml system.  You will note that the unit tests for a given
+module often far exceed that module in raw lines of code.
+
+NOTE: the Microsoft Visual Studio .vcproj's have no knowledge of these tests.
+
+== Building cppunit without RTTI
+
+Since libkml does not use RTTI, you _must_ configure cppunit accordingly.
+
+On Mac OS X the command is:
+
+{{{
+./configure --disable-typeinfo-name
+}}}
+
+On Linux the command is:
+
+{{{
+./configure --disable-typeinfo-name LIBS="-ldl"
+}}}
+
+See the top-level DEPENDENCIES file.
+
+== Build and run the libkml unit tests
 
 We have provided a large suite of unit tests to verify the correct behavior of
 libkml. We use the [http://cppunit.sourceforge.net CppUnit framework]. If you
@@ -101,16 +127,81 @@ You can run the tests like so:
 make check
 }}}
 
-The test output looks as follows:
+Excerpts of the test output as of 0.3.0 looks as follows.
+
+In reporting any problem with libkml please also submit a complete
+trace of your run of the unit test suite.
 
 {{{
+...
+Making check in base
+...
+make  check-TESTS
+FileTest::TestReadFileToString : OK
+FileTest::TestWriteStringToFile : OK
+FileTest::TestExists : OK
+FileTest::TestDelete : OK
+FileTest::TestCreateNewTempFile : OK
+OK (5)
+PASS: file_test
+ReferentTest::TestReferent : OK
+ReferentTest::TestIntrusivePointerFunctions : OK
+ReferentTest::TestDelete : OK
+ReferentTest::TestVector : OK
+ReferentTest::TestFunc : OK
+ReferentTest::TestBasicParentChild : OK
+ReferentTest::TestGetChild : OK
+OK (7)
+PASS: referent_test
+TempFileTest::TestTempFile : OK
+OK (1)
+PASS: tempfile_test
+==================
+All 3 tests passed
+==================
+Making check in convenience
+...
+make  check-TESTS
+CsvFileTest::TestEmpty : OK
+CsvFileTest::TestSplitStringUsing : OK
+CsvFileTest::TestParseCsvLine : OK
+CsvFileTest::TestParseCsvFile : OK
+OK (4)
+PASS: csv_file_test
+ConvenienceTest::TestCreatePointPlacemark : OK
+ConvenienceTest::TestCreateRegion2d : OK
+OK (2)
+PASS: convenience_test
+KmzCheckLinksTest::TestNoLinks : OK
+KmzCheckLinksTest::TestNull : OK
+KmzCheckLinksTest::TestOverlay : OK
+KmzCheckLinksTest::TestBadOverlay : OK
+OK (4)
+PASS: kmz_check_links_test
+FeatureListTest::TestDefault : OK
+FeatureListTest::TestSave : OK
+FeatureListTest::TestNull : OK
+FeatureListTest::TestPushBack : OK
+FeatureListTest::TestRegionSplitAll : OK
+FeatureListTest::TestRegionSplitSome : OK
+FeatureListTest::TestRegionSplitIncrementally : OK
+OK (7)
+PASS: feature_list_test
+==================
+All 4 tests passed
+==================
+Making check in dom
+...
+creating xsd_test
 make  check-TESTS
 AbstractLatLonBoxTest::TestType : OK
 AbstractLatLonBoxTest::TestDefaults : OK
 AbstractLatLonBoxTest::TestSetToDefaultValues : OK
 AbstractLatLonBoxTest::TestSetGetHasClear : OK
 OK (4)
+PASS: abstractlatlonbox_test
 ...
+PASS: xml_serializer_test
 XsdTest::TestGoodElement : OK
 XsdTest::TestBadElement : OK
 XsdTest::TestUglyElement : OK
@@ -122,16 +213,52 @@ PASS: xsd_test
 ===================
 All 43 tests passed
 ===================
+Making check in engine
 ...
 make  check-TESTS
-KmzTest::TestDataIsKmz : OK
-KmzTest::TestReadFileFromKmz : OK
-KmzTest::TestReadKmlFromKmz : OK
-OK (3)
-PASS: kmz_test
+KmlFileTest::TestInitialState : OK
+KmlFileTest::TestEncoding : OK
+KmlFileTest::TestBasicParseFromString : OK
+KmlFileTest::TestRoot : OK
+KmlFileTest::TestBasicObjectIdParse : OK
+KmlFileTest::TestObjectIdDupe : OK
+KmlFileTest::TestObjectIdMapReplaced : OK
+KmlFileTest::TestNullGetSharedStyleById : OK
+KmlFileTest::TestBasicGetSharedStyleById : OK
+KmlFileTest::TestReparse : OK
+OK (10)
+...
+StyleResolverTest::TestFiles : OK
+OK (1)
+PASS: style_resolver_test
+===================
+All 14 tests passed
+===================
+Making check in regionator
+...
+FeatureListRegionHandlerTest::TestBasic : OK
+OK (1)
+PASS: feature_list_region_handler_test
+RegionatorTest::TwoLevelPointRegionatorTest : OK
+RegionatorTest::FourLevelPointRegionatorTest : OK
+OK (2)
+PASS: regionator_test
+...
+PASS: regionator_util_test
 ==================
-All 1 tests passed
+All 4 tests passed
 ==================
+}}}
+
+Some amount of Python SWIG functionality is tested in src/swig/kmldom_test.py.
+A successful run of this test looks as follows:
+
+{{{
+.......................................
+----------------------------------------------------------------------
+Ran 39 tests in 0.013s
+
+OK
 }}}
 
 And so on. If any tests fail to pass, you will be asked to report the issue to

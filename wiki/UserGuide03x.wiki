@@ -771,9 +771,9 @@ operate on a set of Features including bounding box computation,
 splitting by bounding box, sorting on score and saving
 to a Container.
 
-Put a bunch of Features in the FeatureList and sort on score.
+Put a bunch of Features in the !FeatureList and sort on score.
 (KML itself has no concept of Feature "score".  This is particular
-to kmlconvenience::FeatureList.  The standard <ExtendedData><Data>
+to kmlconvenience::!FeatureList.  The standard <ExtendedData><Data>
 elements are used to hold the score.)
 
 {{{

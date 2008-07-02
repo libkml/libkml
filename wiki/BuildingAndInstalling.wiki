@@ -32,7 +32,11 @@ all extra options.)
 
 If you want to create bindings for the additional supported languages, you need
 to install the Simplified Wrapper and Interface Generator
-([http://www.swig.org/ SWIG]) version 1.3.35. Once SWIG is installed, the
+([http://www.swig.org/ SWIG]) version 1.3.35.
+
+NOTE: the Microsoft Windows Visual Studio .vcproj's do not build SWIG.
+
+Once SWIG is installed, the
 configure program will check for the existence of development versions of
 Python and Java. If either is found, we attempt to build the SWIG bindings. If
 you have either language installed in a non-default location, you can specify

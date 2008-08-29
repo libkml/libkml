@@ -51,7 +51,7 @@ void Placemark::Serialize(Serializer& serializer) const {
   serializer.BeginById(Type(), attributes);
   Feature::Serialize(serializer);
   if (has_geometry()) {
-    serializer.SaveElementGroup(get_geometry(), Type_Geometry);
+    serializer.SaveElement(get_geometry());
   }
   SerializeUnknown(serializer);
   serializer.End();

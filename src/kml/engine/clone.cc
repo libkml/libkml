@@ -29,7 +29,6 @@
 #include <stack>
 #include <string>
 #include "kml/dom/element.h"
-#include "kml/dom/geometry.h"
 #include "kml/dom/kml_factory.h"
 #include "kml/dom/serializer.h"
 
@@ -38,7 +37,6 @@ class Attributes;
 }
 
 using kmldom::Attributes;
-using kmldom::CoordinatesPtr;
 using kmldom::ElementPtr;
 using kmldom::KmlFactory;
 using kmldom::KmlDomType;
@@ -93,14 +91,6 @@ class ElementReplicator : public kmldom::Serializer {
   // Serializer::SaveContent() is called for arbitrary character data.
   virtual void SaveContent(const std::string& content, bool maybe_quote) {
     char_data_.append(content);
-  }
-
-  // Serializer::SaveLonLatAlt() is called to save each <coordinates> tuples.
-  virtual void SaveLonLatAlt(double longitude, double latitude,
-                             double altitude) {
-    if (CoordinatesPtr coordinates = AsCoordinates(clone_stack_.top())) {
-      coordinates->add_latlngalt(latitude, longitude, altitude);
-    }  // else something is very wrong.
   }
 
   // Return the top of the stack which holds the root element.

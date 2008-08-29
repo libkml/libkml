@@ -60,7 +60,6 @@ class KmlFileTest : public CPPUNIT_NS::TestFixture {
   CPPUNIT_TEST(TestBasicCreateFromString);
   CPPUNIT_TEST(TestBasicCreateFromStringWithUrl);
   CPPUNIT_TEST(TestCreateWithKmlCache);
-  CPPUNIT_TEST(TestXmlnsOnRoot);
   CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -93,7 +92,6 @@ class KmlFileTest : public CPPUNIT_NS::TestFixture {
   void TestBasicCreateFromString();
   void TestBasicCreateFromStringWithUrl();
   void TestCreateWithKmlCache();
-  void TestXmlnsOnRoot();
 
  private:
   void VerifyIsPlacemarkWithName(const ElementPtr& root,
@@ -114,7 +112,7 @@ void KmlFileTest::TestInitialState() {
 // Verify the encoding appears properly in the xml header.
 void KmlFileTest::TestEncoding() {
   CPPUNIT_ASSERT_EQUAL(std::string(
-                         "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"),
+                         "<?xml version=\"1.0\" encoding=\"utf-8\"?>"),
                        kml_file_->CreateXmlHeader());
 
   const std::string kIso_8859_1("iso-8859-1");
@@ -122,7 +120,7 @@ void KmlFileTest::TestEncoding() {
   CPPUNIT_ASSERT_EQUAL(kIso_8859_1, kml_file_->get_encoding());
 
   CPPUNIT_ASSERT_EQUAL(std::string(
-                         "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n"),
+                         "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>"),
                        kml_file_->CreateXmlHeader());
 }
 
@@ -364,25 +362,6 @@ void KmlFileTest::TestCreateWithKmlCache() {
   kml_file_ = KmlFile::CreateFromStringWithUrl(kPlacemark, kUrl, &kml_cache);
   CPPUNIT_ASSERT_EQUAL(kUrl, kml_file_->get_url());
   CPPUNIT_ASSERT_EQUAL(&kml_cache, kml_file_->get_kml_cache());
-}
-
-// Verify KmlFile's default xmlns is set on the root element.
-void KmlFileTest::TestXmlnsOnRoot() {
-  std::string xml;
-  const std::string kExpectedKml(
-      "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-      "<kml xmlns=\"http://www.opengis.net/kml/2.2\"/>\n");
-  kml_file_ = KmlFile::CreateFromString("<kml/>");
-  CPPUNIT_ASSERT(kml_file_->SerializeToString(&xml));
-  CPPUNIT_ASSERT_EQUAL(kExpectedKml, xml);
-
-  const std::string kExpectedPlacemark(
-      "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-      "<Placemark xmlns=\"http://www.opengis.net/kml/2.2\"/>\n");
-  kml_file_ = KmlFile::CreateFromString("<Placemark/>");
-  xml.clear();
-  CPPUNIT_ASSERT(kml_file_->SerializeToString(&xml));
-  CPPUNIT_ASSERT_EQUAL(kExpectedPlacemark, xml);
 }
 
 }  // end namespace kmlengine

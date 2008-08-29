@@ -39,16 +39,16 @@ static XsdElement kKml22Elements[] = {
   // The "casual" name in the comment is the corresponding name
   // used in the code.google.com/apis/kml KML 2.2 Reference.
   { "AbstractColorStyleGroup", XSD_COMPLEX_TYPE },  // "ColorStyle"
-  { "Container", XSD_COMPLEX_TYPE },  // "Container"
-  { "Feature", XSD_COMPLEX_TYPE },  // "Feature"
-  { "Geometry", XSD_COMPLEX_TYPE },   // "Geometry"
+  { "AbstractContainerGroup", XSD_COMPLEX_TYPE },  // "Container"
+  { "AbstractFeatureGroup", XSD_COMPLEX_TYPE },  // "Feature"
+  { "AbstractGeometryGroup", XSD_COMPLEX_TYPE },   // "Geometry"
   { "AbstractLatLonBox", XSD_COMPLEX_TYPE },  // (Not in Kml ref).
   { "AbstractObjectGroup", XSD_COMPLEX_TYPE },  // "Object"
   { "AbstractOverlayGroup", XSD_COMPLEX_TYPE },  // "Overlay"
-  { "StyleSelector", XSD_COMPLEX_TYPE },  // "StyleSelector"
+  { "AbstractStyleSelectorGroup", XSD_COMPLEX_TYPE },  // "StyleSelector"
   { "AbstractSubStyleGroup", XSD_COMPLEX_TYPE },  // "SubStyle"
-  { "TimePrimitive", XSD_COMPLEX_TYPE },  // "TimePrimitive"
-  { "AbstractView", XSD_COMPLEX_TYPE },  // "AbstractView"
+  { "AbstractTimePrimitiveGroup", XSD_COMPLEX_TYPE },  // "TimePrimitive"
+  { "AbstractViewGroup", XSD_COMPLEX_TYPE },  // "AbstractView"
   { "BasicLink", XSD_COMPLEX_TYPE },  // (Not in KML ref).
   { "vec2Type", XSD_COMPLEX_TYPE },  // "vec2"
 

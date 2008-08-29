@@ -101,13 +101,13 @@ void Feature::AddElement(const ElementPtr& element) {
 }
 
 void Feature::Serialize(Serializer& serializer) const {
-  if (has_name()) {
+  if (has_name_) {
     serializer.SaveFieldById(Type_name, name_);
   }
-  if (has_visibility()) {
+  if (has_visibility_) {
     serializer.SaveFieldById(Type_visibility, visibility_);
   }
-  if (has_open()) {
+  if (has_open_) {
     serializer.SaveFieldById(Type_open, open_);
   }
   if (has_snippet()) {
@@ -116,22 +116,22 @@ void Feature::Serialize(Serializer& serializer) const {
   if (has_description()) {
     serializer.SaveFieldById(Type_description, description_);
   }
-  if (has_abstractview()) {
-    serializer.SaveElementGroup(get_abstractview(), Type_AbstractView);
+  if (abstractview_) {
+    serializer.SaveElement(get_abstractview());
   }
-  if (has_timeprimitive()) {
-    serializer.SaveElementGroup(get_timeprimitive(), Type_TimePrimitive);
+  if (timeprimitive_) {
+    serializer.SaveElement(get_timeprimitive());
   }
   if (has_styleurl()) {
     serializer.SaveFieldById(Type_styleUrl, styleurl_);
   }
-  if (has_styleselector()) {
-    serializer.SaveElementGroup(get_styleselector(), Type_StyleSelector);
+  if (styleselector_) {
+    serializer.SaveElement(get_styleselector());
   }
-  if (has_region()) {
+  if (region_) {
     serializer.SaveElement(get_region());
   }
-  if (has_extendeddata()) {
+  if (extendeddata_) {
     serializer.SaveElement(get_extendeddata());
   }
 }

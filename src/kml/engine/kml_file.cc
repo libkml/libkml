@@ -114,7 +114,7 @@ const kmldom::ElementPtr& KmlFile::ParseFromString(const std::string& kml,
 }
 
 const std::string KmlFile::CreateXmlHeader() const {
-  return std::string("<?xml version=\"1.0\" encoding=\"" + encoding_ + "\"?>\n");
+  return std::string("<?xml version=\"1.0\" encoding=\"" + encoding_ + "\"?>");
 }
 
 bool KmlFile::SerializeToString(std::string* xml_output) const {

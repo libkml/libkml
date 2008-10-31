@@ -37,6 +37,18 @@ This library has been compiled and tested on Windows XP, Mac OS X 10.4 and
 
 = Changes since 0.4 =
 
+gtest
+xcode
+gpx
+atom
+xsd
+base: Attributes, Color32, DateTime, ExpatHandler, ExpatHandlerNs, Vec3, XmlNs
+convenience: ElementCounter, GpxTrkPtHandler, convenience
+engine: old schema
+swig
+examples
+
+
 xxxx
 
 The KML DOM is largely unchanged since 0.3.

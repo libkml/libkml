@@ -1,5 +1,7 @@
 ﻿#summary libkml quick reference
 
+This is a quick reference to programming with libkml.
+
 = Hello libkml =
 
 Here are some small sample programs to show you how to program with libkml.
@@ -910,4 +912,3 @@ regionator.Regionate();
 NOTE: this is the mainline of the
 [http://code.google.com/p/libkml/source/browse/trunk/examples/regionator/csvregionator.cc csvregionator.cc]
 example program.
-

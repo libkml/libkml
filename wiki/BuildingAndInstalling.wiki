@@ -109,35 +109,11 @@ module often far exceed that module in raw lines of code.
 
 NOTE: the Microsoft Visual Studio .vcproj's have no knowledge of these tests.
 
-== Build cppunit without RTTI ==
-
-Since libkml does not use RTTI, you _must_ configure cppunit accordingly.
-
-On Mac OS X the command is:
-
-{{{
-./configure --disable-typeinfo-name
-}}}
-
-On Linux the command is:
-
-{{{
-./configure --disable-typeinfo-name LIBS="-ldl"
-}}}
-
-See the top-level DEPENDENCIES file.
-
 == Build and run the libkml unit tests ==
 
 We have provided a large suite of unit tests to verify the correct behavior of
-libkml. We use the [http://cppunit.sourceforge.net CppUnit framework]. If you
-have installed cppunit in its default location (a prefix of /usr/local) the
-existence of such should be discovered automatically. If you have a custom
-installation, you can specify where the headers and libraries are installed as:
-
-{{{
-../configure --with-cppunit-prefix=PFX --with-cppunit-exec-prefix=PFX
-}}}
+libkml. We use the [http://googletest.googlecode.com GoogleTest framework], which
+on Linux and Mac OS X is built automatically as a part of the automake process.
 
 You can run the tests like so:
 
@@ -145,131 +121,60 @@ You can run the tests like so:
 make check
 }}}
 
-Excerpts of the test output as of 0.3.0 looks as follows.
+Excerpts of the test output as of 0.5.0 looks as follows.
 
 In reporting any problem with libkml please also submit a complete
 trace of your run of the unit test suite.
 
 {{{
-...
-Making check in base
-...
 make  check-TESTS
-FileTest::TestReadFileToString : OK
-FileTest::TestWriteStringToFile : OK
-FileTest::TestExists : OK
-FileTest::TestDelete : OK
-FileTest::TestCreateNewTempFile : OK
-OK (5)
-PASS: file_test
-ReferentTest::TestReferent : OK
-ReferentTest::TestIntrusivePointerFunctions : OK
-ReferentTest::TestDelete : OK
-ReferentTest::TestVector : OK
-ReferentTest::TestFunc : OK
-ReferentTest::TestBasicParentChild : OK
-ReferentTest::TestGetChild : OK
-OK (7)
-PASS: referent_test
-TempFileTest::TestTempFile : OK
-OK (1)
-PASS: tempfile_test
+[==========] Running 10 tests from 1 test case.
+[----------] Global test environment set-up.
+[----------] 10 tests from AttributesTest
+[ RUN      ] AttributesTest.TestCreate
+[       OK ] AttributesTest.TestCreate
+[ RUN      ] AttributesTest.TestCreateOdd
+[       OK ] AttributesTest.TestCreateOdd
+[ RUN      ] AttributesTest.TestSetGetString
+[       OK ] AttributesTest.TestSetGetString
+[ RUN      ] AttributesTest.TestSetGetDouble
+[       OK ] AttributesTest.TestSetGetDouble
+[ RUN      ] AttributesTest.TestSetGetInt
+[       OK ] AttributesTest.TestSetGetInt
+[ RUN      ] AttributesTest.TestClone
+[       OK ] AttributesTest.TestClone
+[ RUN      ] AttributesTest.TestMerge
+[       OK ] AttributesTest.TestMerge
+[ RUN      ] AttributesTest.TestSerialize
+[       OK ] AttributesTest.TestSerialize
+[ RUN      ] AttributesTest.TestMatch
+[       OK ] AttributesTest.TestMatch
+[ RUN      ] AttributesTest.TestMatchNoDefault
+[       OK ] AttributesTest.TestMatchNoDefault
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test case ran.
+[  PASSED  ] 10 tests.
+PASS: attributes_test
+...
+PASS: xsd_util_test
+[==========] Running 2 tests from 1 test case.
+[----------] Global test environment set-up.
+[----------] 2 tests from XstParserTest
+[ RUN      ] XstParserTest.TestParseXstAlias
+[       OK ] XstParserTest.TestParseXstAlias
+[ RUN      ] XstParserTest.TestParseXst
+[       OK ] XstParserTest.TestParseXst
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test case ran.
+[  PASSED  ] 2 tests.
+PASS: xst_parser_test
 ==================
-All 3 tests passed
-==================
-Making check in convenience
-...
-make  check-TESTS
-CsvFileTest::TestEmpty : OK
-CsvFileTest::TestSplitStringUsing : OK
-CsvFileTest::TestParseCsvLine : OK
-CsvFileTest::TestParseCsvFile : OK
-OK (4)
-PASS: csv_file_test
-ConvenienceTest::TestCreatePointPlacemark : OK
-ConvenienceTest::TestCreateRegion2d : OK
-OK (2)
-PASS: convenience_test
-KmzCheckLinksTest::TestNoLinks : OK
-KmzCheckLinksTest::TestNull : OK
-KmzCheckLinksTest::TestOverlay : OK
-KmzCheckLinksTest::TestBadOverlay : OK
-OK (4)
-PASS: kmz_check_links_test
-FeatureListTest::TestDefault : OK
-FeatureListTest::TestSave : OK
-FeatureListTest::TestNull : OK
-FeatureListTest::TestPushBack : OK
-FeatureListTest::TestRegionSplitAll : OK
-FeatureListTest::TestRegionSplitSome : OK
-FeatureListTest::TestRegionSplitIncrementally : OK
-OK (7)
-PASS: feature_list_test
-==================
-All 4 tests passed
-==================
-Making check in dom
-...
-creating xsd_test
-make  check-TESTS
-AbstractLatLonBoxTest::TestType : OK
-AbstractLatLonBoxTest::TestDefaults : OK
-AbstractLatLonBoxTest::TestSetToDefaultValues : OK
-AbstractLatLonBoxTest::TestSetGetHasClear : OK
-OK (4)
-PASS: abstractlatlonbox_test
-...
-PASS: xml_serializer_test
-XsdTest::TestGoodElement : OK
-XsdTest::TestBadElement : OK
-XsdTest::TestUglyElement : OK
-XsdTest::TestGoodEnum : OK
-XsdTest::TestBadEnum : OK
-XsdTest::TestUglyEnum : OK
-OK (6)
-PASS: xsd_test
-===================
-All 43 tests passed
-===================
-Making check in engine
-...
-make  check-TESTS
-KmlFileTest::TestInitialState : OK
-KmlFileTest::TestEncoding : OK
-KmlFileTest::TestBasicParseFromString : OK
-KmlFileTest::TestRoot : OK
-KmlFileTest::TestBasicObjectIdParse : OK
-KmlFileTest::TestObjectIdDupe : OK
-KmlFileTest::TestObjectIdMapReplaced : OK
-KmlFileTest::TestNullGetSharedStyleById : OK
-KmlFileTest::TestBasicGetSharedStyleById : OK
-KmlFileTest::TestReparse : OK
-OK (10)
-...
-StyleResolverTest::TestFiles : OK
-OK (1)
-PASS: style_resolver_test
-===================
-All 14 tests passed
-===================
-Making check in regionator
-...
-FeatureListRegionHandlerTest::TestBasic : OK
-OK (1)
-PASS: feature_list_region_handler_test
-RegionatorTest::TwoLevelPointRegionatorTest : OK
-RegionatorTest::FourLevelPointRegionatorTest : OK
-OK (2)
-PASS: regionator_test
-...
-PASS: regionator_util_test
-==================
-All 4 tests passed
+All 9 tests passed
 ==================
 }}}
 
-Some amount of Python SWIG functionality is tested in src/swig/kmldom_test.py.
-A successful run of this test looks as follows:
+Some amount of Python SWIG functionality is tested in src/swig/kmldom_test.py
+and src/swig/kmlengine_test.py. A successful run of these tests looks as follows:
 
 {{{
 .......................................

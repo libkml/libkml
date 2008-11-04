@@ -38,8 +38,7 @@ This library has been compiled and tested on Windows XP, Mac OS X 10.4 and
 = Changes since 0.4 =
 
   * Usage of cppunit test framework replaced with [http://googletest.googlecode.com googletest]
-  * Mac users can now build all of the libraries in Xcode. There is also the (largely untested) ability to build an OS X Framework package. Comments
-    welcome
+  * Mac users can now build all of the libraries in Xcode. There is also the (largely untested) ability to build an OS X Framework package. Comments welcome
   * Limited support for transforming GPX files to KML [http://code.google.com/p/libkml/source/browse/trunk/examples/gpx/gpxtracktokml.cc?r=324 example]
   * Support for parsing and serializing KML 2.2's Atom elements
   * kmldom::Attributes, kmldom::Vec3 classes  moved to kmlbase

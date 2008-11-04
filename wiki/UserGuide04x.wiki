@@ -1,5 +1,5 @@
 ﻿#summary Release notes for the 0.4 version of libkml
-#labels Featured
+#labels Deprecated
 
 = Introduction =
 

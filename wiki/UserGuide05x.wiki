@@ -38,20 +38,15 @@ This library has been compiled and tested on Windows XP, Mac OS X 10.4 and
 = Changes since 0.4 =
 
   * Usage of cppunit test framework replaced with [http://googletest.googlecode.com googletest]
-  * Mac users can now build all of the libraries in Xcode. There is also the (largely untested) ability to build an OS X Framework package. Comments welcome
-  * Limited support for transforming GPX files to KML [http://code.google.com/p/libkml/source/browse/trunk/examples/gpx/gpxtracktokml.cc?r=324 example]
+  * Mac users can now build all of the libraries in Xcode. There is also a target to build an OS X Framework package. Comments welcome
+  * Limited support for transforming GPX files to KML: [http://code.google.com/p/libkml/source/browse/trunk/examples/gpx/gpxtracktokml.cc?r=324 example]
   * Support for parsing and serializing KML 2.2's Atom elements
   * kmldom::Attributes, kmldom::Vec3 classes  moved to kmlbase
   * kmldom::Expat handlers and parser moved to kmlbase
   * KML colors now represented using kmlbase::Color32 class
   * Initial kmlbase::!DateTime class
-  * Some support for handling old KML 2.1 era Schema usage [http://code.google.com/p/libkml/source/browse/trunk/examples/engine/oldschema.cc?r=324 example]
+  * Some support for handling old KML 2.1 era Schema usage: [http://code.google.com/p/libkml/source/browse/trunk/examples/engine/oldschema.cc?r=324 example]
   * Numerous other small bug fixes
-
-The KML DOM is largely unchanged since 0.3.
-
-Building out the KML Engine has been the focus through the 0.4 and 0.5
-releases.
 
 = Building and installing libkml =
 

@@ -1,4 +1,5 @@
 #summary Building and installing libkml
+#labels Featured
 
 = Building and Installing libkml =
 

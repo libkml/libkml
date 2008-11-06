@@ -1,0 +1,275 @@
+﻿#summary libkml engine reference
+
+= KML Engine =
+
+All classes and functions in the KML Engine are within the kmlengine namespace.
+Use the "kml/engine.h" header and link with libkmlengine.
+
+Here is an overview of the KML Engine functions and classes:
+
+  * Bbox - class to manage bounding boxes
+  * Clone - function to deep copy Elements
+  * CreateBalloonText - this function creates a Feature's balloon content
+  * !FeatureVisitor - walk the Feature hierarchy in a KML file
+  * Find - find elements of a given type
+  * !GetLinks - get the links in a KML file
+  * !KmlCache - KML networking
+  * !KmlFile - Object ID and shared style support
+  * !KmzFile - KMZ read/write
+  * !KmzCache - networked KMZ access
+  * Location - find the location of a Feature
+  * Merge - merge one Element into another
+  * Style resolution - every Feature has a resolved Style
+  * URI parsing and resolution - KMZ area URI handling
+
+== Bounding box ==
+
+{{{
+Bbox bbox;
+bbox.ExpandLatLon(lat, lon);  // 0 or more times for a set of lat,lon.
+
+// Inquire some things about the bounding box:
+double mid_lat, mid_lon;
+bbox.GetCenter(&mid_lat, &mid_lon);
+double north = bbox.get_north()  // Same for s,e,w
+bool contains = bbox.Contains(lat, lon);
+}}}
+
+== Balloon content ==
+
+Any Feature can have balloon content.  Use !CreateBalloonText() to
+build the balloon text as appropriate for its styleUrl and/or !StyleSelector.
+
+If the !KmlFile is created using !KmlCache the internals of
+!CreateBalloonText() will use the network-enabled functionality
+of !CreateResolvedStyle() to resolve and fetch any schemaUrls or styleUrls.
+
+== Element clone ==
+
+Any Element can be deep-copied using kmlengine::Clone().
+The newly created Element is a complete copy of all simple element
+and complex element children of the original.  Just as one would
+"copy-paste" the XML within a file to exactly duplicate an element,
+kmlengine::Clone() provides such functionality within libkml.
+
+{{{
+kmldom::ElementPtr element;
+kmldom::ElementPtr deep_copy = kmlengine::Clone(element);
+}}}
+
+== Feature support ==
+
+A KML file is a hierarchy of Features.   Thus there is (possibly) a "root"
+Feature.  (As with all things KML this is optional.  For example, a KML file
+may have only a !NetworkLinkControl or even be a "null" <kml/> element).
+
+{{{
+kmldom::Element root = kmldom::Parse(kmldata, NULL);
+klmdom::FeaturePtr feature = kmlengine::GetRootFeature(root);
+}}}
+
+The !VisitFeatureHierachy() function makes a depth-first walk of all Features
+rooted at the given feature.  The feature can be the "root" Feature of a KML
+file or any other Feature within.
+
+{{{
+class YourFeatureVisitor : public kmlengine::FeatureVisitor {
+ public:
+  virtual void VisitFeature(const kmldom::FeaturePtr& feature) {
+    // ...your per-feature code...
+  }
+};
+YourFeatureVisitor your_feature_visitor;
+kmldom::FeaturePtr feature;
+kmlengine::VisitFeatureHierarchy(feature, your_feature_visitor);
+}}}
+
+== Finding Elements ==
+
+It is possible to get a flat list (in depth-first order) of all Elements of a
+given type.  For example, find all the Placemarks in a KML file.
+
+{{{
+kmldom::ElementPtr element;
+element_vector_t placemarks;
+kmlengine::GetElementsById(element, kmldom::Type_Placemark, &placemarks);
+}}}
+
+== Finding links ==
+
+A KML file may have 0 or more of many types of links such as
+!NetworkLink/Link/href, styleUrl, !IconStyle/Icon/href, etc.  This function
+finds them all.
+
+{{{
+href_vector_t hrefs;
+GetLinks(kml_data, *hrefs);
+}}}
+
+== KML Cache  ==
+
+The !KmlCache class is a core component for networked KML.  You supply
+your own network fetcher (the example programs show a simple example
+based on curl).  You fetch KML (or KMZ) content via NetCache and that
+NetCache and your network fetcher will be used from within the balloon
+expansion and style resolution code to fetch remote shared styles and schemas.
+Multiple references to the same styleUrl from different Features will
+resolve to a single parsed !KmlFile holding the !StyleSelector.
+
+A !KmlFile created by !KmlCache retains a pointer back to this KmlCache
+which is used by the style resolution machinery to fetch any styleUrls
+encountered.  The KML Engine does not directly to ANY network I/O.
+Also, note that absolute file references in remotely fetched KML is
+explicitely disallowed.  (Relative file references, of course, function
+fine from KML loaded directly from the local file system).
+
+A !KmlFile created directly from !KmlFile will not have a !KmlCache to
+use and any remote style or schema references will be quietly ignored.
+(The default !NetFetcher returns false for any URL).
+
+{{{
+class YourNetFetcher : public kmlbase::NetFetcher {
+  virtual bool FetchUrl(const std::string& url, std::string* data) const {
+    // You fetch the URL and save the result to data.
+    return true;  // Assuming the fetch succeeded.
+  }
+};
+
+YourNetFetcher your_net_fetcher;
+kmlengine::KmlCache kml_cache(&your_net_fetcher, cache_size);
+kmlengine::KmlFile kml_file = kml_cache.FetchKml("http://.../foo.kml");
+
+std::string image_data;
+bool status = kml_cache.FetchData("http://.../image.jpg", &image_data);
+
+std::string balloon_text = CreateBalloonText(kml_file,
+                                             some_feature_in_kml_file);
+}}}
+
+== KML File ==
+
+The !KmlFile is a central component to the KML Engine and in typical
+applications should be used to parse a KML file.  Use !NetCache to fetch
+KML over the network and to associate a URL with a !KmlFile.
+
+A KML file is the domain of id space as for any XML file.  (We use the term
+"file" instead of "document" to not confuse with the KML <Document> element.
+Note that a given KML file may have 0, 1 or many <Document> elements and that
+<Document> is not necessarily the root Feature of a KML file).
+
+A KML file also has an encoding and default namespace (and someday a set of
+pairs of namespace prefixes and namespaces).
+
+The !KmlFile class provides a parse method and efficient object and shared style
+lookup methods.
+
+{{{
+std::string kmldata;
+std::string errors;
+kmlengine::KmlFile kml_file = KmlFile::CreateFromParse(kmldata, &errors);
+kmldom::ObjectPtr object = kml_file.GetObjectById(id);
+kmldom::StyleSelectorPtr shared_style = kml_file.GetSharedStyleById(id);
+}}}
+
+Note that !KmlFile's parser will reject the KML if there are duplicate ids.
+
+(Future revisions of !KmlFile in are expected to continue to enhance this
+class as the main parser and serializer of most common KML applications.
+Future revisions are anticipated to support unique object id management and
+an id-safe import operation.  The KML DOM parser and serializer are expected
+to remain available for those applications with special needs).
+
+== KMZ File ==
+
+The !KmzFile class allows for reading and writing of KMZ files and provides some
+useful utility functions. Historically, Google Earth has always read the
+"default KML file" from a loaded KMZ file. The !KmzFile class now defines
+what is meant by "default KML file".
+
+Some example code to illustrate use:
+
+{{{
+// We have just read the contents of a file into a string called file_data. We
+// believe it to be a KMZ and would like to:
+// - ensure it really is a KMZ file
+// - read the default KML file from the archive
+// - get a list of all files contained within the archive
+// - read a file called "images/pic.jpg" from the archive
+
+std::string kml;
+// Ensure that the file is really a KMZ file.
+if (!KmzFile::IsKmz(file_data)) {
+  // Handle error.
+}
+// Instantiate the KmzFile object.
+kmlengine::KmzFile* kmz_file = kmlengine::KmzFile::OpenFromString(file_data);
+if (!kmz_file) {
+  // Handle error.
+}
+if (!kmz_file->ReadKml(&kml)) {
+  // Handle error.
+}
+// `kml` is now a string filled with the raw XML for the default KML file.
+// We'll read the names of the archived files into a vector.
+std::vector<std::string> list;
+kmz_file_->List(&list);
+// Now read "images/pic.jpg".
+std::string pic_data;;
+if (!kmz_file_->ReadFile("images/pic", &pice_data)) {
+  // Handle error.
+}
+// Now delete the KmzFile instance when we're done with it.
+// There's a handy scoped_ptr in third_party you could use instead.
+delete kmz_file;
+}}}
+
+== Finding Feature and Geometry location ==
+
+Any Feature may have a location.
+
+{{{
+double lat, lon;
+if (kmlengine::GetFeatureLatLon(feature, &lat, &lon)) {
+  ... yup, it has a location...
+}
+}}}
+
+== Element merge ==
+
+The simple element children of an Element maybe be merged
+into those in another Element.
+
+{{{
+kmldom::ElementPtr some_new_values;
+kmldom::ElementPtr override_me;
+kmlengine::MergeFields(some_new_values, override_me);
+}}}
+
+Two Elements may be merged together.
+This does a deep merge including all simple elements and
+recursing on all complex elements.
+
+{{{
+kmldom::ElementPtr inline_style;
+kmldom::ElementPtr shared_style;
+kmlengine::MergeElements(inline_style, shared_style);
+}}}
+ 
+== Style resolution ==
+
+Every Feature has a resolved Style. !CreateResolvedStyle() creates a <Style>,
+based on resolving the styleUrl and inline !StyleSelector of the given Feature.
+The !StyleStateEnum argument is used to indicate which state of any !StyleMaps
+to resolve.
+
+Note that this requires use of !KmlFile to parse the KML file.
+
+Networked style resolution (styleUrl's to remote KML/KMZ) is performed
+via if the !KmlFile was created from a fetch through !KmlCache.
+
+{{{
+kmlengine::KmlFile kml_file;
+kmldom::FeaturePtr feature;
+kmldom::StylePtr style = kmlengine::CreateResolvedStyle(feature, kml_file, normal or highlight);
+}}}
+

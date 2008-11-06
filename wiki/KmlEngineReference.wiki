@@ -61,7 +61,7 @@ kmldom::ElementPtr deep_copy = kmlengine::Clone(element);
 
 A KML file is a hierarchy of Features.   Thus there is (possibly) a "root"
 Feature.  (As with all things KML this is optional.  For example, a KML file
-may have only a !NetworkLinkControl or even be a "null" <kml/> element).
+may have only a !NetworkLinkControl or even be a "null" `<kml/>` element).
 
 {{{
 kmldom::Element root = kmldom::Parse(kmldata, NULL);
@@ -153,9 +153,9 @@ applications should be used to parse a KML file.  Use !NetCache to fetch
 KML over the network and to associate a URL with a !KmlFile.
 
 A KML file is the domain of id space as for any XML file.  (We use the term
-"file" instead of "document" to not confuse with the KML <Document> element.
-Note that a given KML file may have 0, 1 or many <Document> elements and that
-<Document> is not necessarily the root Feature of a KML file).
+"file" instead of "document" to not confuse with the KML `<Document>` element.
+Note that a given KML file may have 0, 1 or many `<Document>` elements and that
+`<Document>` is not necessarily the root Feature of a KML file).
 
 A KML file also has an encoding and default namespace (and someday a set of
 pairs of namespace prefixes and namespaces).
@@ -215,7 +215,7 @@ std::vector<std::string> list;
 kmz_file_->List(&list);
 // Now read "images/pic.jpg".
 std::string pic_data;;
-if (!kmz_file_->ReadFile("images/pic", &pice_data)) {
+if (!kmz_file_->ReadFile("images/pic.jpg", &pic_data)) {
   // Handle error.
 }
 // Now delete the KmzFile instance when we're done with it.
@@ -257,7 +257,7 @@ kmlengine::MergeElements(inline_style, shared_style);
  
 == Style resolution ==
 
-Every Feature has a resolved Style. !CreateResolvedStyle() creates a <Style>,
+Every Feature has a resolved Style. !CreateResolvedStyle() creates a `<Style>`,
 based on resolving the styleUrl and inline !StyleSelector of the given Feature.
 The !StyleStateEnum argument is used to indicate which state of any !StyleMaps
 to resolve.

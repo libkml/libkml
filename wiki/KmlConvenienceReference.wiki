@@ -33,7 +33,7 @@ to a Container.
 
 Put a bunch of Features in the !FeatureList and sort on score.
 (KML itself has no concept of Feature "score".  This is particular
-to kmlconvenience::!FeatureList.  The standard <ExtendedData><Data>
+to kmlconvenience::!FeatureList.  The standard `<ExtendedData><Data>`
 elements are used to hold the score.)
 
 {{{
@@ -52,7 +52,7 @@ kmlengine::Bbox some_bbox;
 feature_list.BboxSplit(bbox, how_many, &features_in_some_bbox);
 }}}
 
-Put the split out Features in a <Folder> and set the <Region> from
+Put the split out Features in a `<Folder>` and set the `<Region>` from
 the bounding box.
 
 {{{

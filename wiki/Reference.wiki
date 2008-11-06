@@ -6,7 +6,7 @@ This is a reference to programming with libkml.
 
   * QuickStart
   * KML Base
-  * [KmLDomReference KML Dom]
+  * [KmlDomReference KML Dom]
   * KML Engine
   * KML Convenience
   * KML Regionator

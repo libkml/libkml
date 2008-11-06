@@ -53,9 +53,9 @@ This library has been compiled and tested on Windows XP, Mac OS X 10.4 and
 
 See the wiki page for BuildingAndInstalling. 
 
-= Quick Reference =
+= Reference =
 
-See the wiki page for QuickReference.
+See the [Reference Reference].
 
 = Future development =
 

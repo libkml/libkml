@@ -1,5 +1,9 @@
 ﻿#summary libkml quick reference
-#labels Featured
+#labels Deprecated
+
+= NOTE: This version of the reference is obsolete =
+
+[Reference new reference]
 
 This is a quick reference to programming with libkml.
 

@@ -14,8 +14,8 @@ for tutorials, examples, and reference material.
 == Creating complex elements ==
 
 Each complex element in KML 2.2 has a C++ type whose name is the same as the
-element. For example, <Placemark> is kmldom::!PlacemarkPtr, and <GroundOverlay>
-is kmldom::!GroundOverlayPtr.
+element. For example, `<Placemark>` is kmldom::!PlacemarkPtr,
+and `<GroundOverlay>` is kmldom::!GroundOverlayPtr.
 
 The !KmlFactory singleton has a method to create each complex element:
 
@@ -62,7 +62,8 @@ Each simple element in KML 2.2 is a field in a complex element. The library
 provides accessor functions to set, get, clear, and discover the existence of a
 given simple element.
 
-For example, any Feature (such as Placemark) has a <name> that can be manipulated with these methods:
+For example, any Feature (such as Placemark) has a `<name>` that can be
+manipulated with these methods:
 
 {{{
 const std::string& get_name() const;
@@ -87,7 +88,7 @@ this element, as specifed in the KML Reference.
 Simple elements are of either `std::string`, `double`, `int`, `boolean` or
 `enum` type.
 
-Here is how to access the <description> element:
+Here is how to access the `<description>` element:
 
 {{{
 const std::string& get_description() const;
@@ -96,7 +97,7 @@ void set_description(const std::string& value);
 void clear_description();
 }}}
 
-Here is how to access the <north> element:
+Here is how to access the `<north>` element:
 
 {{{
 double get_north() const;
@@ -105,7 +106,7 @@ bool has_north() const;
 void set_north(bool north);
 }}}
 
-Here is how to access the <drawOrder> element. Note that the name of the
+Here is how to access the `<drawOrder>` element. Note that the name of the
 element in the accessor method is folded to all lower case:
 
 {{{
@@ -115,7 +116,7 @@ bool has_draworder() const;
 void clear_draworder();
 }}}
 
-Here is how to access the <visibility> element:
+Here is how to access the ``<visibility>` element:
 
 {{{
 bool get_visibility() const;
@@ -124,7 +125,7 @@ bool has_visibility() const;
 void clear_visibility();
 }}}
 
-Here is how to access the <altitudeMode> element:
+Here is how to access the `<altitudeMode>` element:
 
 {{{
 int get_altitudemode() const;
@@ -136,7 +137,7 @@ void clear_altitudemode();
 == Enumerated value elements ==
 
 Every enumerated value element has a C++ `enum`. For example, here is the
-`enum` for <altitudeMode>:
+`enum` for `<altitudeMode>:
 
 {{{
 typedef enum {
@@ -147,8 +148,8 @@ typedef enum {
 }}}
 
 The `enum` type name is the element name with a leading capital and the string
-'Enum' appended to it. Thus <colorMode> is of !ColorModeEnum, and
-<listItemType> is !ListItemTypeEnum.
+'Enum' appended to it. Thus `<colorMode>` is of !ColorModeEnum, and
+'<listItemType>` is !ListItemTypeEnum.
 
 == More on complex elements ==
 
@@ -156,7 +157,7 @@ There are 3 kinds of complex child accessors: 1) single value of a specific
 type, 2) single value of a group type, and 3) an array value of either a
 specific or group type. Here are examples of each.
 
-The <LatLonBox> child of <GroundOverlay> is an example of a complex child of a
+The `<LatLonBox>` child of `<GroundOverlay>` is an example of a complex child of a
 specific type:
 
 {{{
@@ -167,7 +168,7 @@ void clear_latlonbox();
 }}}
 
 The !AbstractView child of Feature is an example of a complex child of a group
-type. Both <LookAt> and <Camera> can be used with these accessors.
+type. Both `<LookAt>` and `<Camera>` can be used with these accessors.
 
 {{{
 const AbstractViewPtr& get_abstractview() const;
@@ -176,7 +177,7 @@ bool has_abstractview() const;
 void clear_abstractview();
 }}}
 
-The Feature child of <Folder> is an example of an array value of a group type:
+The Feature child of `<Folder>` is an example of an array value of a group type:
 
 {{{
 void add_feature(const FeaturePtr& feature);

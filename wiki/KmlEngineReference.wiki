@@ -9,7 +9,7 @@ Here is an overview of the KML Engine functions and classes:
 
   * Bbox - class to manage bounding boxes
   * Clone - function to deep copy Elements
-  * CreateBalloonText - this function creates a Feature's balloon content
+  * !CreateBalloonText - this function creates a Feature's balloon content
   * !FeatureVisitor - walk the Feature hierarchy in a KML file
   * Find - find elements of a given type
   * !GetLinks - get the links in a KML file
@@ -110,13 +110,13 @@ GetLinks(kml_data, *hrefs);
 
 The !KmlCache class is a core component for networked KML.  You supply
 your own network fetcher (the example programs show a simple example
-based on curl).  You fetch KML (or KMZ) content via NetCache and that
-NetCache and your network fetcher will be used from within the balloon
+based on curl).  You fetch KML (or KMZ) content via !NetCache and that
+!NetCache and your network fetcher will be used from within the balloon
 expansion and style resolution code to fetch remote shared styles and schemas.
 Multiple references to the same styleUrl from different Features will
 resolve to a single parsed !KmlFile holding the !StyleSelector.
 
-A !KmlFile created by !KmlCache retains a pointer back to this KmlCache
+A !KmlFile created by !KmlCache retains a pointer back to this !KmlCache
 which is used by the style resolution machinery to fetch any styleUrls
 encountered.  The KML Engine does not directly to ANY network I/O.
 Also, note that absolute file references in remotely fetched KML is

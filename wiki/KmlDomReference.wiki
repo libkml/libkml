@@ -137,7 +137,7 @@ void clear_altitudemode();
 == Enumerated value elements ==
 
 Every enumerated value element has a C++ `enum`. For example, here is the
-`enum` for `<altitudeMode>:
+`enum` for `<altitudeMode>`:
 
 {{{
 typedef enum {
@@ -149,7 +149,7 @@ typedef enum {
 
 The `enum` type name is the element name with a leading capital and the string
 'Enum' appended to it. Thus `<colorMode>` is of !ColorModeEnum, and
-'<listItemType>` is !ListItemTypeEnum.
+`<listItemType>` is !ListItemTypeEnum.
 
 == More on complex elements ==
 

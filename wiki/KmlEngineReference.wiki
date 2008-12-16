@@ -21,6 +21,7 @@ Here is an overview of the KML Engine functions and classes:
   * Merge - merge one Element into another
   * Style resolution - every Feature has a resolved Style
   * URI parsing and resolution - KMZ area URI handling
+  * Update processing
 
 == Bounding box ==
 
@@ -173,6 +174,11 @@ kmldom::StyleSelectorPtr shared_style = kml_file.GetSharedStyleById(id);
 
 Note that !KmlFile's parser will reject the KML if there are duplicate ids.
 
+{{{
+kmldom::ElementPtr element = ...
+kmlengine::KmlFile kml_file = KmlFile::CreateFromImport(element);
+}}}
+
 (Future revisions of !KmlFile in are expected to continue to enhance this
 class as the main parser and serializer of most common KML applications.
 Future revisions are anticipated to support unique object id management and
@@ -271,5 +277,16 @@ via if the !KmlFile was created from a fetch through !KmlCache.
 kmlengine::KmlFile kml_file;
 kmldom::FeaturePtr feature;
 kmldom::StylePtr style = kmlengine::CreateResolvedStyle(feature, kml_file, normal or highlight);
+}}}
+
+== Update ==
+
+The !ProcessUpdate function processes the given Update into the given !KmlFile.
+At present (0.6) Change and Create are supported and Delete is quietly ignored.
+
+{{{
+kmldom::UpdatePtr update;
+kmlengine:KmlFilePtr kml_file;
+kmlengine::ProcessUpdate(update, kml_file);
 }}}
 

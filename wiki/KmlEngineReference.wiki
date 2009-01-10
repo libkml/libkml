@@ -5,6 +5,12 @@
 All classes and functions in the KML Engine are within the kmlengine namespace.
 Use the "kml/engine.h" header and link with libkmlengine.
 
+The !KmlFile class is the core component of the KML Engine.  Most typical usage
+of libkml is expected to center on creation and use of !KmlFile.  The !KmlCache
+class is the core component for networked KML; !KmlCache creates a !KmlFile
+for any KML file it fetches.  Balloon expansion and style resolution are based
+on !KmlFile and !KmlCache.
+
 Here is an overview of the KML Engine functions and classes:
 
   * Bbox - class to manage bounding boxes
@@ -96,6 +102,9 @@ element_vector_t placemarks;
 kmlengine::GetElementsById(element, kmldom::Type_Placemark, &placemarks);
 }}}
 
+Note that !KmlFile provides fast lookup of any element by XML id.
+See the notes on !KmlFile below for more information.
+
 == Finding links ==
 
 A KML file may have 0 or more of many types of links such as
@@ -106,6 +115,9 @@ finds them all.
 href_vector_t hrefs;
 GetLinks(kml_data, *hrefs);
 }}}
+
+Note that !KmlFile automatically gathers links.  See the notes on !KmlFile below
+for more information.
 
 == KML Cache  ==
 
@@ -174,9 +186,28 @@ kmldom::StyleSelectorPtr shared_style = kml_file.GetSharedStyleById(id);
 
 Note that !KmlFile's parser will reject the KML if there are duplicate ids.
 
+A !KmlFile can be constructed from a "raw" KML DOM.   The !CreateFromImport
+static method walks the DOM an saves a mapping for each Object with an id.
+This method will fail on a DOM with duplicate ids.
+
 {{{
 kmldom::ElementPtr element = ...
 kmlengine::KmlFile kml_file = KmlFile::CreateFromImport(element);
+}}}
+
+The links in a !KmlFile are available using get_link_parent_vector():
+
+{{{
+kmlengine::KmlFile* kml_file = KmlFile::Create*();
+const ElementVector& link_parents = kml_file->get_link_parent_vector()
+}}}
+
+The serialize method on !KmFile adds an xml header and sets the
+xmlns on the root element.
+
+{{{
+std::string xml;
+kml_file->SerializeToString(&xml);
 }}}
 
 == KML Stream ==
@@ -193,8 +224,8 @@ KmlStream* kml_stream = KmlStream::ParseFromIstream(input, &errors, NULL);
 ElementPtr root = kml_stream->get_root();
 }}}
 
-A large (or infinite) KML file can be processed on the fly using a ParserObserver
-with KmlStream as follows:
+A large (or infinite) KML file can be processed on the fly using a !ParserObserver
+with !KmlStream as follows:
 
 {{{
 std::ifstream input(...);
@@ -208,6 +239,8 @@ class YourParserObserver : public kmldom::ParserObserver {
 YourParserObserver observer;
 KmlStream* kml_stream = KmlStream::ParseFromIstream(input, NULL, &observer);
 }}}
+
+See examples/engine/streamkml.cc for a complete example.
 
 KmlStream was introduced in version 0.6.
 

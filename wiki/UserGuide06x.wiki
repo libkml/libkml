@@ -7,7 +7,7 @@ Welcome to the sixth public release of libkml!
 THIS IS ALPHA SOFTWARE. Expect changes. We recommend caution in use in
 production code.
 
-This is an initial preview of libkml, and while the general interfaces
+This is a development shapshot of libkml, and while the general interfaces
 described are now fairly stable, there is the potential for change! As KML 2.2
 is now an [http://www.opengeospatial.org/ Open Geospatial Consortium] (OGC)
 standard, the language itself is now stable. It is the intention of libkml to
@@ -37,9 +37,9 @@ This library has been compiled and tested on Windows XP, Mac OS X 10.4 and
 
 = Changes since 0.5 =
 
-  * low-level streamed parsing support
+  * !KmlStream streamed parsing
   * Support for Update/Change,Create
-  * KmlFile DOM import
+  * !KmlFile DOM import
   * Limited support for KML 2.2's xAL elements.
   * Numerous other small bug fixes
 
@@ -53,16 +53,12 @@ See the [Reference Reference].
 
 = Future development =
 
-Future development is expect to be on continued expansion of the KML Engine
-and Convenience libraries built on the KML DOM in these areas:
+These are some items anticipating development in the very near future:
 
-  * more complete kmz read and write
-  * more object id management
-  * more complete xml namespace support
-  * networklink fetching
-  * feature and geometry bounding box and lookat/camera computation
-  * region visibility computation
-  * !NetworkLinkControl/Update processing
+  * KMZ creation
+  * Update/Delete processing
+  * upgrade dependent libraries
+  * TODO cleanup
 
 = Found a bug? =
 

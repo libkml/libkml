@@ -8,8 +8,8 @@ Use the "kml/engine.h" header and link with libkmlengine.
 The !KmlFile class is the core component of the KML Engine.  Most typical usage
 of libkml is expected to center on creation and use of !KmlFile.  The !KmlCache
 class is the core component for networked KML; !KmlCache creates a !KmlFile
-for any KML file it fetches.  Balloon expansion and style resolution are based
-on !KmlFile and !KmlCache.
+for any KML file it fetches.  Balloon expansion, style resolution, and Update processing
+are based on !KmlFile and !KmlCache.
 
 Here is an overview of the KML Engine functions and classes:
 
@@ -348,3 +348,31 @@ kmldom::UpdatePtr update;
 kmlengine:KmlFilePtr kml_file;
 kmlengine::ProcessUpdate(update, kml_file);
 }}}
+
+== URI Resolution ==
+
+KMZ-aware URI resolution functions are available:
+
+{{{
+const std::string kml_url("http://host.com/path/file.kmz/dir/image.jpg");
+std::string kmz_url;  // Will hold fetchable URL to KMZ file
+std::string kmz_path;  // Will hold path inside KMZ archive.
+bool is_kmz = kmlengine::KmzSplit(kml_url, &kmz_url, &kmz_path);
+}}}
+
+The !ResolveUri() function can be used with any KML uri (including
+those referencing into KMZ files) with the content of any href-like
+field in a KML file.  The following is based KMZ-aware path name
+splitting and then RFC 3986.
+
+{{{
+// The URL of the KML file:
+const std::string base("http://host.com/foo.kml");
+// From an <href> such as <NetworkLink>'s <Link>:
+const std::string relative("dir/goo.kml");
+std::string result;
+bool ok = kmlengine::ResolveUri(base, relative, &result);
+// result is now "http://host.com/dir/goo.kml".
+}}}
+
+See kml/engine/kml_uri.h for more information.

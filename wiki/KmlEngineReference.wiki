@@ -179,11 +179,37 @@ kmldom::ElementPtr element = ...
 kmlengine::KmlFile kml_file = KmlFile::CreateFromImport(element);
 }}}
 
-(Future revisions of !KmlFile in are expected to continue to enhance this
-class as the main parser and serializer of most common KML applications.
-Future revisions are anticipated to support unique object id management and
-an id-safe import operation.  The KML DOM parser and serializer are expected
-to remain available for those applications with special needs).
+== KML Stream ==
+
+A KML stream provides streamed I/O and streamed processing of a
+large KML file.
+
+This builds a DOM from a file using streamed I/O:
+
+{{{
+std::ifstream input(...);  // Or any other std::istream.  
+std::string errors;
+KmlStream* kml_stream = KmlStream::ParseFromIstream(input, &errors, NULL);
+ElementPtr root = kml_stream->get_root();
+}}}
+
+A large (or infinite) KML file can be processed on the fly using a ParserObserver
+with KmlStream as follows:
+
+{{{
+std::ifstream input(...);
+class YourParserObserver : public kmldom::ParserObserver {
+ public:
+  bool EndElement(const ElementPtr& parent, const ElementPtr& child) {
+    // Your code here to example child about to be added to parent.
+    // Return false to inhibit adding child to parent.
+  }
+};
+YourParserObserver observer;
+KmlStream* kml_stream = KmlStream::ParseFromIstream(input, NULL, &observer);
+}}}
+
+KmlStream was introduced in version 0.6.
 
 == KMZ File ==
 
@@ -289,4 +315,3 @@ kmldom::UpdatePtr update;
 kmlengine:KmlFilePtr kml_file;
 kmlengine::ProcessUpdate(update, kml_file);
 }}}
-

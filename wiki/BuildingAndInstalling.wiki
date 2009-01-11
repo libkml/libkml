@@ -1,5 +1,5 @@
 #summary Building and installing libkml
-#labels Featured
+#labels Featured,Phase-Deploy
 
 = Building and Installing libkml =
 
@@ -108,21 +108,27 @@ given these assert semantics about the KML language itself and not
 just the libkml system.  You will note that the unit tests for a given
 module often far exceed that module in raw lines of code.
 
-NOTE: the Microsoft Visual Studio .vcproj's have no knowledge of these tests.
-
 == Build and run the libkml unit tests ==
 
 We have provided a large suite of unit tests to verify the correct behavior of
 libkml. We use the [http://googletest.googlecode.com GoogleTest framework], which
-on Linux and Mac OS X is built automatically as a part of the automake process.
+on Linux and Mac OS X is built automatically as a part of the automake process and is
+supplied in binary form for MS Windows.
 
-You can run the tests like so:
+On Linux/OS X you can run the tests like so:
 
 {{{
 make check
 }}}
 
-Excerpts of the test output as of 0.5.0 looks as follows.
+On Windows you should first build the libkml libraries and then the tests solution. There is a batch script that runs the tests:
+
+{{{
+cd msvc\tests
+exec_tests.bat
+}}}
+
+Excerpts of the test output looks as follows.
 
 In reporting any problem with libkml please also submit a complete
 trace of your run of the unit test suite.

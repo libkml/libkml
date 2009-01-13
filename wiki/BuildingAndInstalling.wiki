@@ -9,7 +9,7 @@ versions of all required software.
 There are two separate build systems: one for GNU/Linux and Mac OS X, and
 another for Microsoft Windows.
 
-This is lasted upated for version 0.3.0.  There may be changes within the svn tree.
+This is last updated for version 0.6.1.  There may be changes within the svn tree.
 
 == Linux and Mac OS X ==
 

@@ -277,10 +277,10 @@ if (!kmz_file->ReadKml(&kml)) {
 // `kml` is now a string filled with the raw XML for the default KML file.
 // We'll read the names of the archived files into a vector.
 std::vector<std::string> list;
-kmz_file_->List(&list);
+kmz_file->List(&list);
 // Now read "images/pic.jpg".
 std::string pic_data;;
-if (!kmz_file_->ReadFile("images/pic.jpg", &pic_data)) {
+if (!kmz_file->ReadFile("images/pic.jpg", &pic_data)) {
   // Handle error.
 }
 // Now delete the KmzFile instance when we're done with it.

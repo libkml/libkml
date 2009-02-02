@@ -3,7 +3,7 @@
 
 = Introduction =
 
-Welcome to the ninth public release of libkml! 
+Welcome to the ninth-ish public release of libkml! 
 
 THIS IS ALPHA SOFTWARE. Expect changes. We recommend caution in use in
 production code.
@@ -49,13 +49,15 @@ See the wiki page for BuildingAndInstalling.
 
 See the [Reference Reference].
 
-= Future development =
+= Future development towards 1.0 =
 
-These are some items anticipating development in the very near future:
+As we rapidly approach our intended 1.0 milestone here are some remaining
+items anticipating development in the very near future:
 
   * KMZ creation
   * upgrade dependent libraries
   * TODO cleanup
+  * various bugfixes
 
 = Found a bug? =
 

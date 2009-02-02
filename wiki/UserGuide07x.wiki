@@ -1,5 +1,4 @@
-﻿#summary Release notes for the 0.6 version of libkml
-#labels Featured
+﻿#summary Release notes for the 0.7 version of libkml
 
 = Introduction =
 

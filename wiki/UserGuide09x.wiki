@@ -1,8 +1,8 @@
-﻿#summary Release notes for the 0.7 version of libkml
+﻿#summary Release notes for the 0.9 version of libkml
 
 = Introduction =
 
-Welcome to the seventh public release of libkml! 
+Welcome to the ninth public release of libkml! 
 
 THIS IS ALPHA SOFTWARE. Expect changes. We recommend caution in use in
 production code.

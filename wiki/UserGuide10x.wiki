@@ -11,8 +11,8 @@ It is the intention of libkml to adhere strictly to the OGC KML 2.2 standard.
 = What is libkml? =
 
 This is a library to parse, serialize and programmatically access a KML
-document object model (DOM). The main API is C++, and there are bindings to
-Python and Java.
+document object model (DOM). The main API is C++, and there are Swig
+bindings to Python and Java.
 
 = Who uses libkml? =
 
@@ -35,10 +35,16 @@ This library has been compiled and tested on Windows XP, Mac OS X 10.4 and
 
   * Windows fixes and better test coverage on Windows
   * Java fixes
-  * SWIG fixes
+  * Swig fixes
   * version API
   * Atom support: parse feed, entry, added convenience methods
   * private/public header cleanup
+
+= Known issues in 1.0.1 =
+
+  * Swig issues
+  * vcproj's needed for unit tests in engine, convenience
+  * documentation
 
 = Building and installing libkml =
 
@@ -50,8 +56,9 @@ See the [Reference Reference].
 
 = Future development =
 
-Some TODO items in the near time may include:
+Some TODO items in the near future may include:
 
+  * improved Swig support
   * Google Maps Data API support
   * upgrade dependent libraries
   * singleton deleter

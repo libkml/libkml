@@ -10,7 +10,7 @@ The
 example shows how this library is used to create
 a Region-based !NetworkLink KML hierarchy from a CSV file.
 
-== !RegionHander ==
+== !RegionHandler ==
 
 This abstract class defines the interface which the Regionator algorithm
 uses to walk a Region-hierarchy.

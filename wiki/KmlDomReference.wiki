@@ -259,9 +259,9 @@ class kmldom::ParserObserver {
 };
 }}}
 
-Use your !ParserObserver with the kmldom::Parser class like this:
+Use your !ParserObserver with the kmldom::Parser class as follows.
 
-Your !ParserObserver specialization implements one or more of the
+Derive a class from !ParserObserver and implement one or more of the
 !NewElement(), !EndElement() and !AddChild() methods.
 
 {{{

@@ -16,17 +16,23 @@ Here is an overview of the KML Engine functions and classes:
   * Bbox - class to manage bounding boxes
   * Clone - function to deep copy Elements
   * !CreateBalloonText - this function creates a Feature's balloon content
+  * !FeatureView - compute !LookAt for Feature
   * !FeatureVisitor - walk the Feature hierarchy in a KML file
   * Find - find elements of a given type
+  * FindXmlNamespaces - find XML namespaces used in an Element hierarchy
   * !GetLinks - get the links in a KML file
   * !KmlCache - KML networking
   * !KmlFile - Object ID and shared style support
-  * !KmzFile - KMZ read/write
+  * !KmlStream - process a large KML file in a streamed fashion
+  * !KmlUri - URI parsing and resolution, KMZ aware URI handling
   * !KmzCache - networked KMZ access
+  * !KmzFile - KMZ read/write
+  * Link - process Link and Icon
   * Location - find the location of a Feature
   * Merge - merge one Element into another
+  * Style inlining - parse KML and inline shared !StyleSelectors
   * Style resolution - every Feature has a resolved Style
-  * URI parsing and resolution - KMZ area URI handling
+  * Style splitting - parse KML and split inline styles to be shared
   * Update processing
 
 == Bounding box ==
@@ -202,8 +208,9 @@ kmlengine::KmlFile* kml_file = KmlFile::Create*();
 const ElementVector& link_parents = kml_file->get_link_parent_vector()
 }}}
 
-The serialize method on !KmFile adds an xml header and sets the
-xmlns on the root element.
+The serialize method on !KmlFile adds an xml header and sets the
+xmlns's on the root element as per the XML namespaces actually
+found in the Element hierarchy.
 
 {{{
 std::string xml;
@@ -224,8 +231,8 @@ KmlStream* kml_stream = KmlStream::ParseFromIstream(input, &errors, NULL);
 ElementPtr root = kml_stream->get_root();
 }}}
 
-A large (or infinite) KML file can be processed on the fly using a !ParserObserver
-with !KmlStream as follows:
+A large (or infinite) KML file can be processed on the fly using a
+!ParserObserver with !KmlStream as follows:
 
 {{{
 std::ifstream input(...);
@@ -241,8 +248,6 @@ KmlStream* kml_stream = KmlStream::ParseFromIstream(input, NULL, &observer);
 }}}
 
 See examples/engine/streamkml.cc for a complete example.
-
-KmlStream was introduced in version 0.6.
 
 == KMZ File ==
 
@@ -341,7 +346,7 @@ kmldom::StylePtr style = kmlengine::CreateResolvedStyle(feature, kml_file, norma
 == Update ==
 
 The !ProcessUpdate function processes the given Update into the given !KmlFile.
-At present (0.6) Change and Create are supported and Delete is quietly ignored.
+An Update is one or more of any number of Change, Create and Delete operations.
 
 {{{
 kmldom::UpdatePtr update;

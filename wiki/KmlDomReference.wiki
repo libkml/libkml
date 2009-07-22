@@ -43,7 +43,9 @@ To help enforce the tree nature of XML no Element can be set to more than one
 parent.   That is, a given Placemark can be added at most once to a given
 Folder and never to a 2nd Folder.
 
-Once an element is set to a given parent, it cannot be detached.
+Once an element is set to a given parent, it cannot be detached using
+a pure dom-level call.  At engine-level use `<Update>`/`<Delete>` to remove
+a Feature from a Container.
 
 The `clear_xxx()` method both removes the child from the parent and releases
 its reference to the underlying storage.
@@ -54,7 +56,8 @@ as Python and Java.
 
 At present the "smart pointer" is simply a standard Boost intrusive_ptr however
 this is not directly considered part of the API.  We strongly encourage use of
-the typedefs.
+the typedefs as this helps protect your code from any future changes to
+this specific means of memory management.
 
 == Setting simple elements ==
 
@@ -187,7 +190,7 @@ const kmldom::FeaturePtr& get_feature_array_at(unsigned int index) const;
 
 (Note that in KML 2.2 the following elements are all of Feature type:
 Placemark, !NetworkLink, !GroundOverlay, !ScreenOverlay, !PhotoOverlay, Folder,
-and Document)
+and Document.  Also in the Google KML extensions gx:Tour is a Feature.)
 
 == Type inspection and conversion ==
 
@@ -242,6 +245,13 @@ class kmldom::ParserObserver {
     return true;  // Default implementation is a NOP: parse continues.
   }
 
+  // Called after child is fully constructed before it is added to the parent.
+  // A derived class can return false to inhibit adding the child to the parent.
+  // Returning true permits the parser to add this child to the parent.
+  virtual bool EndElement(const ElementPtr& parent, const ElementPtr& child) {
+    return true;
+  }
+
   // Called after the given child has been set to the given parent.
   virtual bool AddChild(const ElementPtr& parent, const ElementPtr& child) {
     return true;  // Default implementation is a NOP: parse continues.
@@ -249,12 +259,10 @@ class kmldom::ParserObserver {
 };
 }}}
 
-Use your !ParserObserver with the new kmldom::Parser class like this:
+Use your !ParserObserver with the kmldom::Parser class like this:
 
-Your !ParserObserver specialization implements one or both of the
-!NewElement() and !AddChild() methods.  You can return false from
-either method to completely halt the parse at any time.  Always return
-true if you wish the parse to completely finish.
+Your !ParserObserver specialization implements one or more of the
+!NewElement(), !EndElement() and !AddChild() methods.
 
 {{{
 MyParserObserver : public kmldom::ParserObserver {
@@ -262,6 +270,7 @@ MyParserObserver : public kmldom::ParserObserver {
     ...what ever you want..
     return true;  // or false if you want to terminate the parse
   };
+  // EndElement() not implemented in derived class so default is used.
   virtual bool AddChild(const ElementPtr& parent, const ElementPtr& child) {
     ...whatever you want...
     return true;
@@ -287,15 +296,19 @@ Your !ParserObserver is called as the parse proceeds and
 a full DOM hierarchy is constructed as normal.
 
 See the
-[http://code.google.com/p/libkml/source/browse/trunk/examples/helloworld/countkml.cc countkml.cc]
-and
+[http://code.google.com/p/libkml/source/browse/trunk/examples/helloworld/countkml.cc countkml.cc],
 [http://code.google.com/p/libkml/source/browse/trunk/examples/helloworld/checklinks.cc checklinks.cc]
+and
+[http://code.google.com/p/libkml/source/browse/trunk/examples/engine/streamkml.cc streamkml.cc]
 examples for how this may be used.
 
 The KML DOM fully constructed assuming no !ParserObserver method
-terminated the parse.
+terminated the parse or inhibited parenting of a child to a parent.
 
-The kmlengine::!ObjectIdParserObserver uses this to flag duplicate ids during parse within kmlengine::!KmlFile.
-The kmlengine::!SharedStyleParserObserver uses this to gather shared styles in a KML file.
-More on kmlengine::!KmlFile below.
-
+The kmlengine::!ObjectIdParserObserver uses this to flag duplicate ids during
+parse within kmlengine::!KmlFile.
+The kmlengine::!SharedStyleParserObserver uses this to gather shared styles
+in a KML file.
+See
+[http://code.google.com/p/libkml/wiki/KmlEngineReference kmlengine::!KmlFile]
+for more information.

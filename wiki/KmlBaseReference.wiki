@@ -1,0 +1,80 @@
+﻿#summary libkml base reference
+
+= KML Base =
+
+All classes and functions in the KML Base are in the kmlbase namespace.
+
+This module contains base functionality used in kmldom and above.
+There is nothing directly specific KML or KMZ in this module.
+
+Here is an overview of the KML Base functions and classes:
+
+  * Attributes - manage XML attributes
+  * Color32 - manage the abgr color type used in KML
+  * !DateTime - manage the time format used in KML
+  * Expat - C++ wrapper
+  * File - platform independent local file I/O
+  * Math utils - Great Circle math utilities
+  * !NetCache
+  * Referent
+  * String typedefs and utils
+  * !UriParser
+  * Vec3
+  * Version
+  * XML namespaces
+
+== Attributes ==
+
+The kmlbase::Attributes class provides methods to parse Expat-style
+attribute lists, query and change attributes, and format them as XML.
+
+Here are some examples of some of the capabilities.
+
+See
+[http://code.google.com/p/libkml/source/browse/trunk/src/kml/base/attributes.h kml/base/attributes.h]
+for detailed information.
+
+Parsing and inspecting...
+
+{{{
+// This is how Expat's startElement method passes in an element's attributes.
+const char* expat_attrs[] = { "type", "double", "name", "TrailLength", 0 };
+kmlbase::Attributes* attributes = kmlbase::Attributes::Create(expat_attrs);
+std::string type;
+attributes->GetValue("type", &type);
+std::string name;
+attributes->GetValue("name", &name);
+delete attributes;  // Better might be scoped_ptr<Attributes>
+}}}
+
+Creating and XML formatting...
+
+{{{
+Attributes attributes;
+attributes.SetValue("x", .75);
+attributes.SetValue("yunits", "fraction");
+std::string xml;
+attributs.Serialize(&xml);
+}}}
+
+== !DateTime ==
+
+== Expat C++ ==
+
+== File I/O ==
+
+== Math utils ==
+
+== !NetCache ==
+
+== Referent ==
+
+== String utils ==
+
+== !UriParser C++ ==
+
+== Vec3 ==
+
+== Version ==
+
+== XML namespaces ==

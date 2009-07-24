@@ -6,7 +6,7 @@ This is a reference to programming with libkml.
 = Overview =
 
   * QuickStart
-  * KML Base
+  * [KmlBaseReference KML Base]
   * [KmlDomReference KML Dom]
   * [KmlEngineReference KML Engine]
   * [KmlConvenienceReference KML Convenience]

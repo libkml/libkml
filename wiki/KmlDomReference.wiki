@@ -208,7 +208,7 @@ const kmldom::PlacemarkPtr placemark;
 ...
 if (placemark->has_geometry()) {
   if (const kmldom::PointPtr point =
-    kmldom::AsPoint(placemark->get_geometry()) {
+    kmldom::AsPoint(placemark->get_geometry())) {
     // Yes, it is a Point... see if it has coordinates:
     if (point->has_coordinates()) {
       ...

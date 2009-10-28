@@ -21,7 +21,7 @@ parse, create and process KML.
 
 = Licensing =
 
-The libkml software is distributed under the new BSD license, whose text is
+The libkml software is distributed under the New BSD license, whose text is
 found at the top of each file.
 
 = Supported platforms =
@@ -32,11 +32,9 @@ This library has been compiled and tested on Windows XP, Mac OS X 10.4 and
 = Changes since 1.0 =
 
   * In-memory KMZ read support
-  * initial Google Maps Data API support
-
-= Known issues in 1.1 =
-
-  * [1.1 is not yet complete]
+  * Initial Google Maps Data API support
+  * Various security fixes, particularly in the underlying Zip library
+  * The OS X Framework is much improved
 
 = Building and installing libkml =
 
@@ -50,10 +48,11 @@ See the [Reference Reference].
 
 Some TODO items in the near future may include:
 
-  * improved Swig support
-  * Google Maps Data API support
-  * upgrade dependent libraries
-  * singleton deleter
+  * Continued Google Maps Data API support
+  * Upgrade of dependent libraries
+  * Singleton deleter
+  * Improve SWIG support
+
 
 = Found a bug? =
 

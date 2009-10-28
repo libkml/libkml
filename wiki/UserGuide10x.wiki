@@ -1,5 +1,4 @@
 ﻿#summary Release notes for the 1.0 version of libkml
-#labels Featured
 
 = Introduction =
 

@@ -1,9 +1,9 @@
-﻿#summary Release notes for the 1.1 version of libkml
+﻿#summary Release notes for the 1.2 version of libkml
 #labels Featured
 
 = Introduction =
 
-Welcome to the "1.1" release of libkml! 
+Welcome to the "1.2" release of libkml! 
 
 It is the intention of libkml to adhere strictly to the OGC KML 2.2 standard. 
 
@@ -30,12 +30,11 @@ found at the top of each file.
 This library has been compiled and tested on Windows XP, Mac OS X 10.4 and
 10.5, and various flavors of Linux.
 
-= Changes since 1.0 =
+= Changes since 1.1 =
 
-  * In-memory KMZ read support
-  * Initial Google Maps Data API support
-  * Various security fixes, particularly in the underlying Zip library
-  * The OS X Framework is much improved
+  * Replaced use of `std::string` with `string` to permit direct use in codebases that have their own (STL-compatible) string implementation
+  * Replaced use of `char*` and `XML_Char*` with string in the low-level wrapper around Expat
+  * Improved Google Maps and Spreadsheets Data API support
 
 = Building and installing libkml =
 

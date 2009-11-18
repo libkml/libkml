@@ -185,7 +185,7 @@ lookup methods.
 {{{
 std::string kmldata;
 std::string errors;
-kmlengine::KmlFile kml_file = KmlFile::CreateFromParse(kmldata, &errors);
+kmlengine::KmlFilePtr kml_file = KmlFile::CreateFromParse(kmldata, &errors);
 kmldom::ObjectPtr object = kml_file.GetObjectById(id);
 kmldom::StyleSelectorPtr shared_style = kml_file.GetSharedStyleById(id);
 }}}

@@ -26,6 +26,7 @@
 #ifndef KML_XSD_XSD_SIMPLE_TYPE_H__
 #define KML_XSD_XSD_SIMPLE_TYPE_H__
 
+#include <string>
 #include <vector>
 #include "boost/intrusive_ptr.hpp"
 #include "kml/base/attributes.h"
@@ -41,7 +42,7 @@ typedef boost::intrusive_ptr<XsdSimpleType> XsdSimpleTypePtr;
 class XsdSimpleType : public XsdType {
  public:
   static XsdSimpleType* Create(const kmlbase::Attributes& attributes) {
-    string name;
+    std::string name;
     if (attributes.GetString("name", &name)) {
       return new XsdSimpleType(name);
     }
@@ -64,35 +65,35 @@ class XsdSimpleType : public XsdType {
   }
 
   // <xs:simpleType name="NAME"/>
-  virtual const string get_name() const {
+  virtual const std::string get_name() const {
     return name_;
   }
 
-  virtual const string get_base() const {
+  virtual const std::string get_base() const {
     return restriction_base_;
   }
 
   // <xs:restriction base="BASE"/>
-  void set_restriction_base(const string& base) {
+  void set_restriction_base(const std::string& base) {
     restriction_base_ = base;
   }
-  const string& get_restriction_base() const { 
+  const std::string& get_restriction_base() const { 
     return restriction_base_;
   }
 
   // <xs:enumeration value="VALUE"/>
-  void add_enumeration(const string& value) { 
+  void add_enumeration(const std::string& value) { 
     enumeration_.push_back(value);
   }
 
   // Return the number of <xs:enumeration value="..."/>'s.
-  size_t get_enumeration_size() const {
+  const size_t get_enumeration_size() const {
     return enumeration_.empty() ? 0 : enumeration_.size();
   }
 
   // Return the index'th <xs:enumeration value="..."/>.  The order is preserved
   // as added in add_enumeration_value().
-  const string& get_enumeration_at(size_t index) const {
+  const std::string& get_enumeration_at(size_t index) const {
     return enumeration_[index];
   }
 
@@ -103,12 +104,12 @@ class XsdSimpleType : public XsdType {
 
  private: 
   // Client code should use Create().
-  XsdSimpleType(const string& name)
+  XsdSimpleType(const std::string& name)
     : name_(name) {
   }
-  const string name_;
-  string restriction_base_;
-  std::vector<string> enumeration_;
+  const std::string name_;
+  std::string restriction_base_;
+  std::vector<std::string> enumeration_;
 };
 
 }  // end namespace kmlxsd

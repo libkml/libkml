@@ -48,9 +48,6 @@ IconStyle::IconStyle() :
 IconStyle::~IconStyle() {}
 
 void IconStyle::AddElement(const ElementPtr& element) {
-  if (!element) {
-    return;
-  }
   switch (element->Type()) {
     case Type_scale:
       has_scale_ = element->SetDouble(&scale_);
@@ -71,7 +68,9 @@ void IconStyle::AddElement(const ElementPtr& element) {
 }
 
 void IconStyle::Serialize(Serializer& serializer) const {
-  ElementSerializer element_serializer(*this, serializer);
+  Attributes attributes;
+  ColorStyle::GetAttributes(&attributes);
+  serializer.BeginById(Type(), attributes);
   ColorStyle::Serialize(serializer);
   if (has_scale()) {
     serializer.SaveFieldById(Type_scale, get_scale());
@@ -85,20 +84,8 @@ void IconStyle::Serialize(Serializer& serializer) const {
   if (has_hotspot()) {
     serializer.SaveElement(get_hotspot());
   }
-}
-
-void IconStyle::Accept(Visitor* visitor) {
-  visitor->VisitIconStyle(IconStylePtr(this));
-}
-
-void IconStyle::AcceptChildren(VisitorDriver* driver) {
-  ColorStyle::AcceptChildren(driver);
-  if (has_icon()) {
-    driver->Visit(get_icon());
-  }
-  if (has_hotspot()) {
-    driver->Visit(get_hotspot());
-  }
+  SerializeUnknown(serializer);
+  serializer.End();
 }
 
 }  // end namespace kmldom

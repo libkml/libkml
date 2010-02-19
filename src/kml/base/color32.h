@@ -28,10 +28,19 @@
 #ifndef KML_BASE_COLOR_H__
 #define KML_BASE_COLOR_H__
 
-#include "kml/base/string_util.h"
+#include <string>
 #include "kml/base/util.h"
 
 namespace kmlbase {
+
+// TODO: Move to string utils.
+// Binary-to-ASCII hex conversion.
+static void b2a_hex(uint32_t i, char* out) {
+  char map[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                  'a', 'b', 'c', 'd', 'e', 'f'};
+  out[0] = map[(i >> 4) & 0xf];
+  out[1] = map[(i) & 0xf];
+}
 
 class Color32 {
  public:
@@ -47,7 +56,7 @@ class Color32 {
   Color32(unsigned char a, unsigned char b, unsigned char g, unsigned char r) {
     set_color_abgr((a << 24) | (b << 16) | (g << 8) | r);
   }
-  Color32(const string& value) {
+  Color32(const std::string& value) {
     set_color_abgr(value);
   }
 
@@ -97,7 +106,7 @@ class Color32 {
   }
 
   // Returns a new string in the AABBGGRR format.
-  string to_string_abgr() const {
+  std::string to_string_abgr() const {
     char out[9];
     b2a_hex(get_red(), out + 6);
     b2a_hex(get_green(), out + 4);
@@ -108,7 +117,7 @@ class Color32 {
   }
 
   // Returns a new string in the AARRGGBB format.
-  string to_string_argb() const {
+  std::string to_string_argb() const {
     char out[9];
     b2a_hex(get_blue(), out + 6);
     b2a_hex(get_green(), out + 4);
@@ -124,12 +133,9 @@ class Color32 {
   }
 
   // Sets the color from a string of AABBGGRR color.
-  void set_color_abgr(const string& color_abgr) {
+  void set_color_abgr(const std::string& color_abgr) {
     uint32_t out = 0;
-    // Don't loop over the entire string. We consider only the first
-    // 8 characters significant.
-    size_t length = color_abgr.size() >= 8 ? 8 : color_abgr.size();
-    for(size_t i = 0; i < length; ++i) {
+    for(size_t i = 0; i < color_abgr.size(); ++i) {
       out = out * 16;
       if (color_abgr[i] >= '0' && color_abgr[i] <= '9') {
         out += color_abgr[i] - '0';

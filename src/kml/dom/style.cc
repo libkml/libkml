@@ -67,7 +67,9 @@ void Style::AddElement(const ElementPtr& element) {
 }
 
 void Style::Serialize(Serializer& serializer) const {
-  ElementSerializer element_serializer(*this, serializer);
+  Attributes attributes;
+  StyleSelector::GetAttributes(&attributes);
+  serializer.BeginById(Type(), attributes);
   StyleSelector::Serialize(serializer);
   if (has_iconstyle()) {
     serializer.SaveElement(get_iconstyle());
@@ -87,32 +89,8 @@ void Style::Serialize(Serializer& serializer) const {
   if (has_liststyle()) {
     serializer.SaveElement(get_liststyle());
   }
-}
-
-void Style::Accept(Visitor* visitor) {
-  visitor->VisitStyle(StylePtr(this));
-}
-
-void Style::AcceptChildren(VisitorDriver* driver) {
-  StyleSelector::AcceptChildren(driver);
-  if (has_iconstyle()) {
-    driver->Visit(get_iconstyle());
-  }
-  if (has_labelstyle()) {
-    driver->Visit(get_labelstyle());
-  }
-  if (has_linestyle()) {
-    driver->Visit(get_linestyle());
-  }
-  if (has_polystyle()) {
-    driver->Visit(get_polystyle());
-  }
-  if (has_balloonstyle()) {
-    driver->Visit(get_balloonstyle());
-  }
-  if (has_liststyle()) {
-    driver->Visit(get_liststyle());
-  }
+  SerializeUnknown(serializer);
+  serializer.End();
 }
 
 }  // end namespace kmldom

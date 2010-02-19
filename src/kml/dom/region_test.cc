@@ -59,10 +59,7 @@ TEST_F(LatLonAltBoxTest, TestDefaults) {
   ASSERT_DOUBLE_EQ(0.0, latlonaltbox_->get_maxaltitude());
   ASSERT_FALSE(latlonaltbox_->has_altitudemode());
   ASSERT_TRUE(ALTITUDEMODE_CLAMPTOGROUND ==
-              latlonaltbox_->get_altitudemode());
-  ASSERT_FALSE(latlonaltbox_->has_gx_altitudemode());
-  ASSERT_TRUE(GX_ALTITUDEMODE_CLAMPTOSEAFLOOR ==
-              latlonaltbox_->get_gx_altitudemode());
+                 latlonaltbox_->get_altitudemode());
 }
 
 // Verify setting default makes has_xxx() true:
@@ -71,15 +68,12 @@ TEST_F(LatLonAltBoxTest, TestSetToDefaultValues) {
   ASSERT_FALSE(latlonaltbox_->has_minaltitude());
   ASSERT_FALSE(latlonaltbox_->has_maxaltitude());
   ASSERT_FALSE(latlonaltbox_->has_altitudemode());
-  ASSERT_FALSE(latlonaltbox_->has_gx_altitudemode());
   latlonaltbox_->set_minaltitude(latlonaltbox_->get_minaltitude());
   latlonaltbox_->set_maxaltitude(latlonaltbox_->get_maxaltitude());
   latlonaltbox_->set_altitudemode(latlonaltbox_->get_altitudemode());
-  latlonaltbox_->set_gx_altitudemode(latlonaltbox_->get_gx_altitudemode());
   ASSERT_TRUE(latlonaltbox_->has_minaltitude());
   ASSERT_TRUE(latlonaltbox_->has_maxaltitude());
   ASSERT_TRUE(latlonaltbox_->has_altitudemode());
-  ASSERT_TRUE(latlonaltbox_->has_gx_altitudemode());
 }
 
 // Verify set, get, has, clear:
@@ -88,13 +82,11 @@ TEST_F(LatLonAltBoxTest, TestSetGetHasClear) {
   const double minaltitude = 10101.5678;
   const double maxaltitude = 54321.1234566;
   const int altitudemode = ALTITUDEMODE_ABSOLUTE;
-  const int gx_altitudemode = GX_ALTITUDEMODE_RELATIVETOSEAFLOOR;
 
   // Set all fields:
   latlonaltbox_->set_minaltitude(minaltitude);
   latlonaltbox_->set_maxaltitude(maxaltitude);
   latlonaltbox_->set_altitudemode(altitudemode);
-  latlonaltbox_->set_gx_altitudemode(gx_altitudemode);
 
   // Verify getter and has_xxx():
   ASSERT_TRUE(latlonaltbox_->has_minaltitude());
@@ -103,19 +95,16 @@ TEST_F(LatLonAltBoxTest, TestSetGetHasClear) {
   ASSERT_TRUE(maxaltitude == latlonaltbox_->get_maxaltitude());
   ASSERT_TRUE(latlonaltbox_->has_altitudemode());
   ASSERT_TRUE(altitudemode == latlonaltbox_->get_altitudemode());
-  ASSERT_TRUE(latlonaltbox_->has_gx_altitudemode());
-  ASSERT_TRUE(gx_altitudemode == latlonaltbox_->get_gx_altitudemode());
 
   // Clear all fields:
   latlonaltbox_->clear_minaltitude();
   latlonaltbox_->clear_maxaltitude();
   latlonaltbox_->clear_altitudemode();
-  latlonaltbox_->clear_gx_altitudemode();
 }
 
 // Verify parse behavior of <altitudeMode> in <LatLonAltBox>
 TEST_F(LatLonAltBoxTest, TestParseAltitudeMode) {
-  string kLatLonAltBoxAbsolute =
+  std::string kLatLonAltBoxAbsolute =
     "<LatLonAltBox>"
     "<north>2.5</north>"
     "<south>1.25</south>"
@@ -125,7 +114,7 @@ TEST_F(LatLonAltBoxTest, TestParseAltitudeMode) {
     "<maxAltitude>202.202</maxAltitude>"
     "<altitudeMode>absolute</altitudeMode>"
     "</LatLonAltBox>";
-  string errors;
+  std::string errors;
   ElementPtr root = Parse(kLatLonAltBoxAbsolute, &errors);
   ASSERT_TRUE(root);
   ASSERT_TRUE(errors.empty());
@@ -149,7 +138,7 @@ TEST_F(LatLonAltBoxTest, TestParseAltitudeMode) {
   ASSERT_EQ(static_cast<int>(ALTITUDEMODE_ABSOLUTE),
             llab_absolute->get_altitudemode());
 
-  string kLatLonAltBoxClampToGround =
+  std::string kLatLonAltBoxClampToGround =
     "<LatLonAltBox>"
     "<altitudeMode>clampToGround</altitudeMode>"
     "</LatLonAltBox>";
@@ -165,11 +154,10 @@ TEST_F(LatLonAltBoxTest, TestParseAltitudeMode) {
   ASSERT_FALSE(llab_clamptoground->has_minaltitude());
   ASSERT_FALSE(llab_clamptoground->has_maxaltitude());
   ASSERT_TRUE(llab_clamptoground->has_altitudemode());
-  ASSERT_FALSE(llab_clamptoground->has_gx_altitudemode());
   ASSERT_EQ(static_cast<int>(ALTITUDEMODE_CLAMPTOGROUND),
-            llab_clamptoground->get_gx_altitudemode());
+            llab_clamptoground->get_altitudemode());
 
-  string kLatLonAltBoxRelativeToGround =
+  std::string kLatLonAltBoxRelativeToGround =
     "<LatLonAltBox>"
     "<altitudeMode>relativeToGround</altitudeMode>"
     "</LatLonAltBox>";
@@ -179,29 +167,9 @@ TEST_F(LatLonAltBoxTest, TestParseAltitudeMode) {
   const LatLonAltBoxPtr llab_relativetoground = AsLatLonAltBox(root);
   ASSERT_TRUE(llab_relativetoground);
   ASSERT_TRUE(llab_relativetoground->has_altitudemode());
-  ASSERT_FALSE(llab_relativetoground->has_gx_altitudemode());
+  ASSERT_TRUE(llab_relativetoground->has_altitudemode());
   ASSERT_EQ(static_cast<int>(ALTITUDEMODE_RELATIVETOGROUND),
             llab_relativetoground->get_altitudemode());
-
-  string kLatLonAltBoxRelativeToSeaFloor =
-    "<LatLonAltBox>"
-    "<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>"
-    "</LatLonAltBox>";
-  root = Parse(kLatLonAltBoxRelativeToSeaFloor, &errors);
-  ASSERT_TRUE(root);
-  ASSERT_TRUE(errors.empty());
-  const LatLonAltBoxPtr llab_relativetoseafloor = AsLatLonAltBox(root);
-  ASSERT_TRUE(llab_relativetoseafloor);
-  ASSERT_FALSE(llab_relativetoseafloor->has_north());
-  ASSERT_FALSE(llab_relativetoseafloor->has_south());
-  ASSERT_FALSE(llab_relativetoseafloor->has_east());
-  ASSERT_FALSE(llab_relativetoseafloor->has_west());
-  ASSERT_FALSE(llab_relativetoseafloor->has_minaltitude());
-  ASSERT_FALSE(llab_relativetoseafloor->has_maxaltitude());
-  ASSERT_FALSE(llab_relativetoseafloor->has_altitudemode());
-  ASSERT_TRUE(llab_relativetoseafloor->has_gx_altitudemode());
-  ASSERT_EQ(static_cast<int>(GX_ALTITUDEMODE_RELATIVETOSEAFLOOR),
-            llab_relativetoseafloor->get_gx_altitudemode());
 }
 
 class LodTest : public testing::Test {
@@ -300,7 +268,7 @@ TEST_F(RegionTest, TestDefaults) {
 }
 
 TEST_F(RegionTest, TestParse) {
-  string kRegion =
+  std::string kRegion =
     "<Region id=\"region123\">"
     "<LatLonAltBox>"
     "<minAltitude>101.101</minAltitude>"
@@ -311,13 +279,13 @@ TEST_F(RegionTest, TestParse) {
     "<minLodPixels>128</minLodPixels>"
     "</Lod>"
     "</Region>";
-  string errors;
+  std::string errors;
   ElementPtr root = Parse(kRegion, &errors);
   ASSERT_TRUE(root);
   ASSERT_TRUE(errors.empty());
   const RegionPtr region = AsRegion(root);
   ASSERT_TRUE(region);
-  ASSERT_EQ(string("region123"), region->get_id());
+  ASSERT_EQ(std::string("region123"), region->get_id());
   ASSERT_TRUE(region->has_latlonaltbox());
   ASSERT_DOUBLE_EQ(101.101, region->get_latlonaltbox()->get_minaltitude());
   ASSERT_DOUBLE_EQ(202.202, region->get_latlonaltbox()->get_maxaltitude());
@@ -347,12 +315,12 @@ TEST_F(RegionTest, TestSetParent) {
 }
 
 TEST_F(RegionTest, TestSerialize) {
-  string expecting_default ="<Region/>";
+  std::string expecting_default ="<Region/>";
   ASSERT_EQ(expecting_default, SerializeRaw(region_));
   region_->set_lod(KmlFactory::GetFactory()->CreateLod());
   region_->set_latlonaltbox(KmlFactory::GetFactory()->CreateLatLonAltBox());
   region_->set_id("abc");
-  string expecting_both_children =
+  std::string expecting_both_children =
     "<Region id=\"abc\">"
     "<LatLonAltBox/>"
     "<Lod/>"
@@ -360,7 +328,7 @@ TEST_F(RegionTest, TestSerialize) {
   ASSERT_EQ(expecting_both_children, SerializeRaw(region_));
   region_->clear_id();  // Clears id attribute.
   region_->clear_lod();  // Deletes Lod.
-  string expecting_llab =
+  std::string expecting_llab =
     "<Region>"
     "<LatLonAltBox/>"
     "</Region>";

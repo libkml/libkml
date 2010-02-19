@@ -29,13 +29,10 @@
 #include "kml/base/file.h"
 #include "gtest/gtest.h"
 
-// The following define is a convenience for testing inside Google.
-#ifdef GOOGLE_INTERNAL
-#include "kml/base/google_internal_test.h"
-#endif
-
 #ifndef DATADIR
 #error *** DATADIR must be defined! ***
+#else
+static const std::string kDataDir = DATADIR;
 #endif
 
 namespace kmlengine {
@@ -45,14 +42,14 @@ class GetLinksTest : public testing::Test {
 
 // Verify that GetLinks() returns false if given no output vector.
 TEST_F(GetLinksTest, TestNull) {
-  const string nothing;
+  const std::string nothing;
   ASSERT_FALSE(GetLinks(nothing, NULL));
 }
 
 // Verify very basic usage.
 TEST_F(GetLinksTest, TestBasic) {
-  const string kHref = "foo.kml";
-  const string kNetworkLink = "<NetworkLink><Link><href>" + kHref +
+  const std::string kHref = "foo.kml";
+  const std::string kNetworkLink = "<NetworkLink><Link><href>" + kHref +
                                    "</href></Link></NetworkLink>";
   href_vector_t href_vector;
   ASSERT_TRUE(GetLinks(kNetworkLink, &href_vector));
@@ -62,48 +59,23 @@ TEST_F(GetLinksTest, TestBasic) {
 
 // Verify that GetLinks finds all kinds of hrefs in a KML file.
 TEST_F(GetLinksTest, TestAll) {
-  const string kAllLinks = string(DATADIR) + "/links/alllinks.kml";
-  string kml;
+  const std::string kAllLinks = kDataDir + "/links/alllinks.kml";
+  std::string kml;
   ASSERT_TRUE(kmlbase::File::ReadFileToString(kAllLinks, &kml));
   href_vector_t href_vector;
   ASSERT_TRUE(GetLinks(kml, &href_vector));
   // This is obviously exactly matched to the content of alllinks.kml.
   ASSERT_EQ(static_cast<size_t>(9), href_vector.size());
-  ASSERT_EQ(string("http://example.com/icon.jpg"),
+  ASSERT_EQ(std::string("http://example.com/icon.jpg"),
                        href_vector[0]);
-  ASSERT_EQ(string("itemicon.png"), href_vector[1]);
-  ASSERT_EQ(string("../more.kml"), href_vector[2]);
-  ASSERT_EQ(string("go.jpeg"), href_vector[3]);
-  ASSERT_EQ(string("so.jpeg"), href_vector[4]);
-  ASSERT_EQ(string("po.jpeg"), href_vector[5]);
-  ASSERT_EQ(string("style.kml#style"), href_vector[6]);
-  ASSERT_EQ(string("#myschema"), href_vector[7]);
-  ASSERT_EQ(string("model.dae"), href_vector[8]);
-}
-
-TEST_F(GetLinksTest, TestGetRelativeLinks) {
-  const string kAllLinks = string(DATADIR) + "/links/alllinks.kml";
-  string kml;
-  ASSERT_TRUE(kmlbase::File::ReadFileToString(kAllLinks, &kml));
-  href_vector_t href_vector;
-  ASSERT_TRUE(GetRelativeLinks(kml, &href_vector));
-  // Of the 9 href's in alllinks.kml, the first is remote and the penultimate
-  // is fragment-only.
-  ASSERT_EQ(static_cast<size_t>(7), href_vector.size());
-  ASSERT_EQ(string("itemicon.png"), href_vector[0]);
-  ASSERT_EQ(string("../more.kml"), href_vector[1]);
-  ASSERT_EQ(string("go.jpeg"), href_vector[2]);
-  ASSERT_EQ(string("so.jpeg"), href_vector[3]);
-  ASSERT_EQ(string("po.jpeg"), href_vector[4]);
-  ASSERT_EQ(string("style.kml#style"), href_vector[5]);
-  ASSERT_EQ(string("model.dae"), href_vector[6]);
-  // Test NULL/empty args.
-  ASSERT_FALSE(GetRelativeLinks(kml, NULL));
-  ASSERT_FALSE(GetRelativeLinks("", &href_vector));
-  ASSERT_EQ(static_cast<size_t>(7), href_vector.size());
-  // Test invalid KML input.
-  ASSERT_FALSE(GetRelativeLinks("<NoSuchElement/>", &href_vector));
-  ASSERT_EQ(static_cast<size_t>(7), href_vector.size());
+  ASSERT_EQ(std::string("itemicon.png"), href_vector[1]);
+  ASSERT_EQ(std::string("../more.kml"), href_vector[2]);
+  ASSERT_EQ(std::string("go.jpeg"), href_vector[3]);
+  ASSERT_EQ(std::string("so.jpeg"), href_vector[4]);
+  ASSERT_EQ(std::string("po.jpeg"), href_vector[5]);
+  ASSERT_EQ(std::string("style.kml#style"), href_vector[6]);
+  ASSERT_EQ(std::string("#myschema"), href_vector[7]);
+  ASSERT_EQ(std::string("model.dae"), href_vector[8]);
 }
 
 }  // end namespace kmlengine

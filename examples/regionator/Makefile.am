@@ -1,5 +1,6 @@
 AM_CPPFLAGS = -I$(top_srcdir)/src \
               -I$(top_srcdir)/third_party/boost_1_34_1 \
+              -I$(top_srcdir)/third_party/uriparser-0.7.1/include \
               -I$(top_srcdir)/third_party/zlib-1.2.3/contrib
 
 if GCC
@@ -16,3 +17,5 @@ csvregionator_LDADD = \
 	$(top_builddir)/src/kml/regionator/libkmlregionator.la \
 	$(top_builddir)/src/kml/convenience/libkmlconvenience.la
 
+EXTRA_DIST = \
+	csvregionator.vcproj

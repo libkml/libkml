@@ -40,9 +40,7 @@ Feature::Feature() :
   has_address_(false),
   has_phonenumber_(false),
   has_description_(false),
-  has_styleurl_(false),
-  gx_balloonvisibility_(false),
-  has_gx_balloonvisibility_(false) {
+  has_styleurl_(false) {
 }
 
 Feature::~Feature() {}
@@ -85,9 +83,6 @@ void Feature::AddElement(const ElementPtr& element) {
     case Type_address:
       has_address_ = element->SetString(&address_);
       break;
-    case Type_XalAddressDetails:
-      set_xaladdressdetails(AsXalAddressDetails(element));
-      break;
     case Type_phoneNumber:
       has_phonenumber_ = element->SetString(&phonenumber_);
       break;
@@ -121,15 +116,12 @@ void Feature::AddElement(const ElementPtr& element) {
     case Type_ExtendedData:
       set_extendeddata(AsExtendedData(element));
       break;
-    case Type_GxBalloonVisibility:
-      has_gx_balloonvisibility_ = element->SetBool(&gx_balloonvisibility_);
-      break;
     default:
       Object::AddElement(element);
   }
 }
 
-void Feature::SerializeBeforeStyleSelector(Serializer& serializer) const {
+void Feature::Serialize(Serializer& serializer) const {
   if (has_name()) {
     serializer.SaveFieldById(Type_name, name_);
   }
@@ -144,15 +136,6 @@ void Feature::SerializeBeforeStyleSelector(Serializer& serializer) const {
   }
   if (has_atomlink()) {
     serializer.SaveElement(get_atomlink());
-  }
-  if (has_address()) {
-    serializer.SaveFieldById(Type_address, get_address());
-  }
-  if (has_phonenumber()) {
-    serializer.SaveFieldById(Type_phoneNumber, get_phonenumber());
-  }
-  if (has_xaladdressdetails()) {
-    serializer.SaveElement(get_xaladdressdetails());
   }
   if (has_snippet()) {
     serializer.SaveElement(get_snippet());
@@ -169,47 +152,14 @@ void Feature::SerializeBeforeStyleSelector(Serializer& serializer) const {
   if (has_styleurl()) {
     serializer.SaveFieldById(Type_styleUrl, styleurl_);
   }
-}
-
-void Feature::SerializeAfterStyleSelector(Serializer& serializer) const {
+  if (has_styleselector()) {
+    serializer.SaveElementGroup(get_styleselector(), Type_StyleSelector);
+  }
   if (has_region()) {
     serializer.SaveElement(get_region());
   }
   if (has_extendeddata()) {
     serializer.SaveElement(get_extendeddata());
-  }
-  if (has_gx_balloonvisibility()) {
-    serializer.SaveFieldById(Type_GxBalloonVisibility, gx_balloonvisibility_);
-  }
-}
-
-void Feature::Serialize(Serializer& serializer) const {
-  Feature::SerializeBeforeStyleSelector(serializer);
-  if (has_styleselector()) {
-    serializer.SaveElementGroup(get_styleselector(), Type_StyleSelector);
-  }
-  Feature::SerializeAfterStyleSelector(serializer);
-}
-
-void Feature::AcceptChildren(VisitorDriver* driver) {
-  Object::AcceptChildren(driver);
-  if (has_snippet()) {
-    driver->Visit(get_snippet());
-  }
-  if (has_abstractview()) {
-    driver->Visit(get_abstractview());
-  }
-  if (has_timeprimitive()) {
-    driver->Visit(get_timeprimitive());
-  }
-  if (has_styleselector()) {
-    driver->Visit(get_styleselector());
-  }
-  if (has_region()) {
-    driver->Visit(get_region());
-  }
-  if (has_extendeddata()) {
-    driver->Visit(get_extendeddata());
   }
 }
 

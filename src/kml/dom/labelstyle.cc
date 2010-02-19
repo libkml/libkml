@@ -41,9 +41,6 @@ LabelStyle::~LabelStyle() {
 }
 
 void LabelStyle::AddElement(const ElementPtr& element) {
-  if (!element) {
-    return;
-  }
   switch (element->Type()) {
     case Type_scale:
       has_scale_ = element->SetDouble(&scale_);
@@ -55,15 +52,15 @@ void LabelStyle::AddElement(const ElementPtr& element) {
 }
 
 void LabelStyle::Serialize(Serializer& serializer) const {
-  ElementSerializer element_serializer(*this, serializer);
+  Attributes attributes;
+  ColorStyle::GetAttributes(&attributes);
+  serializer.BeginById(Type(), attributes);
   ColorStyle::Serialize(serializer);
   if (has_scale()) {
     serializer.SaveFieldById(Type_scale, get_scale());
   }
-}
-
-void LabelStyle::Accept(Visitor* visitor) {
-  visitor->VisitLabelStyle(LabelStylePtr(this));
+  SerializeUnknown(serializer);
+  serializer.End();
 }
 
 }  // end namespace kmldom

@@ -27,6 +27,7 @@
 // various internals of the KmlHandler class.
 
 #include "kml/dom/kml_funcs.h"
+#include <string>
 #include "kml/dom/element.h"
 #include "kml/dom/kml.h"
 #include "kml/dom/kml_cast.h"
@@ -34,10 +35,13 @@
 
 namespace kmldom {
 
+class ParserTest : public testing::Test {
+};
+
 // Verify proper behavior for good KML.  The XML is valid and all elements
 // are known and contained by proper parents.
-TEST(ParserTest, TestValidKml) {
-  string errors;
+TEST_F(ParserTest, TestValidKml) {
+  std::string errors;
   ElementPtr root = Parse("<kml>"
                           "<Placemark>"
                           "<name>a good Placemark</name>"
@@ -66,9 +70,9 @@ TEST(ParserTest, TestValidKml) {
   // Parse.
 }
 
-TEST(ParserTest, TestJunkInput) {
+TEST_F(ParserTest, TestJunkInput) {
   // Parse a garbage string.
-  string errors;
+  std::string errors;
   ElementPtr root = Parse("This is not even xml", &errors);
   // Since the parse failed there will be an error string and NULL is returned.
   ASSERT_FALSE(errors.empty());
@@ -80,12 +84,12 @@ TEST(ParserTest, TestJunkInput) {
   ASSERT_FALSE(root);
 }
 
-TEST(ParserTest, TestFullyUnknownXml) {
+TEST_F(ParserTest, TestFullyUnknownXml) {
   // Parse perfectly valid, but fully unknown XML.  "Fully unknown" means
   // the root element is not known.  When Parse returns NULL an error string
   // is set.  The error string is considered human readable and not
   // examined further by this test.
-  string errors;
+  std::string errors;
   ElementPtr root;
 
   // These test some subtle variations of the inner workings of expat.
@@ -122,10 +126,10 @@ TEST(ParserTest, TestFullyUnknownXml) {
   ASSERT_FALSE(errors.empty());
 }
 
-TEST(ParserTest, TestPartlyValidKml) {
+TEST_F(ParserTest, TestPartlyValidKml) {
   // This pushes several elements onto the stack within the parser to
   // excercise the destructor which frees them all.
-  string errors;
+  std::string errors;
   ElementPtr root = Parse("<kml>"
                           "<Folder>"
                           "<Document>"
@@ -138,57 +142,6 @@ TEST(ParserTest, TestPartlyValidKml) {
                           &errors);
   ASSERT_FALSE(root);
   ASSERT_FALSE(errors.empty());
-}
-
-TEST(ParserTest, TestKmlWithUnknownEmptyFields) {
-  // Note that the unknown element handling logic still engages expat handlers
-  // hence nil elements (<c/>) are turned into <c></c>.  Note also the newline
-  // added by the unknown element handler.
-  const string kUnknownXml("<a>b<c></c></a>\n");
-  const string kKml(
-      string("<kml>") + kUnknownXml + "</kml>");
-  ElementPtr root = Parse(kKml, NULL);
-  ASSERT_TRUE(root);
-  ASSERT_EQ(static_cast<size_t>(1), root->get_unknown_elements_array_size());
-  ASSERT_EQ(kUnknownXml, root->get_unknown_elements_array_at(0));
-}
-
-TEST(ParserTest, TestParseAtomOnJunk) {
-  ASSERT_FALSE(ParseAtom("junk", NULL));
-}
-
-TEST(ParserTest, TestBasicParseAtomError) {
-  string errors;
-  ElementPtr root = ParseAtom("<feed xmlns='http://www.w3.org/2005/Atom'>",
-                              &errors);
-  ASSERT_FALSE(root.get());
-  ASSERT_FALSE(errors.empty());
-}
-
-TEST(ParserTest, TestBasicParseAtom) {
-  string errors;
-  ElementPtr root = ParseAtom("<feed xmlns='http://www.w3.org/2005/Atom'/>",
-                              &errors);
-  ASSERT_TRUE(errors.empty());
-  ASSERT_TRUE(root.get());
-  ASSERT_TRUE(AsAtomFeed(root));
-  ASSERT_EQ(kmlbase::XMLNS_ATOM, root->get_xmlns());
-}
-
-TEST(ParserTest, TestBasicParseAtomWithKml) {
-  ElementPtr root = ParseAtom(
-    "<atom:content xmlns:atom='http://www.w3.org/2005/Atom'>"
-    " xmlns='http://www.opengis.net/kml/2.2'>"
-    "<Placemark id='pm0'/>"
-    "</atom:content>", NULL);
-  ASSERT_TRUE(root.get());
-  kmldom::AtomContentPtr content = kmldom::AsAtomContent(root);
-  ASSERT_TRUE(content.get());
-  ASSERT_EQ(static_cast<size_t>(1),
-            content->get_misplaced_elements_array_size());
-  kmldom::PlacemarkPtr placemark =
-      kmldom::AsPlacemark(content->get_misplaced_elements_array_at(0));
-  ASSERT_EQ(string("pm0"), placemark->get_id());
 }
 
 }  // end namespace kmldom

@@ -24,6 +24,7 @@
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // This file contains the Vec3 class.
+// TODO: update this to match kmldom::Vec3 and remove that
 
 #ifndef KML_BASE_VEC3_H__
 #define KML_BASE_VEC3_H__
@@ -40,7 +41,6 @@ class Vec3 {
     vec_[0] = vec_[1] = 0.0;
     clear_altitude();
   }
-
   // Create a 2d Vec3.
   Vec3(double longitude, double latitude) {
     vec_[0] = longitude;
@@ -53,14 +53,6 @@ class Vec3 {
     vec_[0] = longitude;
     vec_[1] = latitude;
     set_altitude(altitude);
-  }
-
-  void set(int i, double val) {
-    if (i == 2) {
-      set_altitude(val);
-    } else {
-      vec_[i] = val;
-    }
   }
 
   double get_longitude() const {
@@ -83,13 +75,6 @@ class Vec3 {
   void clear_altitude() {
     vec_[2] = 0;
     has_altitude_ = false;
-  }
-
-  // Operator overrides.
-  bool operator==(const Vec3& vec3) const {
-    return vec_[0] == vec3.get_longitude() &&
-           vec_[1] == vec3.get_latitude() &&
-           vec_[2] == vec3.get_altitude();
   }
 
  private:

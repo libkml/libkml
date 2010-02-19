@@ -46,20 +46,19 @@ static const char kDefaultPrefix[] = "default";
 static const char kOtherNamespace[] = "this:is:another:namespace";
 static const char kOtherPrefix[] = "other";
 
-typedef std::vector<string> StringVector;
+typedef std::vector<std::string> StringVector;
 
 class TestHandler : public ExpatHandler {
  public:
   TestHandler(StringVector* log) : log_(log) {}
-  virtual void StartElement(const string& name,
-                            const StringVector& atts) {
+  virtual void StartElement(const char *name, const char **atts) {
     // TODO: handle attributes
     log_->push_back(name);
   }
-  virtual void EndElement(const string& name) {
+  virtual void EndElement(const char *name) {
     log_->push_back(name);
   }
-  virtual void CharData(const string& s) {
+  virtual void CharData(const XML_Char *s, int len) {
     // Nothing namespace/prefix related here.  Just ignore.
   }
 
@@ -73,16 +72,16 @@ TEST_F(ExpatHandlerNsTest, TestExpatParserDefault) {
   Attributes attributes;
   attributes.SetString("xmlns", kDefaultNamespace);
   boost::scoped_ptr<Xmlns> xmlns(Xmlns::Create(attributes));
-  std::vector<string> log;
+  std::vector<std::string> log;
   TestHandler test_handler(&log);
   ExpatHandlerNs expat_handler_ns(&test_handler, xmlns.get());
-  const string kXml(
-      string("<hi xmlns=\"") + kDefaultNamespace + "\"/>");
-  string errors;
-  ASSERT_TRUE(ExpatParser::ParseString(kXml, &expat_handler_ns, &errors, true));
+  const std::string kXml(
+      std::string("<hi xmlns=\"") + kDefaultNamespace + "\"/>");
+  std::string errors;
+  ASSERT_TRUE(ExpatParser(kXml, &expat_handler_ns, &errors, true));
   ASSERT_EQ(static_cast<size_t>(2), log.size());
-  ASSERT_EQ(string("hi"), log[0]);
-  ASSERT_EQ(string("hi"), log[1]);
+  ASSERT_EQ(std::string("hi"), log[0]);
+  ASSERT_EQ(std::string("hi"), log[1]);
 }
 
 // This verifies ExpatHandlerNs's StartElement() and EndElement() on XML with
@@ -91,21 +90,21 @@ TEST_F(ExpatHandlerNsTest, TestExpatParserDefault) {
 TEST_F(ExpatHandlerNsTest, TestExpatParserPrefixed) {
   Attributes attributes;
   attributes.SetString(
-      string("xmlns:") + kDefaultPrefix, kDefaultNamespace);
+      std::string("xmlns:") + kDefaultPrefix, kDefaultNamespace);
   boost::scoped_ptr<Xmlns> xmlns(Xmlns::Create(attributes));
-  std::vector<string> log;
+  std::vector<std::string> log;
   TestHandler test_handler(&log);
   ExpatHandlerNs expat_handler_ns(&test_handler, xmlns.get());
-  const string kTag("hi");
-  const string kXml(
-      string("<") + kDefaultPrefix + ":" + kTag + " " +
+  const std::string kTag("hi");
+  const std::string kXml(
+      std::string("<") + kDefaultPrefix + ":" + kTag + " " +
                   "xmlns:" + kDefaultPrefix + "=\"" + kDefaultNamespace +
                    "\"" + "/>");
-  string errors;
-  ASSERT_TRUE(ExpatParser::ParseString(kXml, &expat_handler_ns, &errors, true));
+  std::string errors;
+  ASSERT_TRUE(ExpatParser(kXml, &expat_handler_ns, &errors, true));
   ASSERT_EQ(static_cast<size_t>(2), log.size());
-  ASSERT_EQ(string(kDefaultPrefix) + ":" + kTag, log[0]);
-  ASSERT_EQ(string(kDefaultPrefix) + ":" + kTag, log[1]);
+  ASSERT_EQ(std::string(kDefaultPrefix) + ":" + kTag, log[0]);
+  ASSERT_EQ(std::string(kDefaultPrefix) + ":" + kTag, log[1]);
 }
 
 // This verifies ExpatHandlerNs's StartElement() and EndElement() on XML with
@@ -114,25 +113,25 @@ TEST_F(ExpatHandlerNsTest, TestExpatParserDefaultAndPrefixed) {
   Attributes attributes;
   attributes.SetString("xmlns", kDefaultNamespace);
   attributes.SetString(
-      string("xmlns:") + kOtherPrefix, kOtherNamespace);
+      std::string("xmlns:") + kOtherPrefix, kOtherNamespace);
   boost::scoped_ptr<Xmlns> xmlns(Xmlns::Create(attributes));
-  std::vector<string> log;
+  std::vector<std::string> log;
   TestHandler test_handler(&log);
   ExpatHandlerNs expat_handler_ns(&test_handler, xmlns.get());
-  const string kHi("hi");
-  const string kThere("there");
-  const string kXml(
-      string("<") + kHi + " " +
+  const std::string kHi("hi");
+  const std::string kThere("there");
+  const std::string kXml(
+      std::string("<") + kHi + " " +
                   "xmlns=\"" + kDefaultNamespace + "\" " +
                   "xmlns:" + kOtherPrefix + "=\"" + kOtherNamespace + "\">" +
                   "<" + kOtherPrefix + ":" + kThere + "/>" +
                   "</" + kHi + ">");
-  string errors;
-  ASSERT_TRUE(ExpatParser::ParseString(kXml, &expat_handler_ns, &errors, true));
+  std::string errors;
+  ASSERT_TRUE(ExpatParser(kXml, &expat_handler_ns, &errors, true));
   ASSERT_EQ(static_cast<size_t>(4), log.size());
   ASSERT_EQ(kHi, log[0]);
-  ASSERT_EQ(string(kOtherPrefix) + ":" + kThere, log[1]);
-  ASSERT_EQ(string(kOtherPrefix) + ":" + kThere, log[2]);
+  ASSERT_EQ(std::string(kOtherPrefix) + ":" + kThere, log[1]);
+  ASSERT_EQ(std::string(kOtherPrefix) + ":" + kThere, log[2]);
   ASSERT_EQ(kHi, log[3]);
 }
 

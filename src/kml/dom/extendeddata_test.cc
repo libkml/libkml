@@ -26,6 +26,7 @@
 // This file contains the unit tests for the SimpleData, SchemaData, Datai
 // and ExtendedData elements.
 
+#include <string>
 #include "kml/dom/extendeddata.h"
 #include "kml/dom.h"
 #include "gtest/gtest.h"
@@ -48,9 +49,9 @@ TEST_F(SimpleDataTest, TestType) {
 }
 
 TEST_F(SimpleDataTest, TestDefaults) {
-  ASSERT_EQ(string(""), simpledata_->get_name());
+  ASSERT_EQ(std::string(""), simpledata_->get_name());
   ASSERT_FALSE(simpledata_->has_name());
-  ASSERT_EQ(string(""), simpledata_->get_text());
+  ASSERT_EQ(std::string(""), simpledata_->get_text());
   ASSERT_FALSE(simpledata_->has_text());
 }
 
@@ -62,13 +63,13 @@ TEST_F(SimpleDataTest, TestSetToDefaultValues) {
 }
 
 TEST_F(SimpleDataTest, TestSetGetHasClear) {
-  string name("tom");
+  std::string name("tom");
   simpledata_->set_name(name);
   ASSERT_TRUE(simpledata_->has_name());
   ASSERT_TRUE(name == simpledata_->get_name());
   simpledata_->clear_name();
 
-  string text("dick");
+  std::string text("dick");
   simpledata_->set_text(text);
   ASSERT_TRUE(simpledata_->has_text());
   ASSERT_TRUE(text == simpledata_->get_text());
@@ -78,11 +79,11 @@ TEST_F(SimpleDataTest, TestSetGetHasClear) {
 
 TEST_F(SimpleDataTest, TestSerializeCdata) {
   simpledata_->set_text("&");
-  ASSERT_EQ(string("<SimpleData><![CDATA[&]]></SimpleData>"),
+  ASSERT_EQ(std::string("<SimpleData><![CDATA[&]]></SimpleData>"),
                        SerializeRaw(simpledata_));
 
   simpledata_->set_text("a");
-  ASSERT_EQ(string("<SimpleData>a</SimpleData>"),
+  ASSERT_EQ(std::string("<SimpleData>a</SimpleData>"),
                        SerializeRaw(simpledata_));
 }
 
@@ -104,14 +105,14 @@ TEST_F(SchemaDataTest, TestType) {
 
 TEST_F(SchemaDataTest, TestSchemaUrl) {
   ASSERT_FALSE(schemadata_->has_schemaurl());
-  ASSERT_EQ(string(""), schemadata_->get_schemaurl());
-  string schemaurl("#icanhasurl");
+  ASSERT_EQ(std::string(""), schemadata_->get_schemaurl());
+  std::string schemaurl("#icanhasurl");
   schemadata_->set_schemaurl(schemaurl);
   ASSERT_TRUE(schemadata_->has_schemaurl());
   ASSERT_TRUE(schemaurl == schemadata_->get_schemaurl());
   schemadata_->clear_schemaurl();
   ASSERT_FALSE(schemadata_->has_schemaurl());
-  ASSERT_EQ(string(""), schemadata_->get_schemaurl());
+  ASSERT_EQ(std::string(""), schemadata_->get_schemaurl());
 }
 
 TEST_F(SchemaDataTest, TestLists) {
@@ -145,11 +146,11 @@ TEST_F(DataTest, TestType) {
 
 TEST_F(DataTest, TestDefaults) {
   ASSERT_FALSE(data_->has_name());
-  ASSERT_EQ(string(""), data_->get_name());
+  ASSERT_EQ(std::string(""), data_->get_name());
   ASSERT_FALSE(data_->has_displayname());
-  ASSERT_EQ(string(""), data_->get_displayname());
+  ASSERT_EQ(std::string(""), data_->get_displayname());
   ASSERT_FALSE(data_->has_value());
-  ASSERT_EQ(string(""), data_->get_value());
+  ASSERT_EQ(std::string(""), data_->get_value());
 }
 
 TEST_F(DataTest, TestSetToDefaultValues) {
@@ -162,19 +163,19 @@ TEST_F(DataTest, TestSetToDefaultValues) {
 }
 
 TEST_F(DataTest, TestSetGetHasClear) {
-  string name("tom");
+  std::string name("tom");
   data_->set_name(name);
   ASSERT_TRUE(data_->has_name());
   ASSERT_TRUE(name == data_->get_name());
   data_->clear_name();
 
-  string displayname("dick");
+  std::string displayname("dick");
   data_->set_displayname(displayname);
   ASSERT_TRUE(data_->has_displayname());
   ASSERT_TRUE(displayname == data_->get_displayname());
   data_->clear_displayname();
 
-  string value("harry");
+  std::string value("harry");
   data_->set_value(value);
   ASSERT_TRUE(data_->has_value());
   ASSERT_TRUE(value == data_->get_value());
@@ -224,13 +225,13 @@ TEST_F(ExtendedDataTest, TestLists) {
 }
 
 TEST_F(ExtendedDataTest, TestParse) {
-  const string schemaurl("http://example.com/index.kml#schemaId");
-  const string d_name("myCoolDataName");
-  const string displayname("my cool displayName");
-  const string value("my cool value");
-  const string sd_name("myCoolSimpleDataName");
-  const string chardata("some char data");
-  const string kml =
+  const std::string schemaurl("http://example.com/index.kml#schemaId");
+  const std::string d_name("myCoolDataName");
+  const std::string displayname("my cool displayName");
+  const std::string value("my cool value");
+  const std::string sd_name("myCoolSimpleDataName");
+  const std::string chardata("some char data");
+  const std::string kml =
     "<ExtendedData>"
     "<Data name=\"" + d_name + "\">"
     "<displayName>" + displayname + "</displayName>"
@@ -240,7 +241,7 @@ TEST_F(ExtendedDataTest, TestParse) {
     "<SimpleData name=\"" + sd_name + "\">" + chardata + "</SimpleData>"
     "</SchemaData>"
     "</ExtendedData>";
-  string errors;
+  std::string errors;
   ElementPtr root = Parse(kml, &errors);
   ASSERT_TRUE(root);
   ASSERT_TRUE(errors.empty());
@@ -289,7 +290,7 @@ TEST_F(MetadataTest, TestType) {
 }
 
 TEST_F(MetadataTest, TestParseSerialize) {
-  const string kMetadata(
+  const std::string kMetadata(
     "<Metadata>"
     "<extra><special>stuff</special></extra>\n"  // TODO: remove this newline...
     "</Metadata>");

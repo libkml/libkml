@@ -53,9 +53,6 @@ TEST_F(KmlCastTest, TestCasts) {
   ASSERT_TRUE(AsTimePrimitive(factory->CreateElementById(Type_TimeSpan)));
   ASSERT_TRUE(AsAlias(factory->CreateElementById(Type_Alias)));
   ASSERT_TRUE(AsAtomAuthor(factory->CreateElementById(Type_AtomAuthor)));
-  ASSERT_TRUE(AsAtomContent(factory->CreateElementById(Type_AtomContent)));
-  ASSERT_TRUE(AsAtomEntry(factory->CreateElementById(Type_AtomEntry)));
-  ASSERT_TRUE(AsAtomFeed(factory->CreateElementById(Type_AtomFeed)));
   ASSERT_TRUE(AsAtomLink(factory->CreateElementById(Type_AtomLink)));
   ASSERT_TRUE(AsBalloonStyle(factory->CreateElementById(Type_BalloonStyle)));
   ASSERT_TRUE(AsCamera(factory->CreateElementById(Type_Camera)));
@@ -94,7 +91,7 @@ TEST_F(KmlCastTest, TestCasts) {
       factory->CreateElementById(Type_MultiGeometry)));
   ASSERT_TRUE(AsNetworkLink(factory->CreateElementById(Type_NetworkLink)));
   ASSERT_TRUE(AsNetworkLinkControl(
-      factory->CreateElementById(Type_NetworkLinkControl)));
+          factory->CreateElementById(Type_NetworkLinkControl)));
   ASSERT_TRUE(AsOrientation(factory->CreateElementById(Type_Orientation)));
   ASSERT_TRUE(AsOuterBoundaryIs(
       factory->CreateElementById(Type_outerBoundaryIs)));
@@ -112,7 +109,7 @@ TEST_F(KmlCastTest, TestCasts) {
   ASSERT_TRUE(AsSchema(factory->CreateElementById(Type_Schema)));
   ASSERT_TRUE(AsSchemaData(factory->CreateElementById(Type_SchemaData)));
   ASSERT_TRUE(AsScreenOverlay(
-      factory->CreateElementById(Type_ScreenOverlay)));
+     factory->CreateElementById(Type_ScreenOverlay)));
   ASSERT_TRUE(AsScreenXY(factory->CreateElementById(Type_screenXY)));
   ASSERT_TRUE(AsSimpleData(factory->CreateElementById(Type_SimpleData)));
   ASSERT_TRUE(AsSimpleField(factory->CreateElementById(Type_SimpleField)));
@@ -124,45 +121,6 @@ TEST_F(KmlCastTest, TestCasts) {
   ASSERT_TRUE(AsTimeStamp(factory->CreateElementById(Type_TimeStamp)));
   ASSERT_TRUE(AsUpdate(factory->CreateElementById(Type_Update)));
   ASSERT_TRUE(AsViewVolume(factory->CreateElementById(Type_ViewVolume)));
-
-  ASSERT_TRUE(AsXalAddressDetails(
-      factory->CreateElementById(Type_XalAddressDetails)));
-  ASSERT_TRUE(AsXalAdministrativeArea(
-      factory->CreateElementById(Type_XalAdministrativeArea)));
-  ASSERT_TRUE(AsXalCountry(factory->CreateElementById(Type_XalCountry)));
-  ASSERT_TRUE(AsXalLocality(factory->CreateElementById(Type_XalLocality)));
-  ASSERT_TRUE(AsXalPostalCode(factory->CreateElementById(Type_XalPostalCode)));
-  ASSERT_TRUE(AsXalSubAdministrativeArea(
-      factory->CreateElementById(Type_XalSubAdministrativeArea)));
-  ASSERT_TRUE(AsXalThoroughfare(
-      factory->CreateElementById(Type_XalThoroughfare)));
-
-  ASSERT_TRUE(AsGxAnimatedUpdate(
-      factory->CreateElementById(Type_GxAnimatedUpdate)));
-  ASSERT_TRUE(AsGxFlyTo(
-      factory->CreateElementById(Type_GxFlyTo)));
-  ASSERT_TRUE(AsGxLatLonQuad(
-      factory->CreateElementById(Type_GxLatLonQuad)));
-  ASSERT_TRUE(AsGxPlaylist(
-      factory->CreateElementById(Type_GxPlaylist)));
-  ASSERT_TRUE(AsGxSoundCue(
-      factory->CreateElementById(Type_GxSoundCue)));
-  ASSERT_TRUE(AsGxTimeSpan(
-      factory->CreateElementById(Type_GxTimeSpan)));
-  ASSERT_TRUE(AsGxTimeStamp(
-      factory->CreateElementById(Type_GxTimeStamp)));
-  ASSERT_TRUE(AsTimePrimitive(
-      factory->CreateElementById(Type_GxTimeSpan)));
-  ASSERT_TRUE(AsTimePrimitive(
-      factory->CreateElementById(Type_GxTimeStamp)));
-  ASSERT_TRUE(AsGxTour(
-      factory->CreateElementById(Type_GxTour)));
-  ASSERT_TRUE(AsGxTourControl(
-      factory->CreateElementById(Type_GxTourControl)));
-  ASSERT_TRUE(AsGxTourPrimitive(
-      factory->CreateElementById(Type_GxFlyTo)));
-  ASSERT_TRUE(AsGxWait(
-      factory->CreateElementById(Type_GxWait)));
 }
 
 }  // end namespace kmldom

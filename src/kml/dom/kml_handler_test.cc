@@ -27,25 +27,13 @@
 
 #include "kml/dom/kml_handler.h"
 #include <stdlib.h>  // For calloc() and free().
-#include "boost/scoped_ptr.hpp"
-#include "kml/base/file.h"
 #include "kml/dom/element.h"
 #include "kml/dom/kml_cast.h"
-#include "kml/dom/kml_funcs.h"
 #include "kml/dom/kml_ptr.h"
 #include "kml/dom/placemark.h"
 #include "kml/dom/parser.h"
 #include "kml/dom/parser_observer.h"
 #include "gtest/gtest.h"
-
-// The following define is a convenience for testing inside Google.
-#ifdef GOOGLE_INTERNAL
-#include "kml/base/google_internal_test.h"
-#endif
-
-#ifndef DATADIR
-#error *** DATADIR must be defined! ***
-#endif
 
 namespace kmldom {
 
@@ -55,15 +43,20 @@ typedef std::vector<ElementPtr> element_vector_t;
 class KmlHandlerTest : public testing::Test {
  protected:
   virtual void SetUp() {
-    kml_handler_.reset(new KmlHandler(observers_));
+    // Emulate expat's xmlparse.c:startAtts().
+    // 16 == xmlparse.c's INIT_ATTS_SIZE
+    atts_ = static_cast<const char**>(calloc(16, sizeof(char*)));
+    kml_handler_ = new KmlHandler(observers_);
   }
 
   virtual void TearDown() {
+    free(atts_);
+    delete kml_handler_;
   }
 
-  kmlbase::StringVector atts_;
+  const char** atts_;
   parser_observer_vector_t observers_;
-  boost::scoped_ptr<KmlHandler> kml_handler_;
+  KmlHandler* kml_handler_;
   void VerifyFolderParse(const ElementPtr& root) const;
   void VerifyElementTypes(const KmlDomType* types_array,
                           const element_vector_t& element_vector) const;
@@ -112,7 +105,7 @@ TEST_F(KmlHandlerTest, TestBasicCharData) {
   const char* kContent = "what is in a name";
 
   kml_handler_->StartElement(kTagName, atts_);
-  kml_handler_->CharData(kContent);
+  kml_handler_->CharData(kContent, strlen(kContent));
   kml_handler_->EndElement(kTagName);
 
   ElementPtr root = kml_handler_->PopRoot();
@@ -142,10 +135,10 @@ TEST_F(KmlHandlerTest, TestEndComplexElement) {
 // This is a test of StartElement() for a known complex element with known
 // attributes.
 TEST_F(KmlHandlerTest, TestStartComplexElementWithAtts) {
-  const string kAttrName("id");
-  const string kAttrVal("foo");
-  atts_.push_back(kAttrName);
-  atts_.push_back(kAttrVal);
+  const char* kAttrName = "id";
+  const char* kAttrVal = "foo";
+  atts_[0] = kAttrName;
+  atts_[1] = kAttrVal;
   kml_handler_->StartElement("Placemark", atts_);
   ElementPtr root = kml_handler_->PopRoot();
   ASSERT_EQ(root->Type(), Type_Placemark);
@@ -290,7 +283,7 @@ TEST_F(KmlHandlerTest, NewElementObserverTerminationTest) {
   // This specifies to stop parsing after 2 elements.
   SimpleNewElementObserver simple_new_element_observer(&element_vector, 2);
   parser.AddObserver(&simple_new_element_observer);
-  string errors;
+  std::string errors;
   ElementPtr root = parser.Parse(kKmlFolder, &errors);
 
   // Verify that the parse was terminated.
@@ -337,7 +330,7 @@ TEST_F(KmlHandlerTest, AddChildObserverTerminationTest) {
                                                    &child_vector,
                                                    4);
   parser.AddObserver(&simple_add_child_observer);
-  string errors;
+  std::string errors;
   ElementPtr root = parser.Parse(kKmlFolder, &errors);
 
   // Verify that the parse was terminated.
@@ -372,7 +365,7 @@ void KmlHandlerTest::MultipleObserverTestCommon(size_t max_elements,
   parser.AddObserver(&null_observer);
   parser.AddObserver(&simple_new_element_observer);
   parser.AddObserver(&simple_parent_child_observer);
-  string errors;
+  std::string errors;
   ElementPtr root = parser.Parse(kKmlFolder, &errors);
 
   if (expected_element_count >= kNumElements) {
@@ -412,157 +405,9 @@ TEST_F(KmlHandlerTest, MultipleObserverTerminationTest) {
   KmlHandlerTest::MultipleObserverTestCommon(6, 6, 4);
 }
 
-// This ParserObserver collects all Features in the parse.
-class FeatureCollector : public ParserObserver {
- public:
-  FeatureCollector(element_vector_t* element_vector)
-    : element_vector_(element_vector) {
-  }
-  // This EndElement saves each non-Container Feature and returns false to
-  // request that the parser not give this feature to the given parent.
-  // All other parent-child relationships are preserved (such as all children
-  // of the collected feature).
-  virtual bool EndElement(const kmldom::ElementPtr& parent,
-                          const kmldom::ElementPtr& child) {
-    if (child->IsA(Type_Feature) && !child->IsA(Type_Container)) {
-      element_vector_->push_back(child);
-      return false;
-    }
-    return true;
-  }
- private:
-  element_vector_t* element_vector_;
-};
-
-TEST_F(KmlHandlerTest, InhibitingEndElement) {
-  element_vector_t features;
-  FeatureCollector feature_collector(&features);
-  observers_.push_back(&feature_collector);
-  KmlHandler kml_handler(observers_);
-  kml_handler.StartElement("kml", atts_);
-  kml_handler.StartElement("Document", atts_);
-  kml_handler.StartElement("Placemark", atts_);
-  kml_handler.StartElement("name", atts_);
-  kml_handler.EndElement("name");
-  kml_handler.StartElement("Point", atts_);
-  kml_handler.StartElement("coordinates", atts_);
-  kml_handler.EndElement("coordinates");
-  kml_handler.EndElement("Point");
-  kml_handler.EndElement("Placemark");
-  kml_handler.EndElement("Document");
-  kml_handler.StartElement("NetworkLinkControl", atts_);
-  kml_handler.EndElement("NetworkLinkControl");
-  kml_handler.EndElement("kml");
-  ElementPtr root = kml_handler.PopRoot();
-  ASSERT_TRUE(root);
-  KmlPtr kml = AsKml(root);
-  ASSERT_TRUE(kml);
-  // Document is a Container and is not collected.
-  ASSERT_TRUE(kml->has_feature());
-  ASSERT_TRUE(AsDocument(kml->get_feature()));
-  // NetworkLinkControl is not a Feature is not collected.
-  ASSERT_TRUE(kml->has_networklinkcontrol());
-  // One non-Container Feature is collected.
-  ASSERT_EQ(static_cast<size_t>(1), features.size());
-  PlacemarkPtr placemark = AsPlacemark(features[0]);
-  ASSERT_TRUE(placemark);
-  // Verify the collected feature has all expected children.
-  ASSERT_TRUE(placemark->has_name());
-  ASSERT_TRUE(placemark->has_geometry());
-  PointPtr point = AsPoint(placemark->get_geometry());
-  ASSERT_TRUE(point);
-  ASSERT_TRUE(point->has_coordinates());
-}
-
-TEST_F(KmlHandlerTest, TestParserHandlesGrossDescriptions) {
-  // HTML markup in <description> MUST be wrapped with CDATA elements like so:
-  // <description><![CDATA[<h1>title</h1>]]></description>
-  // However, the web has files with markup like this:
-  // <description><table><tr>...</tr><table></description>
-  // Historically, Google Earth has preserved the author's intent with this
-  // type of invalid markup. And hence, we try to as well.
-  const string kInvalidDescriptions(
-      kmlbase::File::JoinPaths(DATADIR, kmlbase::File::JoinPaths(
-          "kml", "invalid_descriptions.kml")));
-  string data;
-  ASSERT_TRUE(kmlbase::File::ReadFileToString(kInvalidDescriptions, &data));
-  ElementPtr root = Parse(data, NULL);
-  ASSERT_TRUE(root);
-  KmlPtr kml = AsKml(root);
-  ASSERT_TRUE(kml);
-  DocumentPtr document = AsDocument(kml->get_feature());
-  ASSERT_TRUE(document);
-  ASSERT_EQ(static_cast<size_t>(3), document->get_feature_array_size());
-
-  PlacemarkPtr placemark0 = AsPlacemark(document->get_feature_array_at(0));
-  const string kExpected0("<b>bold</b>");
-  ASSERT_EQ(kExpected0, placemark0->get_description());
-
-  PlacemarkPtr placemark1 = AsPlacemark(document->get_feature_array_at(1));
-  const string kExpected1("foo<b>bold</b>bar");
-  ASSERT_EQ(kExpected1, placemark1->get_description());
-
-  PlacemarkPtr placemark2 = AsPlacemark(document->get_feature_array_at(2));
-  const string kExpected2("<description>foo<b>bold</b>bar</description>");
-  ASSERT_EQ(kExpected2, placemark2->get_description());
-}
-
-TEST_F(KmlHandlerTest, TestParserHandlesBoolWhitespace) {
-  const string kOutlineSpace(
-      kmlbase::File::JoinPaths(DATADIR, kmlbase::File::JoinPaths(
-          "kml", "outline_space.kml")));
-  string data;
-  ASSERT_TRUE(kmlbase::File::ReadFileToString(kOutlineSpace, &data));
-  ElementPtr root = Parse(data, NULL);
-  ASSERT_TRUE(root);
-  DocumentPtr document = AsDocument(AsKml(root)->get_feature());
-  StylePtr style = AsStyle(document->get_styleselector_array_at(0));
-  PolyStylePtr polystyle = style->get_polystyle();
-  ASSERT_EQ(false, polystyle->get_fill());
-  ASSERT_EQ(true, polystyle->get_outline());
-  PlacemarkPtr placemark = AsPlacemark(document->get_feature_array_at(0));
-  polystyle = AsStyle(placemark->get_styleselector())->get_polystyle();
-  ASSERT_EQ(false, polystyle->get_fill());
-  ASSERT_EQ(true, polystyle->get_outline());
-}
-
-// 100 nested folders is equal to our default nesting limit.
-TEST_F(KmlHandlerTest, TestMaxNestingOf100Folders) {
-  const string k100Folders(
-      kmlbase::File::JoinPaths(DATADIR, kmlbase::File::JoinPaths(
-          "kml", "100_nested_folders.kml")));
-  string data;
-  ASSERT_TRUE(kmlbase::File::ReadFileToString(k100Folders, &data));
-  ElementPtr root = Parse(data, NULL);
-  ASSERT_TRUE(root);  // Parse succeeded.
-}
-
-// 101 nested folders exceeds our default nesting limit of 100.
-TEST_F(KmlHandlerTest, TestMaxNestingOf101Folders) {
-  const string k101Folders(
-      kmlbase::File::JoinPaths(DATADIR, kmlbase::File::JoinPaths(
-          "kml", "101_nested_folders.kml")));
-  string data;
-  ASSERT_TRUE(kmlbase::File::ReadFileToString(k101Folders, &data));
-  ElementPtr root = Parse(data, NULL);
-  ASSERT_FALSE(root);  // Parse was stopped.
-}
-
-// 101 nested elements exceeds our default nesting limit of 100.
-TEST_F(KmlHandlerTest, TestMaxNestingOf101Elements) {
-  const string k101Elements(
-      kmlbase::File::JoinPaths(DATADIR, kmlbase::File::JoinPaths(
-          "kml", "101_nested_elements.kml")));
-  string data;
-  ASSERT_TRUE(kmlbase::File::ReadFileToString(k101Elements, &data));
-  ElementPtr root = Parse(data, NULL);
-  ASSERT_FALSE(root);  // Parse was stopped.
-}
-
 }  // end namespace kmldom
 
 int main(int argc, char** argv) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
-

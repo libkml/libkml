@@ -26,7 +26,6 @@
 #include "kml/dom/placemark.h"
 #include "kml/base/attributes.h"
 #include "kml/dom/kml_cast.h"
-#include "kml/dom/element.h"
 #include "kml/dom/serializer.h"
 
 using kmlbase::Attributes;
@@ -49,22 +48,15 @@ void Placemark::AddElement(const ElementPtr& element) {
 }
 
 void Placemark::Serialize(Serializer& serializer) const {
-  ElementSerializer element_serializer(*this, serializer);
+  Attributes attributes;
+  Feature::GetAttributes(&attributes);
+  serializer.BeginById(Type(), attributes);
   Feature::Serialize(serializer);
   if (has_geometry()) {
     serializer.SaveElementGroup(get_geometry(), Type_Geometry);
   }
-}
-
-void Placemark::Accept(Visitor* visitor) {
-  visitor->VisitPlacemark(PlacemarkPtr(this));
-}
-
-void Placemark::AcceptChildren(VisitorDriver* driver) {
-  Feature::AcceptChildren(driver);
-  if (has_geometry()) {
-    driver->Visit(get_geometry());
-  }
+  SerializeUnknown(serializer);
+  serializer.End();
 }
 
 }  // namespace kmldom

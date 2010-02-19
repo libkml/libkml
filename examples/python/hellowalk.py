@@ -30,7 +30,6 @@
 
 import sys
 import kmldom
-import kmlengine
 
 argc = len(sys.argv)
 if argc != 2:
@@ -70,10 +69,25 @@ def WalkContainer(container, depth):
   for i in range(container.get_feature_array_size()):
     VisitFeature(container.get_feature_array_at(i), depth)
 
+# The root feature of a KML file is the child feature of the <kml>
+# element or the root xml element if that is a Feature.
+# If element is neither <kml> nor a feature None is returned.
+def GetRootFeature(element):
+  kml = kmldom.AsKml(element)
+  if kml:
+    if kml.has_feature():
+      return kml.get_feature()
+    else:
+      return None
+  feature = kmldom.AsFeature(element)
+  if feature:
+    return feature
+  return None
+
 # Program main: read the file to memory, parse it, get and visit
 # the root feature if such exists.
 def main():
-  feature = kmlengine.GetRootFeature(kmldom.ParseKml(ReadFile(inputkml)))
+  feature = GetRootFeature(kmldom.ParseKml(ReadFile(inputkml)))
   if feature:
     VisitFeature(feature, 0)
     # Python deletes the feature and all of its descendant elements in turn.

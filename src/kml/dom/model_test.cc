@@ -25,12 +25,11 @@
 
 // This file contains the unittests for Model, Location, Orientation, Scale,
 // ResourceMap and Alias.
-// TODO: Parse,Serialize tests
 
+#include <string>
 #include "gtest/gtest.h"
 #include "kml/dom/kml22.h"
 #include "kml/dom/kml_factory.h"
-#include "kml/dom/kml_funcs.h"
 #include "kml/dom/kml_ptr.h"
 #include "kml/dom/model.h"
 
@@ -262,9 +261,9 @@ TEST_F(AliasTest, TestDefaults) {
   ASSERT_FALSE(alias_->has_id());
   ASSERT_FALSE(alias_->has_targetid());
   ASSERT_FALSE(alias_->has_targethref());
-  ASSERT_EQ(string(""), alias_->get_targethref());
+  ASSERT_EQ(std::string(""), alias_->get_targethref());
   ASSERT_FALSE(alias_->has_sourcehref());
-  ASSERT_EQ(string(""), alias_->get_sourcehref());
+  ASSERT_EQ(std::string(""), alias_->get_sourcehref());
 }
 
 // Verify setting default makes has_xxx() true:
@@ -281,9 +280,9 @@ TEST_F(AliasTest, TestSetToDefaultValues) {
 // Verify set, get, has, clear:
 TEST_F(AliasTest, TestSetGetHasClear) {
   // Non-default values:
-  const string targethref(
+  const std::string targethref(
       "../textures/CU-Macky-Center-StairsnoCulling.jpg");
-  const string sourcehref(
+  const std::string sourcehref(
       "../files/CU-Macky---Center-StairsnoCulling.jpg");
 
   // Set all fields:
@@ -299,11 +298,6 @@ TEST_F(AliasTest, TestSetGetHasClear) {
   // Clear all fields:
   alias_->clear_targethref();
   alias_->clear_sourcehref();
-}
-
-// Verify Serialize.
-TEST_F(AliasTest, TestSerialize) {
-  ASSERT_EQ(string("<Alias/>"), SerializeRaw(alias_));
 }
 
 // This tests the ResourceMap class:
@@ -334,8 +328,8 @@ TEST_F(ResourceMapTest, TestAddAliases) {
 
   // Create an Alias:
   AliasPtr alias = KmlFactory::GetFactory()->CreateAlias();
-  const string targethref0("target0.jpg");
-  const string sourcehref0("source0.jpg");
+  const std::string targethref0("target0.jpg");
+  const std::string sourcehref0("source0.jpg");
   alias->set_targethref(targethref0);
   alias->set_sourcehref(sourcehref0);
 
@@ -353,8 +347,8 @@ TEST_F(ResourceMapTest, TestAddAliases) {
 
   // Create another Alias and add to ResourceMap
   alias = KmlFactory::GetFactory()->CreateAlias();
-  const string targethref1("target1.jpg");
-  const string sourcehref1("source1.jpg");
+  const std::string targethref1("target1.jpg");
+  const std::string sourcehref1("source1.jpg");
   alias->set_targethref(targethref1);
   alias->set_sourcehref(sourcehref1);
   resourcemap_->add_alias(alias);
@@ -396,7 +390,6 @@ TEST_F(ModelTest, TestDefaults) {
   ASSERT_FALSE(model_->has_id());
   ASSERT_FALSE(model_->has_targetid());
   ASSERT_EQ(ALTITUDEMODE_CLAMPTOGROUND, model_->get_altitudemode());
-  ASSERT_EQ(GX_ALTITUDEMODE_CLAMPTOSEAFLOOR, model_->get_gx_altitudemode());
   ASSERT_FALSE(model_->has_location());
   ASSERT_FALSE(model_->has_orientation());
   ASSERT_FALSE(model_->has_scale());
@@ -410,9 +403,6 @@ TEST_F(ModelTest, TestSetGetHasClear) {
   model_->set_altitudemode(ALTITUDEMODE_ABSOLUTE);
   ASSERT_TRUE(model_->has_altitudemode());
   ASSERT_EQ(ALTITUDEMODE_ABSOLUTE, model_->get_altitudemode());
-  model_->set_gx_altitudemode(GX_ALTITUDEMODE_RELATIVETOSEAFLOOR);
-  ASSERT_TRUE(model_->has_gx_altitudemode());
-  ASSERT_EQ(GX_ALTITUDEMODE_RELATIVETOSEAFLOOR, model_->get_gx_altitudemode());
 
   // Create all possible complex children and give to the Model:
   model_->set_location(KmlFactory::GetFactory()->CreateLocation());
@@ -428,7 +418,6 @@ TEST_F(ModelTest, TestSetGetHasClear) {
 
   // Clear all children:
   model_->clear_altitudemode();
-  model_->clear_gx_altitudemode();
   model_->clear_location();
   model_->clear_orientation();
   model_->clear_scale();

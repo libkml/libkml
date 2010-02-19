@@ -49,19 +49,18 @@ class SharedStyleParserObserverTest : public testing::Test {
     stylemap0_ = factory->CreateStyleMap();
     stylemap0_->set_id(kStyleMap0Id_);
     style_no_id_ = factory->CreateStyle();
-    // Create a non-strict SharedStyleParserObserver.
     shared_style_parser_observer_.reset(
-        new SharedStyleParserObserver(&shared_style_map_, false));
+        new SharedStyleParserObserver(&shared_style_map_));
   }
 
   kmldom::DocumentPtr document_;
   kmldom::FolderPtr folder_;
-  string kStyle0Id_;
+  std::string kStyle0Id_;
   kmldom::StylePtr style0_;
-  string kStyle1Id_;
+  std::string kStyle1Id_;
   kmldom::StylePtr style1_;
   kmldom::StylePtr style_no_id_;
-  string kStyleMap0Id_;
+  std::string kStyleMap0Id_;
   kmldom::StyleMapPtr stylemap0_;
   SharedStyleMap shared_style_map_;
   boost::scoped_ptr<SharedStyleParserObserver> shared_style_parser_observer_;
@@ -117,15 +116,12 @@ TEST_F(SharedStyleParserObserverTest, TestNewElement) {
   ASSERT_TRUE(shared_style_parser_observer_->NewElement(document_));
 }
 
-// Verify that AddChild() properly detects a duplicate Object id when
-// strict_parse is true.
+// Verify that AddChild() properly detects a duplicate Object id.
 TEST_F(SharedStyleParserObserverTest, TestAddChildDetectsDupeId) {
-  boost::scoped_ptr<SharedStyleParserObserver> shared_style_parser_observer(
-      new SharedStyleParserObserver(&shared_style_map_, true));
   // Pass a parent-child that will be added to the map.
-  ASSERT_TRUE(shared_style_parser_observer->AddChild(document_, style0_));
+  ASSERT_TRUE(shared_style_parser_observer_->AddChild(document_, style0_));
   // Verify that AddChild() detected the dupe.
-  ASSERT_FALSE(shared_style_parser_observer->AddChild(document_, style0_));
+  ASSERT_FALSE(shared_style_parser_observer_->AddChild(document_, style0_));
   // Verify that the map was not affected.
   ASSERT_EQ(static_cast<size_t>(1), shared_style_map_.size());
   kmldom::ObjectPtr object = shared_style_map_[kStyle0Id_];

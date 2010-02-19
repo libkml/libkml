@@ -25,6 +25,7 @@
 
 #include "kml/xsd/xsd_file.h"
 #include <algorithm>
+#include <string>
 #include <vector>
 #include "kml/base/expat_handler.h"
 #include "kml/base/expat_parser.h"
@@ -32,16 +33,15 @@
 #include "kml/xsd/xsd_handler.h"
 
 using std::vector;
-using kmlbase::ExpatParser;
 
 namespace kmlxsd {
 
 // static
-XsdFile* XsdFile::CreateFromParse(const string& xsd_data,
-                                        string* errors) {
+XsdFile* XsdFile::CreateFromParse(const std::string& xsd_data,
+                                        std::string* errors) {
   XsdFile* xsd_file = new XsdFile;
   XsdHandler xsd_handler(xsd_file);
-  if (ExpatParser::ParseString(xsd_data, &xsd_handler, errors, false)) {
+  if (kmlbase::ExpatParser(xsd_data, &xsd_handler, errors, false)) {
     return xsd_file;
   }
   delete xsd_file;
@@ -49,7 +49,7 @@ XsdFile* XsdFile::CreateFromParse(const string& xsd_data,
 }
 
 // TODO: mem_fun might help avoid this functor
-typedef std::pair<string, XsdElementPtr> NameElementPair;
+typedef std::pair<std::string, XsdElementPtr> NameElementPair;
 struct GetElement : public std::unary_function<NameElementPair, void> {
   GetElement(XsdElementVector* elements)
     : elements_(elements) {
@@ -77,13 +77,13 @@ void XsdFile::GetAllTypes(XsdTypeVector* types) const {
   }
 }
 
-const XsdTypePtr XsdFile::FindType(const string& type_name) const {
+const XsdTypePtr XsdFile::FindType(const std::string& type_name) const {
   XsdTypeMap::const_iterator iter = type_map_.find(type_name);
   return iter == type_map_.end() ? NULL : iter->second;
 }
 
 const XsdElementPtr XsdFile::FindElement(
-    const string& element_name) const {
+    const std::string& element_name) const {
   XsdElementMap::const_iterator iter = element_map_.find(element_name);
   return iter == element_map_.end() ? NULL : iter->second;
 }
@@ -99,7 +99,7 @@ const XsdTypePtr XsdFile::FindElementType(const XsdElementPtr& element) const {
   }
   // Chop off the namespace prefix of this element's type IFF this type is in
   // the <xs:schema>'s targetNamespace.
-  string type_name;
+  std::string type_name;
   if (!xsd_schema_ ||
       !xsd_schema_->SplitNsName(element->get_type(), &type_name)) {
     return NULL;
@@ -123,7 +123,7 @@ void XsdFile::FindChildElements(const XsdComplexTypePtr& complex_type,
   }
 }
 
-void XsdFile::GetChildElements(const string& complex_element_name,
+void XsdFile::GetChildElements(const std::string& complex_element_name,
                                XsdElementVector* elements) const {
   const XsdTypePtr xsd_type =
       FindElementType(FindElement(complex_element_name));
@@ -133,10 +133,10 @@ void XsdFile::GetChildElements(const string& complex_element_name,
   }
 }
 
-const XsdElementPtr XsdFile::ResolveRef(const string& element_ref) const {
+const XsdElementPtr XsdFile::ResolveRef(const std::string& element_ref) const {
   // Proceed only if there is an <xs:schema> set and if the given element_ref
   // is for this XSD file's target namespace.
-  string element_name;
+  std::string element_name;
   if (!xsd_schema_ || !xsd_schema_->SplitNsName(element_ref, &element_name)) {
     return NULL;
   }
@@ -145,7 +145,7 @@ const XsdElementPtr XsdFile::ResolveRef(const string& element_ref) const {
 
 XsdComplexTypePtr XsdFile::GetBaseType(
     const XsdComplexTypePtr& complex_type) const {
-  string type_name;
+  std::string type_name;
   if (!xsd_schema_->SplitNsName(complex_type->get_extension_base(),
                                 &type_name)) {
     return NULL;  // XSD is incomplete.
@@ -262,7 +262,7 @@ void XsdFile::GetElementsOfType(const XsdComplexTypePtr& type,
   }
 }
 
-void XsdFile::GetElementsOfTypeByName(const string& type_name,
+void XsdFile::GetElementsOfTypeByName(const std::string& type_name,
                                       XsdElementVector* elements) const {
   if (!elements) {
     return;

@@ -28,6 +28,7 @@
 #ifndef KML_XSD_XSD_ELEMENT_H__
 #define KML_XSD_XSD_ELEMENT_H__
 
+#include <string>
 #include "boost/intrusive_ptr.hpp"
 #include "kml/base/referent.h"
 #include "kml/xsd/xsd_primitive_type.h"
@@ -51,23 +52,23 @@ public:
   }
 
   // Get the value of the <xs:element default="..."> attribute.
-  const string& get_default() const {
+  const std::string& get_default() const {
     return default_;
   }
 
   // Get the value of the <xs:element name="..."> attribute.  This is the
   // value of ref= if is_ref() is true.
-  const string& get_name() const {
+  const std::string& get_name() const {
     return name_;
   }
 
   // Get the <xs:element substitutionGroup="..."> attribute.
-  const string& get_substitution_group() const {
+  const std::string& get_substitution_group() const {
     return substitution_group_;
   }
 
   // Get the <xs:element type="..."> attribute.
-  const string& get_type() const {
+  const std::string& get_type() const {
     return type_;
   }
 
@@ -101,11 +102,11 @@ public:
   bool ref_;
   int min_occurs_;
   int max_occurs_;
-  string default_;
-  string name_;
-  string type_;
+  std::string default_;
+  std::string name_;
+  std::string type_;
   XsdPrimitiveType::TypeId type_id_;
-  string substitution_group_;
+  std::string substitution_group_;
 };
 
 typedef boost::intrusive_ptr<XsdElement> XsdElementPtr;

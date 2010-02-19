@@ -44,12 +44,12 @@ BasicLink::~BasicLink() {
 static const char *kCdataOpen = "<![CDATA[";
 
 static bool SetStringInsideCdata(ElementPtr element,
-                                 const string& char_data,
-                                 string* val) {
+                                 const std::string& char_data,
+                                 std::string* val) {
   if (!element) {
     return false;
   }
-  string::size_type offset = strlen(kCdataOpen);
+  std::string::size_type offset = strlen(kCdataOpen);
   if (char_data.compare(0, offset, kCdataOpen, offset) == 0) {
     *val = char_data.substr(offset, char_data.size() - offset - 3);
     return true;
@@ -76,10 +76,6 @@ void BasicLink::Serialize(Serializer& serializer) const {
   if (has_href()) {
     serializer.SaveFieldById(Type_href, get_href());
   }
-}
-
-void BasicLink::Accept(Visitor* visitor) {
-  visitor->VisitBasicLink(BasicLinkPtr(this));
 }
 
 // Construct with defaults as per KML standard.
@@ -134,7 +130,9 @@ void AbstractLink::AddElement(const ElementPtr& element) {
 }
 
 void AbstractLink::Serialize(Serializer& serializer) const {
-  ElementSerializer element_serializer(*this, serializer);
+  Attributes attributes;
+  BasicLink::GetAttributes(&attributes);
+  serializer.BeginById(Type(), attributes);
   BasicLink::Serialize(serializer);
   if (has_refreshmode()) {
     serializer.SaveEnum(Type_refreshMode, get_refreshmode());
@@ -157,43 +155,38 @@ void AbstractLink::Serialize(Serializer& serializer) const {
   if (has_httpquery()) {
     serializer.SaveFieldById(Type_httpQuery, get_httpquery());
   }
+  Element::SerializeUnknown(serializer);
+  serializer.End();
 }
 
 Link::Link() {}
 
 Link::~Link() {}
 
-void Link::Accept(Visitor* visitor) {
-  visitor->VisitLink(LinkPtr(this));
-}
-
 Icon::Icon() {}
 
 Icon::~Icon() {}
 
-void Icon::Accept(Visitor* visitor) {
-  visitor->VisitIcon(IconPtr(this));
-}
-
 Url::Url() {}
 
 Url::~Url() {}
-
-void Url::Accept(Visitor* visitor) {
-  visitor->VisitUrl(UrlPtr(this));
-}
 
 IconStyleIcon::IconStyleIcon() {}
 
 IconStyleIcon::~IconStyleIcon() {}
 
 void IconStyleIcon::Serialize(Serializer& serializer) const {
-  ElementSerializer element_serializer(*this, serializer);
+  Attributes attributes;
+  BasicLink::GetAttributes(&attributes);
+  // At one point we "lied" here and called ourselves Type_Icon as a trick to
+  // cause the then XML-only Serializer to emit "<Icon/>".  Since then the
+  // Serializer API has been abstracted for other uses making it important
+  // that any element not lie about its actual type.  The actual XML name
+  // of an element is generally outside the scope of the element's own methods.
+  serializer.BeginById(Type(), attributes);
   BasicLink::Serialize(serializer);
-}
-
-void IconStyleIcon::Accept(Visitor* visitor) {
-  visitor->VisitIconStyleIcon(IconStyleIconPtr(this));
+  SerializeUnknown(serializer);
+  serializer.End();
 }
 
 }  // end namespace kmldom

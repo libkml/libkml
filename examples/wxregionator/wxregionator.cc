@@ -27,42 +27,15 @@
 // application.
 
 #include "wxregionator.h"
-#include <kml/base/csv_splitter.h>
-#include <kml/base/file.h>
 #include <kml/dom.h>
 #include <kml/convenience/convenience.h>
-#include <kml/convenience/csv_parser.h>
+#include <kml/convenience/csv_file.h>
 #include <kml/engine.h>
-#include <kml/regionator/feature_list_regionator.h>
+#include <kml/regionator/feature_list_region_handler.h>
 #include <kml/regionator/regionator.h>
 #include <wx/dir.h>
 #include <wx/file.h>
 #include <wx/progdlg.h>
-
-// This CsvParserHandler saves each "OK" Placemark to the given FeatureList.
-// Non-OK lines are quietly ignored.
-class FeatureListSaver : public kmlconvenience::CsvParserHandler {
- public:
-  FeatureListSaver(kmlconvenience::FeatureList* feature_list)
-    : feature_list_(feature_list) {
-  }
-
-  // This is the method called from within the CsvParser for each line in the
-  // input CSV.  In this implementation we save all Placemarks from good lines
-  // and quietly skip over imperfect lines.
-  virtual bool HandleLine(int line, kmlconvenience::CsvParserStatus status,
-                          kmldom::PlacemarkPtr p) {
-    if (status == kmlconvenience::CSV_PARSER_STATUS_OK &&
-        kmlengine::GetFeatureLatLon(p, NULL, NULL)) {
-      feature_list_->PushBack(p);
-    }
-    // TODO: how to indicate an error on a given line?
-    return true;  // Always advance to the next line of CSV data.
-  }
-
- private:
-  kmlconvenience::FeatureList* feature_list_;
-};
 
 // IDs for the controls and menu commands.
 enum {
@@ -157,51 +130,41 @@ void MainFrame::GenerateRbnl(wxCommandEvent& event) {
 
   // Check if the output dir is empty. Bail if the dir wasn't empty and the
   // user elected not to continue.
-  const char* output_dir = output_dir_ctrl_->GetPath();
-  if (!AskIfOutputDirNotEmpty(output_dir)) {
+  if (!AskIfOutputDirNotEmpty(output_dir_ctrl_->GetPath())) {
     return;
   }
-
-  string csv_data;
-  if (!kmlbase::File::ReadFileToString(input_file_ctrl_->GetPath().c_str(),
-                                       &csv_data)) {
-    // TODO: how to indicate file read error?
-    return;
-  }
-  kmlbase::CsvSplitter csv_splitter(csv_data);
 
   // Parse the CSV file into a FeatureList of Point Placemarks sorted by score.
   kmlconvenience::FeatureList feature_list;
-  FeatureListSaver feature_saver(&feature_list);
-  if (!kmlconvenience::CsvParser::ParseCsv(&csv_splitter, &feature_saver)) {
-    // TODO: how to indicate CSV parse error?
-    return;
-  }
+  kmlconvenience::CsvFile placemarks(&feature_list);
+  // TODO: ParseCsvFile should return a bool?
+  placemarks.ParseCsvFile(input_file_ctrl_->GetPath().c_str());
+  feature_list.Sort();
 
+  // Give the FeatureList to the FeatureListRegionHandler.
+  kmlregionator::FeatureListRegionHandler feature_list_region_handler(
+      &feature_list);
+
+  // Create a root Region based on the bounding box of the FeatureList.
+  kmlengine::Bbox bbox;
+  feature_list.ComputeBoundingBox(&bbox);
+
+  // TODO: snap.
+  kmldom::RegionPtr root = kmlconvenience::CreateRegion2d(bbox.get_north(),
+                                                          bbox.get_south(),
+                                                          bbox.get_east(),
+                                                          bbox.get_west(),
+                                                          256, -1);
+
+  // Create a Regionator instance and walk the hierarchy starting at root.
+  kmlregionator::Regionator regionator(feature_list_region_handler, root);
+
+  // TODO: a way to monitor progress would be useful.
   wxString info("Regionation in progress");
-  // TODO: use a smart pointer
-  progress_dialog_ = new wxProgressDialog(info, info, feature_list.Size(),
-                                          this,
-                                          wxPD_CAN_ABORT | wxPD_APP_MODAL);
-
-  // Give the FeatureList to the FeatureListRegionator which walks the
-  // hierarchy starting at root.  The output is aligned to a quadtree rooted
-  // at n=180, s=-180, e=180, w=-180.
-  if (!kmlregionator::FeatureListRegionator<MainFrame>::Regionate(
-      &feature_list, 10, this, output_dir)) {
-    // TODO: tell user about failure
+  wxProgressDialog dialog(info, info, 1, this, wxPD_CAN_ABORT | wxPD_APP_MODAL);
+  while(!regionator.Regionate(output_dir_ctrl_->GetPath().c_str())) {
+    dialog.Pulse();
   }
-  delete progress_dialog_;  // This takes down the dialog.
-  // TODO: tell user OK!
-}
-
-bool MainFrame::RegionatorProgress(unsigned int completed, unsigned int total) {
-  if (progress_dialog_) {
-    if (!progress_dialog_->Update(completed)) {
-      return false;  // User pressed cancel so that we will do.
-    }
-  }
-  return true;  // Continue regionating.
 }
 
 void MainFrame::OnQuit(wxCommandEvent& event) {

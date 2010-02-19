@@ -26,8 +26,11 @@
 // This file contains the implementation of the Attributes class.
 
 #include "kml/base/attributes.h"
+#include <stdlib.h>
 #include <map>
-#include <vector>
+#include <sstream>
+#include <string>
+#include "kml/base/util.h"
 
 namespace kmlbase {
 
@@ -41,118 +44,150 @@ Attributes* Attributes::Create(const char** attrs) {
   return NULL;
 }
 
-Attributes* Attributes::Create(const kmlbase::StringVector& attrs) {
-  Attributes* attributes = new Attributes;
-  if (attributes->Parse(attrs)) {
-    return attributes;
-  }
-  delete attributes;
-  return NULL;
-}
-
 // private
 bool Attributes::Parse(const char** attrs) {
   while (*attrs && *(attrs+1)) {  // Quietly ignore unpaired last item.
     const char* attr_name = *attrs++;
     const char* attr_val = *attrs++;
-    attributes_map_[attr_name] = attr_val;
+    attributes_[attr_name] = attr_val;
   }
   return true;
 }
 
-bool Attributes::Parse(const kmlbase::StringVector& attrs) {
-  for (unsigned int i = 0; i < attrs.size() ; i += 2) {
-    if (attrs.size() - i < 1)
-      break;
-    string attr_name = attrs.at(i);
-    string attr_val = attrs.at(i+1);
-    attributes_map_[attr_name] = attr_val;
+// Get the value of the given attribute as a string.  Returns true if an
+// attribute with this name exits.  If no attribute by this name exists
+// false is returned and the string is untouched.  If no result string
+// pointer is supplied false is returned.
+bool Attributes::GetString(const std::string attr_name,
+                           std::string* attr_val) const {
+  if (!attr_val) {
+    return false;
   }
+  StringStringMap::const_iterator entry = attributes_.find(attr_name);
+  if (entry == attributes_.end()) {
+    return false;
+  }
+  *attr_val = entry->second;
   return true;
 }
 
-void Attributes::Serialize(string* output) const {
-  if (output) {
-    StringMapIterator iter = CreateIterator();
-    for (; !iter.AtEnd(); iter.Advance()) {
-      *output += " ";
-      *output += iter.Data().first;
-      *output += "=\"";
-      *output += iter.Data().second;
-      *output += "\"";
-    }
+// Set the value of the given attribute.  Any previous value for this
+// attribute is overwritten.
+void Attributes::SetString(const std::string attr_name,
+                           const std::string attr_val) {
+  attributes_[attr_name] = attr_val;
+}
+
+// Get the value of the given attribute as a double.  If the attribute value
+// is not a valid double the output is 0.  This returns true if an attribute
+// with this name exists.  If no attribute by this name exists false is
+// returned and the result pointer is untouched.  If no result pointer is
+// supplied false is returned.
+bool Attributes::GetDouble(const std::string attr_name,
+                           double* attr_val) const {
+  if (!attr_val) {
+    return false;
   }
-}
-
-Attributes* Attributes::Clone() const { 
-  Attributes* clone = new Attributes();
-  clone->attributes_map_ = attributes_map_;
-  return clone;
-}
-
-void Attributes::MergeAttributes(const Attributes& input) {
-  StringMapIterator iter = input.CreateIterator();
-  for (; !iter.AtEnd(); iter.Advance()) {
-    attributes_map_[iter.Data().first] = iter.Data().second;
-  }
-}
-
-bool Attributes::FindValue(const string& key, string* value) const {
-  StringMap::const_iterator entry = attributes_map_.find(key); 
-  if (entry != attributes_map_.end()) {
-    if (value) {
-      *value = entry->second;
-    } 
+  std::string string_value;
+  if (GetString(attr_name, &string_value)) {
+    *attr_val = strtod(string_value.c_str(), NULL);
     return true;
-  } 
-  return false;
-} 
-
-bool Attributes::FindKey(const string& value, string* key) const {
-  StringMapIterator iter = CreateIterator();
-  for (; !iter.AtEnd(); iter.Advance()) {
-    if (value == iter.Data().second) {
-      if (key) {
-        *key = iter.Data().first;
-      }
-      return true;
-    }
   }
   return false;
 }
 
-void Attributes::GetAttrNames(std::vector<string>* string_vector) const {
-  if (string_vector) {
-    StringMapIterator iter = CreateIterator();
-    for (; !iter.AtEnd(); iter.Advance()) {
-      string_vector->push_back(iter.Data().first);
+// Set the value of the given attribute from a double.  Any previous value
+// for this attribute is overwritten.
+void Attributes::SetDouble(const std::string attr_name, double attr_val) {
+  std::stringstream ss;
+  ss.precision(15);
+  ss << attr_val;
+  SetString(attr_name, ss.str());
+}
+
+bool Attributes::GetInt(const std::string attr_name, int* attr_val) const {
+  if (!attr_val) {
+    return false;
+  }
+  std::string string_value;
+  if (GetString(attr_name, &string_value)) {
+    *attr_val = atoi(string_value.c_str());
+    return true;
+  }
+  return false;
+}
+
+void Attributes::SetInt(const std::string attr_name, int attr_val) {
+  std::stringstream ss;
+  ss << attr_val;
+  SetString(attr_name, ss.str());
+}
+
+// Get the value of the given boolean attribute.  If attr_val is supplied
+// it is set to true if the attribute value is "true", else false.  This
+// method returns true if the given attribute exists, else false.
+bool Attributes::GetBool(const std::string& attr_name, bool* attr_val) const {
+  std::string string_value;
+  if (GetString(attr_name, &string_value)) {
+    if (attr_val) {
+      *attr_val = string_value == "true";
     }
+    return true;
+  }
+  return false;
+}
+
+// Serialize the current state of the Attributes instance into the
+// passed string.  This appends to any content previously in the string.
+// If no string pointer is supplied this method does nothing.
+void Attributes::Serialize(std::string* output) const {
+  if (!output) {
+    return;
+  }
+  StringStringMap::const_iterator entry;
+  for (entry = attributes_.begin(); entry != attributes_.end(); ++entry) {
+    *output += " ";
+    *output += entry->first;
+    *output += "=\"";
+    *output += entry->second;
+    *output += "\"";
   }
 }
 
-Attributes* Attributes::SplitByPrefix(const string& prefix) {
-  size_t prefix_size = prefix.size() + 1;  // +1 for the ":"
-  Attributes* split = new Attributes();
-  std::vector<string> keys_to_erase;
-  for (StringMapIterator iter = CreateIterator();
-       !iter.AtEnd(); iter.Advance()) {
-    const string& key = iter.Data().first;
-    if (key.compare(0, prefix_size, prefix + ":") == 0) {
-      split->SetValue(key.substr(prefix_size), iter.Data().second);
-      // Can't erase() while iterating so save the key.
-      keys_to_erase.push_back(key);
+// Creates an exact copy of the Attributes object. Called by
+// Element::ParseAttributes().
+Attributes* Attributes::Clone() const {
+  Attributes* attributes = new Attributes();
+  for (StringStringMap::const_iterator itr = attributes_.begin();
+       itr != attributes_.end(); ++itr) {
+    attributes->SetString(itr->first, itr->second);
+  }
+  return attributes;
+}
+
+// This sets each attribute from the passed Attributes instance.
+// Any conflicting attributes are overridden from the input.
+void Attributes::MergeAttributes(const Attributes& attrs) {
+  for (StringStringMap::const_iterator itr = attrs.attributes_.begin();
+       itr != attrs.attributes_.end(); ++itr) {
+    attributes_[itr->first] = itr->second;
+  }
+}
+
+void Attributes::MatchSplitKey(const std::string& match,
+                               StringStringMap* out) const {
+  if (!out) {
+    return;
+  }
+  size_t match_size = match.size();
+  for (StringStringMap::const_iterator itr = attributes_.begin();
+       itr != attributes_.end(); ++itr) {
+    const std::string& lhs = itr->first;
+    if (lhs.size() > match_size && lhs.compare(0, match_size, match) == 0) {
+      (*out)[lhs.substr(match_size)] = itr->second;
     }
   }
-  // Nothing was split out so just return now.
-  if (split->attributes_map_.empty()) {
-    delete split;
-    return NULL;
-  }
-  // Go back and remove all entries added to the split map.
-  for (size_t i = 0; i < keys_to_erase.size(); ++i) {
-    attributes_map_.erase(keys_to_erase[i]);
-  }
-  return split;
 }
 
 }  // end namespace kmlbase
+

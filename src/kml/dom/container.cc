@@ -52,33 +52,11 @@ void Container::AddElement(const ElementPtr& element) {
   }
 }
 
-// This exists for the benefit of Document which has special serialization
-// needs.  See document.cc.
-void Container::SerializeFeatureArray(Serializer& serializer) const {
-  serializer.SaveElementGroupArray(feature_array_, Type_Feature);
-}
-
 void Container::Serialize(Serializer& serializer) const {
   Feature::Serialize(serializer);
-  SerializeFeatureArray(serializer);
-}
-
-FeaturePtr Container::DeleteFeatureById(const string& id) {
-  // TODO: push all this to Element to properly/centrally remove parent.
-  std::vector<FeaturePtr>::iterator iter = feature_array_.begin();
-  for (; iter != feature_array_.end(); ++iter) {
-    FeaturePtr feature = *iter;
-    if (feature->has_id() && id == feature->get_id()) {
-      feature_array_.erase(iter);
-      return feature;
-    }
+  for (size_t i = 0; i < get_feature_array_size(); ++i) {
+    serializer.SaveElementGroup(get_feature_array_at(i), Type_Feature);
   }
-  return NULL;
-}
-
-void Container::AcceptChildren(VisitorDriver* driver) {
-  Feature::AcceptChildren(driver);
-  Element::AcceptRepeated<FeaturePtr>(&feature_array_, driver);
 }
 
 }  // end namespace kmldom

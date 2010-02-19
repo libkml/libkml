@@ -28,7 +28,6 @@
 
 #include "kml/dom/extendeddata.h"
 #include "kml/base/attributes.h"
-#include "kml/base/xml_namespaces.h"
 #include "kml/dom/kml_cast.h"
 #include "kml/dom/kml_ptr.h"
 #include "kml/dom/serializer.h"
@@ -42,25 +41,21 @@ namespace kmldom {
 SimpleData::SimpleData()
   : has_name_(false),
     has_text_(false) {
-  set_xmlns(kmlbase::XMLNS_KML22);
 }
 
 SimpleData::~SimpleData() {}
 
 static const char kSimpleDataName[] = "name";
 
-void SimpleData::ParseAttributes(Attributes* attributes) {
-  if (!attributes) {
-    return;
-  }
-  has_name_ = attributes->CutValue(kSimpleDataName, &name_);
-  AddUnknownAttributes(attributes);
+void SimpleData::ParseAttributes(const Attributes& attributes) {
+  has_name_ = attributes.GetString(kSimpleDataName, &name_);
+  Element::ParseAttributes(attributes);
 }
 
-void SimpleData::SerializeAttributes(Attributes* attributes) const {
-  Element::SerializeAttributes(attributes);
+void SimpleData::GetAttributes(Attributes* attributes) const {
+  Element::GetAttributes(attributes);
   if (has_name_) {
-    attributes->SetValue(kSimpleDataName, name_);
+    attributes->SetString(kSimpleDataName, name_);
   }
 }
 
@@ -78,20 +73,19 @@ void SimpleData::AddElement(const ElementPtr& element) {
 }
 
 void SimpleData::Serialize(Serializer& serializer) const {
-  ElementSerializer element_serializer(*this, serializer);
+  Attributes attributes;
+  GetAttributes(&attributes);
+  serializer.BeginById(Type(), attributes);
   if (has_text()) {
     serializer.SaveContent(text_, true);
   }
-}
-
-void SimpleData::Accept(Visitor* visitor) {
-  visitor->VisitSimpleData(SimpleDataPtr(this));
+  Element::SerializeUnknown(serializer);
+  serializer.End();
 }
 
 // <SchemaData>
 SchemaData::SchemaData()
   : has_schemaurl_(false) {
-  set_xmlns(kmlbase::XMLNS_KML22);
 }
 
 SchemaData::~SchemaData() {
@@ -101,18 +95,14 @@ SchemaData::~SchemaData() {
 
 static const char kSchemaUrl[] = "schemaUrl";
 
-void SchemaData::ParseAttributes(Attributes* attributes) {
-  if (!attributes) {
-    return;
-  }
-  has_schemaurl_ = attributes->CutValue(kSchemaUrl, &schemaurl_);
+void SchemaData::ParseAttributes(const Attributes& attributes) {
+  has_schemaurl_ = attributes.GetString(kSchemaUrl, &schemaurl_);
   Object::ParseAttributes(attributes);
 }
 
-void SchemaData::SerializeAttributes(Attributes* attributes) const {
-  Object::SerializeAttributes(attributes);
+void SchemaData::GetAttributes(Attributes* attributes) const {
   if (has_schemaurl_) {
-    attributes->SetValue(kSchemaUrl, schemaurl_);
+    attributes->SetString(kSchemaUrl, schemaurl_);
   }
 }
 
@@ -125,18 +115,16 @@ void SchemaData::AddElement(const ElementPtr& element) {
 }
 
 void SchemaData::Serialize(Serializer& serializer) const {
-  ElementSerializer element_serializer(*this, serializer);
+  Attributes attributes;
+  GetAttributes(&attributes);
+  Object::GetAttributes(&attributes);
+  serializer.BeginById(Type(), attributes);
   Object::Serialize(serializer);
-  serializer.SaveElementArray(simpledata_array_);
-}
-
-void SchemaData::Accept(Visitor* visitor) {
-  visitor->VisitSchemaData(SchemaDataPtr(this));
-}
-
-void SchemaData::AcceptChildren(VisitorDriver* driver) {
-  Object::AcceptChildren(driver);
-  Element::AcceptRepeated<SimpleDataPtr>(&simpledata_array_, driver);
+  for (size_t i = 0; i < get_simpledata_array_size(); ++i) {
+    serializer.SaveElement(get_simpledata_array_at(i));
+  }
+  Element::SerializeUnknown(serializer);
+  serializer.End();
 }
 
 // <Data>
@@ -144,25 +132,20 @@ Data::Data()
   : has_name_(false),
     has_displayname_(false),
     has_value_(false) {
-  set_xmlns(kmlbase::XMLNS_KML22);
 }
 
 Data::~Data() {}
 
 static const char kDataName[] = "name";
 
-void Data::ParseAttributes(Attributes* attributes) {
-  if (!attributes) {
-    return;
-  }
-  has_name_ = attributes->CutValue(kDataName, &name_);
+void Data::ParseAttributes(const Attributes& attributes) {
+  has_name_ = attributes.GetString(kDataName, &name_);
   Object::ParseAttributes(attributes);
 }
 
-void Data::SerializeAttributes(Attributes* attributes) const {
-  Object::SerializeAttributes(attributes);
+void Data::GetAttributes(Attributes* attributes) const {
   if (has_name_) {
-    attributes->SetValue(kDataName, name_);
+    attributes->SetString(kDataName, name_);
   }
 }
 
@@ -180,7 +163,10 @@ void Data::AddElement(const ElementPtr& element) {
 }
 
 void Data::Serialize(Serializer& serializer) const {
-  ElementSerializer element_serializer(*this, serializer);
+  Attributes attributes;
+  GetAttributes(&attributes);
+  Object::GetAttributes(&attributes);
+  serializer.BeginById(Type(), attributes);
   Object::Serialize(serializer);
   if (has_displayname()) {
     serializer.SaveFieldById(Type_displayName, get_displayname());
@@ -188,16 +174,12 @@ void Data::Serialize(Serializer& serializer) const {
   if (has_value()) {
     serializer.SaveFieldById(Type_value, get_value());
   }
-}
-
-void Data::Accept(Visitor* visitor) {
-  visitor->VisitData(DataPtr(this));
+  Element::SerializeUnknown(serializer);
+  serializer.End();
 }
 
 // <ExtendedData>
-ExtendedData::ExtendedData() {
-  set_xmlns(kmlbase::XMLNS_KML22);
-}
+ExtendedData::ExtendedData() {}
 
 ExtendedData::~ExtendedData() {
   // data_array_'s and schemadata_array_'s destructors call the destructor of
@@ -216,35 +198,26 @@ void ExtendedData::AddElement(const ElementPtr& element) {
 }
 
 void ExtendedData::Serialize(Serializer& serializer) const {
-  ElementSerializer element_serializer(*this, serializer);
-  serializer.SaveElementArray(data_array_);
-  serializer.SaveElementArray(schemadata_array_);
-}
-
-void ExtendedData::Accept(Visitor* visitor) {
-  visitor->VisitExtendedData(ExtendedDataPtr(this));
-}
-
-void ExtendedData::AcceptChildren(VisitorDriver* driver) {
-  Element::AcceptChildren(driver);
-  Element::AcceptRepeated<DataPtr>(&data_array_, driver);
-  Element::AcceptRepeated<SchemaDataPtr>(&schemadata_array_, driver);
+  Attributes attributes;
+  serializer.BeginById(Type(), attributes);
+  for (size_t i = 0; i < data_array_.size(); i++) {
+    data_array_[i]->Serialize(serializer);
+  }
+  for (size_t i = 0; i < schemadata_array_.size(); i++) {
+    schemadata_array_[i]->Serialize(serializer);
+  }
+  Element::SerializeUnknown(serializer);
+  serializer.End();
 }
 
 // <Metadata>
-Metadata::Metadata() {
-  set_xmlns(kmlbase::XMLNS_KML22);
-}
-
-Metadata::~Metadata() {
-}
+Metadata::~Metadata() {}
 
 void Metadata::Serialize(Serializer& serializer) const {
-  ElementSerializer element_serializer(*this, serializer);
-}
-
-void Metadata::Accept(Visitor* visitor) {
-  visitor->VisitMetadata(MetadataPtr(this));
+  Attributes attributes;
+  serializer.BeginById(Type(), attributes);
+  Element::SerializeUnknown(serializer);
+  serializer.End();
 }
 
 }  // end namespace kmldom

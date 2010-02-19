@@ -62,8 +62,10 @@ void Pair::AddElement(const ElementPtr& element) {
 }
 
 void Pair::Serialize(Serializer& serializer) const {
-  ElementSerializer element_serializer(*this, serializer);
+  Attributes attributes;
+  Object::GetAttributes(&attributes);
   Object::Serialize(serializer);
+  serializer.BeginById(Type(), attributes);
   if (has_key()) {
     serializer.SaveEnum(Type_key, get_key());
   }
@@ -73,17 +75,8 @@ void Pair::Serialize(Serializer& serializer) const {
   if (has_styleselector()) {
     serializer.SaveElementGroup(get_styleselector(), Type_StyleSelector);
   }
-}
-
-void Pair::Accept(Visitor* visitor) {
-  visitor->VisitPair(PairPtr(this));
-}
-
-void Pair::AcceptChildren(VisitorDriver* driver) {
-  Object::AcceptChildren(driver);
-  if (has_styleselector()) {
-    driver->Visit(get_styleselector());
-  }
+  SerializeUnknown(serializer);
+  serializer.End();
 }
 
 // <StyleMap>
@@ -103,18 +96,15 @@ void StyleMap::AddElement(const ElementPtr& element) {
 }
 
 void StyleMap::Serialize(Serializer& serializer) const {
-  ElementSerializer element_serializer(*this, serializer);
+  Attributes attributes;
+  StyleSelector::GetAttributes(&attributes);
+  serializer.BeginById(Type(), attributes);
   StyleSelector::Serialize(serializer);
-  serializer.SaveElementArray(pair_array_);
-}
-
-void StyleMap::Accept(Visitor* visitor) {
-  visitor->VisitStyleMap(StyleMapPtr(this));
-}
-
-void StyleMap::AcceptChildren(VisitorDriver* driver) {
-  StyleSelector::AcceptChildren(driver);
-  Element::AcceptRepeated<PairPtr>(&pair_array_, driver);
+  for (size_t i = 0; i < get_pair_array_size(); ++i) {
+    serializer.SaveElement(get_pair_array_at(i));
+  }
+  SerializeUnknown(serializer);
+  serializer.End();
 }
 
 }  // end namespace kmldom

@@ -2,7 +2,6 @@ SUBDIRS = \
 	domviewer \
 	engine \
 	gpx \
-	gx \
 	hellonet \
 	helloworld \
 	java \
@@ -13,3 +12,5 @@ SUBDIRS = \
 	wxviewer \
 	xsd
 
+EXTRA_DIST = \
+	examples.sln

@@ -28,8 +28,6 @@
 
 %module kmldom
 
-%import "kmlbase.i"
-
 // Include the headers needed to build kmldom_wrap.cc.
 %{
 #include "kml/dom.h"
@@ -43,22 +41,20 @@
 // TODO: push these changes into a future version of SWIG as there
 //       are no libkml-specific enhancements these intrusive_ptr .i files.
 #ifdef SWIGPYTHON
-%include "python/libkml_boost_intrusive_ptr.i"
+%include "python/boost_intrusive_ptr.i"
 #elif SWIGJAVA
-%include "java/libkml_boost_intrusive_ptr.i"
+%include "java/boost_intrusive_ptr.i"
 #endif
-
-%include "typemaps.i"
 
 // Classes for abstract elements and internal convenience classes.
 SWIG_INTRUSIVE_PTR(Referent, kmlbase::Referent)
-SWIG_INTRUSIVE_PTR_DERIVED(XmlElement, kmlbase::Referent, kmlbase::XmlElement)
-SWIG_INTRUSIVE_PTR_DERIVED(Element, kmlbase::XmlElement, kmldom::Element)
+SWIG_INTRUSIVE_PTR_DERIVED(Element, kmlbase::Referent, kmldom::Element)
 SWIG_INTRUSIVE_PTR_DERIVED(AbstractLatLonBox, kmldom::Object,
                            kmldom::AbstractLatLonBox)
 SWIG_INTRUSIVE_PTR_DERIVED(AbstractView, kmldom::Object, kmldom::AbstractView)
 SWIG_INTRUSIVE_PTR_DERIVED(BasicLink, kmldom::Object, kmldom::BasicLink)
 SWIG_INTRUSIVE_PTR_DERIVED(Container, kmldom::Feature, kmldom::Container)
+SWIG_INTRUSIVE_PTR_DERIVED(Coordinates, kmldom::Element, kmldom::Coordinates)
 SWIG_INTRUSIVE_PTR_DERIVED(ColorStyle, kmldom::SubStyle, kmldom::ColorStyle)
 SWIG_INTRUSIVE_PTR_DERIVED(Feature, kmldom::Object, kmldom::Feature)
 SWIG_INTRUSIVE_PTR_DERIVED(Geometry, kmldom::Object, kmldom::Geometry)
@@ -153,26 +149,6 @@ SWIG_INTRUSIVE_PTR_DERIVED(TimeStamp, kmldom::TimePrimitive, kmldom::TimeStamp)
 SWIG_INTRUSIVE_PTR_DERIVED(ViewVolume, kmldom::Object, kmldom::ViewVolume)
 SWIG_INTRUSIVE_PTR_DERIVED(Update, kmldom::Element, kmldom::Update)
 
-SWIG_INTRUSIVE_PTR_DERIVED(GxTourPrimitive, kmldom::Object,
-                           kmldom::GxTourPrimitive)
-SWIG_INTRUSIVE_PTR_DERIVED(GxAnimatedUpdate, kmldom::GxTourPrimitive,
-                           kmldom::GxAnimatedUpdate)
-SWIG_INTRUSIVE_PTR_DERIVED(GxFlyTo, kmldom::GxTourPrimitive,
-                           kmldom::GxFlyTo)
-SWIG_INTRUSIVE_PTR_DERIVED(GxLatLonQuad, kmldom::Object,
-                           kmldom::GxLatLonQuad)
-SWIG_INTRUSIVE_PTR_DERIVED(GxPlaylist, kmldom::Object, kmldom::GxPlaylist)
-SWIG_INTRUSIVE_PTR_DERIVED(GxSoundCue, kmldom::GxTourPrimitive,
-                           kmldom::GxSoundCue)
-SWIG_INTRUSIVE_PTR_DERIVED(GxTimeSpan, kmldom::TimeSpan, kmldom::GxTimeSpan)
-SWIG_INTRUSIVE_PTR_DERIVED(GxTimeStamp, kmldom::TimeStamp,
-                           kmldom::GxTimeStamp)
-SWIG_INTRUSIVE_PTR_DERIVED(GxTour, kmldom::Feature, kmldom::GxTour)
-SWIG_INTRUSIVE_PTR_DERIVED(GxTourControl, kmldom::GxTourPrimitive,
-                           kmldom::GxTourControl)
-SWIG_INTRUSIVE_PTR_DERIVED(GxWait, kmldom::GxTourPrimitive,
-                           kmldom::GxWait)
-
 // Tell SWIG about C++ Standard Library std::string.
 %include "std_string.i"
 
@@ -188,10 +164,8 @@ namespace kmlbase {
 class Referent {
 };
 
-%nodefaultctor XmlElement;
-class XmlElement {
- public:
-  // TODO: XmlnsId get_xmlns() const;
+%nodefaultctor Color32;
+class Color32 {
 };
 
 }  // end namespace kmlbase
@@ -204,10 +178,17 @@ namespace kmldom {
 // in the underlying class since only the factory creates an element instance.
 
 %nodefaultctor Element;
-class Element : public kmlbase::XmlElement {
+class Element : public kmlbase::Referent{
 public:
   virtual KmlDomType Type();
   virtual bool IsA(KmlDomType type_id);
+};
+
+class Vec3 {
+public:
+  double get_longitude();
+  double get_latitude();
+  double get_altitude();
 };
 
 // This is <coordinates> in the KML 2.2 XSD.
@@ -217,7 +198,7 @@ public:
   void add_latlng(double latitude, double longitude);
   void add_latlngalt(double latitude, double longitude, double altitude);
   size_t get_coordinates_array_size();
-  const kmlbase::Vec3 get_coordinates_array_at(unsigned int index);
+  const Vec3 get_coordinates_array_at(unsigned int index);
 };
 
 // This is vec2Type in the KML 2.2 XSD.
@@ -256,10 +237,7 @@ class KmlFactory {
 public:
   static KmlFactory* GetFactory();
 
-  // This method creates any complex element in Element type.
-  ElementPtr CreateElementById(KmlDomType id) const;
-
-  // Factory functions to create all KML complex elements in their native type.
+  // Factory functions to create all KML complex elements.
   AliasPtr CreateAlias() const;
   AtomAuthorPtr CreateAtomAuthor() const;
   AtomLinkPtr CreateAtomLink() const;
@@ -325,17 +303,6 @@ public:
   TimeStampPtr CreateTimeStamp() const;
   ViewVolumePtr CreateViewVolume() const;
   UpdatePtr CreateUpdate() const;
-
-  GxAnimatedUpdatePtr CreateGxAnimatedUpdate() const;
-  GxFlyToPtr CreateGxFlyTo() const;
-  GxLatLonQuadPtr CreateGxLatLonQuad() const;
-  GxPlaylistPtr CreateGxPlaylist() const;
-  GxSoundCuePtr CreateGxSoundCue() const;
-  GxTimeSpanPtr CreateGxTimeSpan() const;
-  GxTimeStampPtr CreateGxTimeStamp() const;
-  GxTourPtr CreateGxTour() const;
-  GxTourControlPtr CreateGxTourControl() const;
-  GxWaitPtr CreateGxWait() const;
 };
 
 // Parse KML from memory buffer to Element hierarchy.

@@ -37,18 +37,13 @@
 namespace kmlengine {
 
 // The SharedStyleParserObserver is a kmldom::ParserObserver which gathers all
-// all shared StyleSelectors into the supplied SharedStyleMap.  If strict_parse
-// is true AddChild() returns false on any id collision causing the parse to
-// terminate when this is used with kmldom::Parse::AddObserver().  If
-// strict_parse is false the "last one wins" on any duplicate.
-// TODO: provide an error log for this latter case.
+// all shared StyleSelectors into the supplied shared_style_map_t.  AddChild()
+// returns false on any id collision causing the parse to terminate when
+// this is used with kmldom::Parse::AddObserver().
 class SharedStyleParserObserver : public kmldom::ParserObserver {
  public:
-  // A SharedStyleMap must be supplied.
-  SharedStyleParserObserver(SharedStyleMap* shared_style_map,
-                            bool strict_parse)
-    : shared_style_map_(shared_style_map),
-      strict_parse_(strict_parse) {}
+  SharedStyleParserObserver(SharedStyleMap* shared_style_map)
+    : shared_style_map_(shared_style_map) {}  // TODO: NULL check or use ref
 
   virtual ~SharedStyleParserObserver() {}
 
@@ -61,13 +56,12 @@ class SharedStyleParserObserver : public kmldom::ParserObserver {
     if (kmldom::DocumentPtr document = kmldom::AsDocument(parent)) {
       if (kmldom::StyleSelectorPtr ss = kmldom::AsStyleSelector(child)) {
         if (ss->has_id()) {
-          if (strict_parse_ && shared_style_map_->find(ss->get_id()) !=
-                               shared_style_map_->end()) {
-            // TODO: provide means to send back an and error string with id
+          if (shared_style_map_->find(ss->get_id()) !=
+              shared_style_map_->end()) {
             return false;  // Duplicate id, fail parse.
           }
         }
-        // No such mapping so save it, and "last one wins" on non-strict parse.
+        // No such mapping so save it.
         (*shared_style_map_)[ss->get_id()] = ss;
       }
     }
@@ -76,7 +70,6 @@ class SharedStyleParserObserver : public kmldom::ParserObserver {
  
  private:
   SharedStyleMap* shared_style_map_;
-  bool strict_parse_;
 };
 
 }  // end namespace kmlengine

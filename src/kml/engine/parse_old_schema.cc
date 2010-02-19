@@ -26,6 +26,7 @@
 
 #include "kml/engine/parse_old_schema.h"
 #include <map>
+#include <string>
 #include "kml/dom.h"
 #include "kml/engine/engine_types.h"
 
@@ -34,9 +35,9 @@ using kmldom::SchemaPtr;
 
 namespace kmlengine {
 
-bool ConvertOldSchema(const string& input_xml,
+bool ConvertOldSchema(const std::string& input_xml,
                       const SchemaNameMap& schema_name_map,
-                      string* output_xml) {
+                      std::string* output_xml) {
   if (!output_xml) {
     return false;
   }
@@ -44,14 +45,14 @@ bool ConvertOldSchema(const string& input_xml,
   if (input_xml[0] != '<') {
     return false;
   }
-  string::size_type gt = input_xml.find('>');
-  if (gt == string::npos) {
+  std::string::size_type gt = input_xml.find('>');
+  if (gt == std::string::npos) {
     return false;
   }
-  const string tag_name = input_xml.substr(1, gt-1);
-  string::size_type end_tag =
-      input_xml.find(string("</" + tag_name + ">"));
-  if (end_tag == string::npos) {
+  const std::string tag_name = input_xml.substr(1, gt-1);
+  std::string::size_type end_tag =
+      input_xml.find(std::string("</" + tag_name + ">"));
+  if (end_tag == std::string::npos) {
     return false;
   }
   // See if there's a <Schema> by/for this name.
@@ -67,10 +68,10 @@ bool ConvertOldSchema(const string& input_xml,
   return true;
 }
 
-PlacemarkPtr ParseOldSchema(const string& xml,
+PlacemarkPtr ParseOldSchema(const std::string& xml,
                             const SchemaNameMap& schema_name_map,
-                            string* errors) {
-  string converted_xml;
+                            std::string* errors) {
+  std::string converted_xml;
   if (!ConvertOldSchema(xml, schema_name_map, &converted_xml)) {
     return NULL;
   }

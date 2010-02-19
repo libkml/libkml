@@ -1,3 +1,1 @@
-SUBDIRS = \
-	atom balloon csv deprecated gdata gmaps gpx gx kml kmz links style update \
-	xal xsd
+SUBDIRS = atom balloon csv deprecated gpx kmz links style xsd

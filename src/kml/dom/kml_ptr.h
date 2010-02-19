@@ -50,10 +50,6 @@ class Vec2;
 
 class Alias;
 class AtomAuthor;
-class AtomCategory;
-class AtomContent;
-class AtomEntry;
-class AtomFeed;
 class AtomLink;
 class BalloonStyle;
 class Camera;
@@ -121,27 +117,6 @@ class RotationXY;
 class ScreenXY;
 class Size;
 
-class XalAddressDetails;
-class XalAdministrativeArea;
-class XalCountry;
-class XalLocality;
-class XalPostalCode;
-class XalSubAdministrativeArea;
-class XalThoroughfare;
-
-class GxAnimatedUpdate;
-class GxFlyTo;
-class GxLatLonQuad;
-class GxPlaylist;
-class GxSoundCue;
-class GxTimeSpan;
-class GxTimeStamp;
-class GxTimePrimitive;
-class GxTour;
-class GxTourControl;
-class GxTourPrimitive;
-class GxWait;
-
 typedef boost::intrusive_ptr<Element> ElementPtr;
 typedef boost::intrusive_ptr<Field> FieldPtr;
 
@@ -162,10 +137,6 @@ typedef boost::intrusive_ptr<Vec2> Vec2Ptr;
 
 typedef boost::intrusive_ptr<Alias> AliasPtr;
 typedef boost::intrusive_ptr<AtomAuthor> AtomAuthorPtr;
-typedef boost::intrusive_ptr<AtomCategory> AtomCategoryPtr;
-typedef boost::intrusive_ptr<AtomContent> AtomContentPtr;
-typedef boost::intrusive_ptr<AtomEntry> AtomEntryPtr;
-typedef boost::intrusive_ptr<AtomFeed> AtomFeedPtr;
 typedef boost::intrusive_ptr<AtomLink> AtomLinkPtr;
 typedef boost::intrusive_ptr<BalloonStyle> BalloonStylePtr;
 typedef boost::intrusive_ptr<Camera> CameraPtr;
@@ -232,27 +203,6 @@ typedef boost::intrusive_ptr<OverlayXY> OverlayXYPtr;
 typedef boost::intrusive_ptr<RotationXY> RotationXYPtr;
 typedef boost::intrusive_ptr<ScreenXY> ScreenXYPtr;
 typedef boost::intrusive_ptr<Size> SizePtr;
-
-typedef boost::intrusive_ptr<XalAddressDetails> XalAddressDetailsPtr;
-typedef boost::intrusive_ptr<XalAdministrativeArea> XalAdministrativeAreaPtr;
-typedef boost::intrusive_ptr<XalCountry> XalCountryPtr;
-typedef boost::intrusive_ptr<XalLocality> XalLocalityPtr;
-typedef boost::intrusive_ptr<XalPostalCode> XalPostalCodePtr;
-typedef boost::intrusive_ptr<XalSubAdministrativeArea>
-   XalSubAdministrativeAreaPtr;
-typedef boost::intrusive_ptr<XalThoroughfare> XalThoroughfarePtr;
-
-typedef boost::intrusive_ptr<GxAnimatedUpdate> GxAnimatedUpdatePtr;
-typedef boost::intrusive_ptr<GxFlyTo> GxFlyToPtr;
-typedef boost::intrusive_ptr<GxLatLonQuad> GxLatLonQuadPtr;
-typedef boost::intrusive_ptr<GxPlaylist> GxPlaylistPtr;
-typedef boost::intrusive_ptr<GxSoundCue> GxSoundCuePtr;
-typedef boost::intrusive_ptr<GxTimeSpan> GxTimeSpanPtr;
-typedef boost::intrusive_ptr<GxTimeStamp> GxTimeStampPtr;
-typedef boost::intrusive_ptr<GxTour> GxTourPtr;
-typedef boost::intrusive_ptr<GxTourControl> GxTourControlPtr;
-typedef boost::intrusive_ptr<GxTourPrimitive> GxTourPrimitivePtr;
-typedef boost::intrusive_ptr<GxWait> GxWaitPtr;
 
 }  // end namespace kmldom
 

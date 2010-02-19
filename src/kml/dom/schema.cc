@@ -27,7 +27,6 @@
 
 #include "kml/dom/schema.h"
 #include "kml/base/attributes.h"
-#include "kml/base/xml_namespaces.h"
 #include "kml/dom/kml_cast.h"
 #include "kml/dom/serializer.h"
 
@@ -40,7 +39,6 @@ SimpleField::SimpleField()
   : has_type_(false),
     has_name_(false),
     has_displayname_(false) {
-  set_xmlns(kmlbase::XMLNS_KML22);
 }
 
 SimpleField::~SimpleField() {}
@@ -48,22 +46,18 @@ SimpleField::~SimpleField() {}
 static const char kSimpleFieldTypeAttr[] = "type";
 static const char kSimpleFieldNameAttr[] = "name";
 
-void SimpleField::ParseAttributes(Attributes* attributes) {
-  if (!attributes) {
-    return;
-  }
-  has_type_ = attributes->CutValue(kSimpleFieldTypeAttr, &type_);
-  has_name_ = attributes->CutValue(kSimpleFieldNameAttr, &name_);
-  AddUnknownAttributes(attributes);
+void SimpleField::ParseAttributes(const Attributes& attributes) {
+  has_type_ = attributes.GetString(kSimpleFieldTypeAttr, &type_);
+  has_name_ = attributes.GetString(kSimpleFieldNameAttr, &name_);
+  Element::ParseAttributes(attributes);
 }
 
-void SimpleField::SerializeAttributes(Attributes* attributes) const {
-  Element::SerializeAttributes(attributes);
+void SimpleField::GetAttributes(Attributes* attributes) const {
   if (has_type_) {
-    attributes->SetValue(kSimpleFieldTypeAttr, type_);
+    attributes->SetString(kSimpleFieldTypeAttr, type_);
   }
   if (has_name_) {
-    attributes->SetValue(kSimpleFieldNameAttr, name_);
+    attributes->SetString(kSimpleFieldNameAttr, name_);
   }
 }
 
@@ -79,37 +73,35 @@ void SimpleField::AddElement(const ElementPtr& element) {
 }
 
 void SimpleField::Serialize(Serializer& serializer) const {
-  ElementSerializer element_serializer(*this, serializer);
+  Attributes attributes;
+  Element::GetAttributes(&attributes);
+  GetAttributes(&attributes);
+  serializer.BeginById(Type(), attributes);
   if (has_displayname()) {
     serializer.SaveFieldById(Type_displayName, get_displayname());
   }
-}
-
-void SimpleField::Accept(Visitor* visitor) {
-  visitor->VisitSimpleField(SimpleFieldPtr(this));
+  SerializeUnknown(serializer);
+  serializer.End();
 }
 
 // <Schema>
 Schema::Schema()
-    : has_name_(false) {
+  : has_name_(false),
+    has_id_(false) {
 }
 
 Schema::~Schema() {}
 
 static const char kSchemaNameAttr[] = "name";
 
-void Schema::ParseAttributes(Attributes* attributes) {
-  if (!attributes) {
-    return;
-  }
-  has_name_ = attributes->CutValue(kSchemaNameAttr, &name_);
+void Schema::ParseAttributes(const Attributes& attributes) {
+  has_name_ = attributes.GetString(kSchemaNameAttr, &name_);
   Object::ParseAttributes(attributes);
 }
 
-void Schema::SerializeAttributes(Attributes* attributes) const {
-  Object::SerializeAttributes(attributes);
+void Schema::GetAttributes(Attributes* attributes) const {
   if (has_name_) {
-    attributes->SetValue(kSchemaNameAttr, name_);
+    attributes->SetString(kSchemaNameAttr, name_);
   }
 }
 
@@ -125,17 +117,15 @@ void Schema::AddElement(const ElementPtr& element) {
 }
 
 void Schema::Serialize(Serializer& serializer) const {
-  ElementSerializer element_serializer(*this, serializer);
-  serializer.SaveElementArray(simplefield_array_);
-}
-
-void Schema::Accept(Visitor* visitor) {
-  visitor->VisitSchema(SchemaPtr(this));
-}
-
-void Schema::AcceptChildren(VisitorDriver* driver) {
-  Object::AcceptChildren(driver);
-  Element::AcceptRepeated<SimpleFieldPtr>(&simplefield_array_, driver);
+  Attributes attributes;
+  GetAttributes(&attributes);
+  Object::GetAttributes(&attributes);
+  serializer.BeginById(Type(), attributes);
+  for (size_t i = 0; i < simplefield_array_.size(); ++i) {
+    serializer.SaveElement(get_simplefield_array_at(i));
+  }
+  Element::SerializeUnknown(serializer);
+  serializer.End();
 }
 
 }  // end namespace kmldom

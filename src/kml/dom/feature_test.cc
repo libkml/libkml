@@ -55,7 +55,7 @@ TEST_F(FeatureTest, TestType) {
 // Verify proper defaults:
 TEST_F(FeatureTest, TestDefaults) {
   ASSERT_FALSE(feature_->has_name());
-  ASSERT_EQ(string(""), feature_->get_name());
+  ASSERT_EQ(std::string(""), feature_->get_name());
   ASSERT_FALSE(feature_->has_visibility());
   ASSERT_TRUE(feature_->get_visibility());
   ASSERT_FALSE(feature_->has_open());
@@ -63,26 +63,23 @@ TEST_F(FeatureTest, TestDefaults) {
   ASSERT_FALSE(feature_->has_atomauthor());
   ASSERT_FALSE(feature_->has_atomlink());
   ASSERT_FALSE(feature_->has_address());
-  ASSERT_EQ(string(""), feature_->get_address());
-  ASSERT_FALSE(feature_->has_xaladdressdetails());
+  ASSERT_EQ(std::string(""), feature_->get_address());
   ASSERT_FALSE(feature_->has_phonenumber());
-  ASSERT_EQ(string(""), feature_->get_phonenumber());
+  ASSERT_EQ(std::string(""), feature_->get_phonenumber());
   ASSERT_FALSE(feature_->has_snippet());
   ASSERT_TRUE(NULL == feature_->get_snippet());
   ASSERT_FALSE(feature_->has_description());
-  ASSERT_EQ(string(""), feature_->get_description());
+  ASSERT_EQ(std::string(""), feature_->get_description());
   ASSERT_FALSE(feature_->has_abstractview());
   ASSERT_TRUE(NULL == feature_->get_abstractview());
   ASSERT_FALSE(feature_->has_timeprimitive());
   ASSERT_TRUE(NULL == feature_->get_timeprimitive());
   ASSERT_FALSE(feature_->has_styleurl());
-  ASSERT_EQ(string(""), feature_->get_styleurl());
+  ASSERT_EQ(std::string(""), feature_->get_styleurl());
   ASSERT_FALSE(feature_->has_styleselector());
   ASSERT_TRUE(NULL == feature_->get_styleselector());
   ASSERT_FALSE(feature_->has_region());
   ASSERT_TRUE(NULL == feature_->get_region());
-  ASSERT_FALSE(feature_->has_gx_balloonvisibility());
-  ASSERT_FALSE(feature_->get_gx_balloonvisibility());
 }
 
 // Verify setting default makes has_xxx() true:
@@ -98,8 +95,6 @@ TEST_F(FeatureTest, TestSetToDefaultValues) {
   ASSERT_TRUE(feature_->has_atomauthor());  // ptr is still null
   feature_->set_address(feature_->get_address());
   ASSERT_TRUE(feature_->has_address());
-  feature_->set_xaladdressdetails(
-      KmlFactory::GetFactory()->CreateXalAddressDetails());
   feature_->set_phonenumber(feature_->get_phonenumber());
   ASSERT_TRUE(feature_->has_phonenumber());
   feature_->set_snippet(KmlFactory::GetFactory()->CreateSnippet());
@@ -116,30 +111,25 @@ TEST_F(FeatureTest, TestSetToDefaultValues) {
   ASSERT_TRUE(feature_->has_styleselector());
   feature_->set_region(KmlFactory::GetFactory()->CreateRegion());
   ASSERT_TRUE(feature_->has_region());
-  feature_->set_gx_balloonvisibility(feature_->get_gx_balloonvisibility());
-  ASSERT_TRUE(feature_->has_gx_balloonvisibility());
 }
 
 // Verify set, get, has, clear:
 TEST_F(FeatureTest, TestSetGetHasClear) {
   // Non-default values:
-  string name("a");
+  std::string name("a");
   bool visibility = false;
   bool open = true;
   AtomAuthorPtr atomauthor = KmlFactory::GetFactory()->CreateAtomAuthor();
   AtomLinkPtr atomlink = KmlFactory::GetFactory()->CreateAtomLink();
-  string address("b");
-  XalAddressDetailsPtr xaladdressdetails =
-      KmlFactory::GetFactory()->CreateXalAddressDetails();
-  string phonenumber("c");
+  std::string address("b");
+  std::string phonenumber("c");
   SnippetPtr snippet = KmlFactory::GetFactory()->CreateSnippet();
-  string description("d");
+  std::string description("d");
   LookAtPtr lookat = KmlFactory::GetFactory()->CreateLookAt();
   TimeSpanPtr timespan = KmlFactory::GetFactory()->CreateTimeSpan();
-  string styleurl("e");
+  std::string styleurl("e");
   StylePtr style = KmlFactory::GetFactory()->CreateStyle();
   RegionPtr region = KmlFactory::GetFactory()->CreateRegion();
-  bool gx_balloonvisibility = true;
 
   // Set all fields:
   feature_->set_name(name);
@@ -148,7 +138,6 @@ TEST_F(FeatureTest, TestSetGetHasClear) {
   feature_->set_atomauthor(atomauthor);
   feature_->set_atomlink(atomlink);
   feature_->set_address(address);
-  feature_->set_xaladdressdetails(xaladdressdetails);
   feature_->set_phonenumber(phonenumber);
   feature_->set_snippet(snippet);
   feature_->set_description(description);
@@ -157,7 +146,6 @@ TEST_F(FeatureTest, TestSetGetHasClear) {
   feature_->set_styleurl(styleurl);
   feature_->set_styleselector(style);
   feature_->set_region(region);
-  feature_->set_gx_balloonvisibility(gx_balloonvisibility);
 
   // Verify getter and has_xxx():
   ASSERT_TRUE(name == feature_->get_name());
@@ -172,8 +160,6 @@ TEST_F(FeatureTest, TestSetGetHasClear) {
   ASSERT_TRUE(feature_->has_atomlink());
   ASSERT_TRUE(address == feature_->get_address());
   ASSERT_TRUE(feature_->has_address());
-  ASSERT_TRUE(xaladdressdetails == feature_->get_xaladdressdetails());
-  ASSERT_TRUE(feature_->has_xaladdressdetails());
   ASSERT_TRUE(phonenumber == feature_->get_phonenumber());
   ASSERT_TRUE(feature_->has_phonenumber());
   ASSERT_TRUE(snippet == feature_->get_snippet());
@@ -190,8 +176,6 @@ TEST_F(FeatureTest, TestSetGetHasClear) {
   ASSERT_TRUE(feature_->has_styleselector());
   ASSERT_TRUE(region == feature_->get_region());
   ASSERT_TRUE(feature_->has_region());
-  ASSERT_TRUE(gx_balloonvisibility == feature_->get_gx_balloonvisibility());
-  ASSERT_TRUE(feature_->has_gx_balloonvisibility());
 
   // Clear all fields:
   feature_->clear_name();
@@ -200,7 +184,6 @@ TEST_F(FeatureTest, TestSetGetHasClear) {
   feature_->clear_atomauthor();
   feature_->clear_atomlink();
   feature_->clear_address();
-  feature_->clear_xaladdressdetails();
   feature_->clear_phonenumber();
   feature_->clear_snippet();
   feature_->clear_description();
@@ -209,45 +192,13 @@ TEST_F(FeatureTest, TestSetGetHasClear) {
   feature_->clear_styleurl();
   feature_->clear_styleselector();
   feature_->clear_region();
-  feature_->clear_gx_balloonvisibility();
-
-  // Verify default state.
-  ASSERT_FALSE(feature_->has_name());
-  ASSERT_EQ(string(""), feature_->get_name());
-  ASSERT_FALSE(feature_->has_visibility());
-  ASSERT_TRUE(feature_->get_visibility());
-  ASSERT_FALSE(feature_->has_open());
-  ASSERT_FALSE(feature_->get_open());
-  ASSERT_FALSE(feature_->has_atomauthor());
-  ASSERT_FALSE(feature_->has_atomlink());
-  ASSERT_FALSE(feature_->has_address());
-  ASSERT_EQ(string(""), feature_->get_address());
-  ASSERT_FALSE(feature_->has_xaladdressdetails());
-  ASSERT_FALSE(feature_->has_phonenumber());
-  ASSERT_EQ(string(""), feature_->get_phonenumber());
-  ASSERT_FALSE(feature_->has_snippet());
-  ASSERT_TRUE(NULL == feature_->get_snippet());
-  ASSERT_FALSE(feature_->has_description());
-  ASSERT_EQ(string(""), feature_->get_description());
-  ASSERT_FALSE(feature_->has_abstractview());
-  ASSERT_TRUE(NULL == feature_->get_abstractview());
-  ASSERT_FALSE(feature_->has_timeprimitive());
-  ASSERT_TRUE(NULL == feature_->get_timeprimitive());
-  ASSERT_FALSE(feature_->has_styleurl());
-  ASSERT_EQ(string(""), feature_->get_styleurl());
-  ASSERT_FALSE(feature_->has_styleselector());
-  ASSERT_TRUE(NULL == feature_->get_styleselector());
-  ASSERT_FALSE(feature_->has_region());
-  ASSERT_TRUE(NULL == feature_->get_region());
-  ASSERT_FALSE(feature_->has_gx_balloonvisibility());
-  ASSERT_FALSE(feature_->get_gx_balloonvisibility());
 }
 
 // Verify <snippet> and <Metadata> are recognized in the small, and not in the
 // large, but are still preserved.  This verifies the AddElement() and
 // Serialize() methods.
 TEST_F(FeatureTest, ParseSerializeMisplaced) {
-  const string kPlacemark(
+  const std::string kPlacemark(
       "<Placemark>"
       "<name>my name</name>"
       "<Snippet maxLines=\"3\"></Snippet>"
@@ -258,44 +209,6 @@ TEST_F(FeatureTest, ParseSerializeMisplaced) {
       "</Placemark>");
 
   ASSERT_EQ(kPlacemark, kmldom::SerializeRaw(kmldom::Parse(kPlacemark, NULL)));
-}
-
-TEST_F(FeatureTest, TestSerializeGx) {
-  PlacemarkPtr placemark = KmlFactory::GetFactory()->CreatePlacemark();
-  placemark->set_name("my name");
-  placemark->set_visibility(false);
-  RegionPtr region = KmlFactory::GetFactory()->CreateRegion();
-  placemark->set_region(region);
-  placemark->set_gx_balloonvisibility(true);
-  const string kExpected(
-      "<Placemark>"
-      "<name>my name</name>"
-      "<visibility>0</visibility>"
-      "<Region/>"
-      "<gx:balloonVisibility>1</gx:balloonVisibility>"
-      "</Placemark>");
-
-  ASSERT_EQ(kExpected, SerializeRaw(placemark));
-}
-
-TEST_F(FeatureTest, TestSerializeFeature) {
-  // TODO: all other Feature children.
-  // Note that this KML has its children in a non-XSD-valid ordering. This is
-  // to test that the elements are serialized and re-ordered correctly.
-  const string kFeature(
-      "<Document>"
-      "<phoneNumber>867-5309</phoneNumber>"
-      "<name>Jenny</name>"
-      "</Document>"
-      );
-  const string kExpected(
-      "<Document>"
-      "<name>Jenny</name>"
-      "<phoneNumber>867-5309</phoneNumber>"
-      "</Document>"
-      );
-
-  ASSERT_EQ(kExpected, SerializeRaw(kmldom::Parse(kFeature, NULL)));
 }
 
 }  // end namespace kmldom

@@ -43,30 +43,23 @@ TEST_F(BboxTest, TestDefault) {
   ASSERT_EQ(kMaxLat, default_bbox.get_south());
   ASSERT_EQ(kMinLon, default_bbox.get_east());
   ASSERT_EQ(kMaxLon, default_bbox.get_west());
-  ASSERT_EQ(0, default_bbox.GetCenterLat());
-  ASSERT_EQ(0, default_bbox.GetCenterLon());
 }
+
 
 void BboxTest::VerifyBounds(const Bbox& bbox, double north, double south,
                             double east, double west) {
+
   // Verify the getters.
   ASSERT_EQ(north, bbox.get_north());
   ASSERT_EQ(south, bbox.get_south());
   ASSERT_EQ(east, bbox.get_east());
   ASSERT_EQ(west, bbox.get_west());
 
-  const double kWantLat((north + south)/2.0);
-  const double kWantLon((east + west)/2.0);
-
   // Verify GetCenter().
   double mid_lat, mid_lon;
   bbox.GetCenter(&mid_lat, &mid_lon);
-  ASSERT_EQ(kWantLat, mid_lat);
-  ASSERT_EQ(kWantLon, mid_lon);
-
-  // Verify GetCenterLat,Lon().
-  ASSERT_EQ(kWantLat, bbox.GetCenterLat());
-  ASSERT_EQ(kWantLon, bbox.GetCenterLon());
+  ASSERT_EQ((north + south)/2.0, mid_lat);
+  ASSERT_EQ((east + west)/2.0, mid_lon);
 
   // Verify Contains().
   ASSERT_TRUE(bbox.Contains(mid_lat, mid_lon));
@@ -161,14 +154,10 @@ TEST_F(BboxTest, TestMultiple) {
   ASSERT_EQ(kEastExpected, bbox.get_east());
   ASSERT_EQ(kWestExpected, bbox.get_west());
 
-  const double kLatExpected = (kNorthExpected + kSouthExpected)/2.0;
-  const double kLonExpected = (kEastExpected + kWestExpected)/2.0;
   double mid_lat, mid_lon;
   bbox.GetCenter(&mid_lat, &mid_lon);
-  ASSERT_EQ(kLatExpected, mid_lat);
-  ASSERT_EQ(kLonExpected, mid_lon);
-  ASSERT_EQ(kLatExpected, bbox.GetCenterLat());
-  ASSERT_EQ(kLonExpected, bbox.GetCenterLon());
+  ASSERT_EQ((kNorthExpected + kSouthExpected)/2.0, mid_lat);
+  ASSERT_EQ((kEastExpected + kWestExpected)/2.0, mid_lon);
 
   for (size_t i = 0; i < sizeof(kPoints)/sizeof(kPoints[0]); ++i) {
     ASSERT_TRUE(bbox.Contains(kPoints[i].lat, kPoints[i].lon));
@@ -176,53 +165,6 @@ TEST_F(BboxTest, TestMultiple) {
 
   VerifyBounds(bbox, kNorthExpected, kSouthExpected, kEastExpected,
                kWestExpected);
-}
-
-TEST_F(BboxTest, TestExpandFromBbox) {
-  const double kNorth = 89.123;
-  const double kSouth = -2.222;
-  const double kEast = -88.888;
-  const double kWest = -154.6789;
-  Bbox bbox(kNorth, kSouth, kEast, kWest);
-  Bbox another_bbox;
-  another_bbox.ExpandFromBbox(bbox);
-  VerifyBounds(another_bbox, kNorth, kSouth, kEast, kWest);
-}
-
-TEST_F(BboxTest, TestSetNSEW) {
-  Bbox b;
-  b.set_north(37.786807);
-  ASSERT_EQ(37.786807, b.get_north());
-  b.set_south(37.781563);
-  ASSERT_EQ(37.781563, b.get_south());
-  b.set_east(-122.494135);
-  ASSERT_EQ(-122.494135, b.get_east());
-  b.set_west(-122.504031);
-  ASSERT_EQ(-122.504031, b.get_west());
-}
-
-TEST_F(BboxTest, TestAlignBbox) {
-  Bbox b;
-  b.set_north(37.786807);  // Lincoln Park 3
-  b.set_south(37.781563);  // Lincoln Park 7
-  b.set_east(-122.494135);  // Lincoln Park 18
-  b.set_west(-122.504031);  // Lincoln Park 5
-  Bbox qt(180, -180, 180, -180);
-  b.AlignBbox(&qt, 24);
-  ASSERT_EQ(37.79296875, qt.get_north());
-  ASSERT_EQ(37.7490234375, qt.get_south());
-  ASSERT_EQ(-122.4755859375, qt.get_east());
-  ASSERT_EQ(-122.51953125, qt.get_west());
-}
-
-TEST_F(BboxTest, TestContainedByBox) {
-  Bbox r(180, -180, 180, -180);
-  Bbox a(1,-1,1,-1);
-  ASSERT_TRUE(a.ContainedByBox(180, -180, 180, -180));
-  ASSERT_TRUE(a.ContainedByBbox(r));
-  Bbox b(1000,-1,1,-1);
-  ASSERT_FALSE(b.ContainedByBox(180, -180, 180, -180));
-  ASSERT_FALSE(b.ContainedByBbox(r));
 }
 
 }  // end namespace kmlengine

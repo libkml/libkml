@@ -25,7 +25,6 @@
 
 #include <iostream>
 #include <string>
-#include "kml/base/file.h"
 #include "kml/engine.h"
 #include "curlfetch.h"
 

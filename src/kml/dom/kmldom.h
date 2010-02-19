@@ -54,9 +54,5 @@
 #include "kml/dom/style.h"
 #include "kml/dom/stylemap.h"
 #include "kml/dom/timeprimitive.h"
-#include "kml/dom/gx_timeprimitive.h"
-#include "kml/dom/gx_tour.h"
-#include "kml/dom/xal.h"
-#include "kml/dom/visitor.h"
 
 #endif  // KML_DOM_KMLDOM_H__

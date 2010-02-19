@@ -29,7 +29,7 @@
 #define KML_BASE_DATE_TIME_H__
 
 #include <time.h>
-#include "kml/base/util.h"
+#include <string>
 
 // TODO: fix this for real.
 #ifdef _WIN32
@@ -43,32 +43,27 @@ class DateTime {
  public:
   // xsd:datetime: 2008-10-03T09:25:42Z
   // TODO: date, gYearMonth, gYear
-  static DateTime* Create(const string& str);
-
-  // A convenience utility: Create() + GetTimeT().
-  static time_t ToTimeT(const string& str);
+  static DateTime* Create(const std::string& str);
 
   // POSIX time
   time_t GetTimeT() /* const */;
 
   // XML Schema 3.2.8 time
-  string GetXsdTime() const;
+  std::string GetXsdTime() const;
 
   // XML Schema 3.2.9 date
-  string GetXsdDate() const;
+  std::string GetXsdDate() const;
 
   // XML Schema 3.2.7 dateTime.
-  string GetXsdDateTime() const;
+  std::string GetXsdDateTime() const;
 
  private:
   DateTime();
   template<int N>
-  string DoStrftime(const char* format) const;
-  bool ParseXsdDateTime(const string& xsd_date_time);
+  std::string DoStrftime(const char* format) const;
+  bool ParseXsdDateTime(const std::string& xsd_date_time);
   struct tm tm_;
 };
-
-time_t DateTimeToTimeT(const string& date_time_str);
 
 }  // end namespace kmlbase
 

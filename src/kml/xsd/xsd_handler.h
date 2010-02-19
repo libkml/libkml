@@ -29,6 +29,7 @@
 #define KML_XSD_XSD_HANDLER_H__
 
 #include <stack>
+#include <string>
 #include "boost/scoped_ptr.hpp"
 #include "kml/base/expat_handler.h"
 #include "kml/xsd/xsd_type.h"
@@ -43,7 +44,7 @@ class XsdFile;
 
 // This ExpatHandler specialization parses an XSD file.  Overall usage is:
 //   // Read the XSD file.
-//   string xsd_data;
+//   std::string xsd_data;
 //   File::ReadFileToString("my.xsd", &xsd_data);
 //   // Parse it.
 //   XsdHandler my_xsd_handler;
@@ -57,14 +58,13 @@ class XsdHandler : public kmlbase::ExpatHandler {
   virtual ~XsdHandler() {}
 
   // ExpatHandler::StartElement.
-  virtual void StartElement(const string& element_name,
-                            const kmlbase::StringVector& atts);
+  virtual void StartElement(const char *element_name, const char **atts);
 
   // ExpatHandler::EndElement.
-  virtual void EndElement(const string& element_name);
+  virtual void EndElement(const char *element_name);
 
   // ExpatHandler::CharData.  No XSD element has character data.
-  virtual void CharData(const string& s) {}
+  virtual void CharData(const XML_Char *s, int len) {}
 
  private:
   XsdFile* xsd_file_;
@@ -84,7 +84,7 @@ class XsdHandler : public kmlbase::ExpatHandler {
   void EndType();
   XsdTypePtr current_type_;
 
-  std::stack<string> parse_;
+  std::stack<std::string> parse_;
 };
 
 }  // end namespace kmlxsd

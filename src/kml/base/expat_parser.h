@@ -23,19 +23,13 @@
 // OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-// This file contains the declaration of the internal ExpatParser class.
-// Direct use of this class in application code is not recommended.  Typical
-// applications should use kmlengine::KmlFile for parsing KML (and KMZ) files.
-// Note that we explicitly do not support parsing files with XML ENTITY
-// declarations. See the unit tests in expat_parser_test.cc for some concrete
-// examples.
+// TODO: actually implement RunExpat and get rid of kml/dom/parser.cc
 
 #ifndef KML_BASE_EXPAT_PARSER_H__
 #define KML_BASE_EXPAT_PARSER_H__
 
 #include <map>
-#include "expat.h"
-#include "kml/base/util.h"
+#include <string>
 
 namespace kmlbase {
 
@@ -44,7 +38,7 @@ const char kExpatNsSeparator = '|';
 class ExpatHandler;
 class ExpatHandlerNs;
 
-typedef std::map<string, ExpatHandler*> ExpatHandlerMap;
+typedef std::map<std::string, ExpatHandler*> ExpatHandlerMap;
 
 class ExpatHandlerSet {
  public:
@@ -52,7 +46,7 @@ class ExpatHandlerSet {
     : default_(NULL) {
   }
 
-  void set_handler(const string& xml_namespace,
+  void set_handler(const std::string& xml_namespace,
                   ExpatHandler* expat_handler) {
     if (!default_) {  // TODO: hack
       default_ = expat_handler;
@@ -69,7 +63,7 @@ class ExpatHandlerSet {
   // TODO: this is how the parser core really looks up the handler for
   // a given namespace.  This returns NULL if no handler is available for
   // the given namespace.
-  ExpatHandler* get_handler(const string& xmlns) const {
+  ExpatHandler* get_handler(const std::string& xmlns) const {
     ExpatHandlerMap::const_iterator iter = expat_handler_map_.find(xmlns);
     return iter == expat_handler_map_.end() ? NULL : iter->second;
   }
@@ -79,47 +73,11 @@ class ExpatHandlerSet {
   ExpatHandlerMap expat_handler_map_;
 };
 
-// This internal class front-ends expat.  Usage is as follows:
-// class SomeXmlLanguageHandler : public kmlbase::ExpatHandler {
-//   // See expat_handler.h for methods to implement.
-// };
-// SomeXmlLanguageHandler some_handler;
-// bool status = ExpatParser::ParseString(xml_file_contents, &some_handler,
-//                                        &errors, namespace_aware_bool);
-// State of parse (if any) is held in the class derived from ExpatHandler.
-class ExpatParser {
- public:
-  ExpatParser(ExpatHandler* handler, bool namespace_aware);
-  ~ExpatParser();
-
-  // Parses a string of XML data in one operation. The xml string must be a
-  // complete, well-formed XML document.
-  static bool ParseString(const string& xml, ExpatHandler* handler,
-                          string* errors, bool namespace_aware);
-
-  // This allocates a buffer for use with ParseInternalBuffer.  The caller is
-  // expected to put the next buffer's worth of XML to parse into this buffer.
-  void* GetInternalBuffer(size_t size);
-
-  // This sends the data the caller put in the buffer in GetInternalBuffer to
-  // the parser.  The size indicates the number of bytes of data in the buffer.
-  // If an error string is supplied any error messages are stored there.
-  // If this buffer is the final chunk of XML to parse set is_final to true.
-  bool ParseInternalBuffer(size_t size, string* errors, bool is_final);
-
-  // Parse a chunk of XML data. The input does not have to be split on element
-  // boundaries. The is_final flag indicates to expat if it should consider
-  // this buffer the end of the content.
-  bool ParseBuffer(const string& input, string* errors,
-                   bool is_final);
-
- private:
-  ExpatHandler* expat_handler_;
-  XML_Parser parser_;
-  // Used by the static ParseString public method.
-  bool _ParseString(const string& xml, string* errors);
-  void ReportError(XML_Parser parser, string* errors);
-};
+// Run expat using the supplied handler over the supplied input.  Any parse
+// errors are are saved to the supplied string.  This returns true if the
+// parse succeeded, false otherwise.
+bool ExpatParser(const std::string& xml, ExpatHandler* expat_handler,
+                 std::string* errors, bool namespace_aware);
 
 
 }  // end namespace kmldom

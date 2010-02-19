@@ -1,9 +1,9 @@
 // Copyright 2008, Google Inc. All rights reserved.
 //
-// Redistribution and use in source and binary forms, with or without
+// Redistribution and use in source and binary forms, with or without 
 // modification, are permitted provided that the following conditions are met:
 //
-//  1. Redistributions of source code must retain the above copyright notice,
+//  1. Redistributions of source code must retain the above copyright notice, 
 //     this list of conditions and the following disclaimer.
 //  2. Redistributions in binary form must reproduce the above copyright notice,
 //     this list of conditions and the following disclaimer in the documentation
@@ -13,14 +13,14 @@
 //     specific prior written permission.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
-// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
 // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
 // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
 // PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
 // OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // This file contains the declarations for the abstract Geometry element
@@ -72,57 +72,77 @@
 #ifndef KML_DOM_GEOMETRY_H__
 #define KML_DOM_GEOMETRY_H__
 
+#include <string>
 #include <vector>
 #include "kml/dom/kml22.h"
 #include "kml/dom/kml_ptr.h"
 #include "kml/dom/object.h"
 #include "kml/base/util.h"
-#include "kml/base/vec3.h"
 
 namespace kmldom {
 
 class Serializer;
-class Visitor;
-class VisitorDriver;
+
+// Just a basic struct of 3 doubles.  Copy and assign at will.
+class Vec3 {
+ public:
+  Vec3() {
+    vec_[0] = vec_[1] = vec_[2] = 0.0;
+  }
+  Vec3(double longitude, double latitude, double altitude) {
+    vec_[0] = longitude;
+    vec_[1] = latitude;
+    vec_[2] = altitude;
+  }
+  void set(int i, double val) {
+    vec_[i] = val;
+  }
+  double get_longitude() const {
+    return vec_[0];
+  }
+  double get_latitude() const {
+    return vec_[1];
+  }
+  double get_altitude() const {
+    return vec_[2];
+  }
+
+  void Serialize(Serializer& serializer) const;
+
+ private:
+  double vec_[3];
+};
 
 // <coordinates>
-class Coordinates : public BasicElement<Type_coordinates> {
+class Coordinates : public Element {
  public:
   virtual ~Coordinates();
+  virtual KmlDomType Type() const { return Type_coordinates; }
+  virtual bool IsA(KmlDomType type) const {
+    return type == Type_coordinates || Element::IsA(type);
+  }
 
   // The main KML-specific API
   void add_latlngalt(double latitude, double longitude, double altitude) {
-    coordinates_array_.push_back(kmlbase::Vec3(longitude, latitude, altitude));
+    coordinates_array_.push_back(Vec3(longitude, latitude, altitude));
   }
 
   void add_latlng(double latitude, double longitude) {
-    coordinates_array_.push_back(kmlbase::Vec3(longitude, latitude));
+    coordinates_array_.push_back(Vec3(longitude, latitude, 0.0));
   }
 
-  void add_vec3(const kmlbase::Vec3& vec3) {
-    coordinates_array_.push_back(vec3);
-  }
-
-  size_t get_coordinates_array_size() const {
+  const size_t get_coordinates_array_size() const {
     return coordinates_array_.size();
   }
 
-  const kmlbase::Vec3 get_coordinates_array_at(size_t index) const {
+  const Vec3 get_coordinates_array_at(unsigned int index) const {
     return coordinates_array_[index];
   }
 
   // Internal methods used in parser.  Public for unittest purposes.
   // See .cc for more details.
-  void Parse(const string& char_data);
-  static bool ParseVec3(const char* coords, char** nextp, kmlbase::Vec3* vec);
-
-  // This clears the internal coordinates array.
-  void Clear() {
-    coordinates_array_.clear();
-  }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
+  void Parse(const std::string& char_data);
+  static bool ParseVec3(const char* coords, char** nextp, Vec3* vec);
 
  private:
   friend class KmlFactory;
@@ -132,7 +152,7 @@ class Coordinates : public BasicElement<Type_coordinates> {
   friend class Serializer;
   virtual void Serialize(Serializer& serializer) const;
 
-  std::vector<kmlbase::Vec3> coordinates_array_;
+  std::vector<Vec3> coordinates_array_;
   LIBKML_DISALLOW_EVIL_CONSTRUCTORS(Coordinates);
 };
 
@@ -176,25 +196,11 @@ class AltitudeGeometryCommon : public Geometry {
     has_altitudemode_ = false;
   }
 
-  // <gx:altitudeMode>
-  int get_gx_altitudemode() const { return gx_altitudemode_; }
-  bool has_gx_altitudemode() const { return has_gx_altitudemode_; }
-  void set_gx_altitudemode(int value) {
-    gx_altitudemode_ = value;
-    has_gx_altitudemode_ = true;
-  }
-  void clear_gx_altitudemode() {
-    gx_altitudemode_ = GX_ALTITUDEMODE_CLAMPTOSEAFLOOR;
-    has_gx_altitudemode_ = false;
-  }
-
   virtual void AddElement(const ElementPtr& element);
 
  private:
   int altitudemode_;
   bool has_altitudemode_;
-  int gx_altitudemode_;
-  bool has_gx_altitudemode_;
   LIBKML_DISALLOW_EVIL_CONSTRUCTORS(AltitudeGeometryCommon);
 };
 
@@ -235,7 +241,7 @@ class CoordinatesGeometryCommon : public ExtrudeGeometryCommon {
 
  public:
   // <coordinates>
-  const CoordinatesPtr& get_coordinates() const { return coordinates_; }
+  const CoordinatesPtr get_coordinates() const { return coordinates_; }
   bool has_coordinates() const { return coordinates_ != NULL; }
   void set_coordinates(const CoordinatesPtr& coordinates) {
     SetComplexChild(coordinates, &coordinates_);
@@ -243,9 +249,6 @@ class CoordinatesGeometryCommon : public ExtrudeGeometryCommon {
   void clear_coordinates() {
     set_coordinates(NULL);
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void AcceptChildren(VisitorDriver* driver);
 
  protected:
   CoordinatesGeometryCommon();
@@ -265,9 +268,6 @@ class Point : public CoordinatesGeometryCommon {
   virtual bool IsA(KmlDomType type) const {
     return type == Type_Point || Geometry::IsA(type);
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
 
  private:
   friend class KmlFactory;
@@ -318,9 +318,6 @@ class LineString : public LineCommon {
     return type == Type_LineString || Geometry::IsA(type);
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-
  private:
   friend class KmlFactory;
   LineString();
@@ -336,9 +333,6 @@ class LinearRing : public LineCommon {
     return type == Type_LinearRing || Geometry::IsA(type);
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-
  private:
   friend class KmlFactory;
   LinearRing();
@@ -352,7 +346,7 @@ class BoundaryCommon : public Element {
   virtual ~BoundaryCommon();
 
  public:
-  const LinearRingPtr& get_linearring() const { return linearring_; }
+  const LinearRingPtr get_linearring() const { return linearring_; }
   bool has_linearring() const { return linearring_ != NULL; }
   void set_linearring(const LinearRingPtr& linearring) {
     SetComplexChild(linearring, &linearring_);
@@ -363,9 +357,6 @@ class BoundaryCommon : public Element {
 
   // Parser support
   virtual void AddElement(const ElementPtr& element);
-
-  // Visitor API methods, see visitor.h.
-  virtual void AcceptChildren(VisitorDriver* driver);
 
  protected:
   BoundaryCommon();
@@ -385,9 +376,6 @@ class OuterBoundaryIs : public BoundaryCommon {
     return type == Type_outerBoundaryIs;
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-
  private:
   friend class KmlFactory;
   OuterBoundaryIs();
@@ -402,9 +390,6 @@ class InnerBoundaryIs : public BoundaryCommon {
   virtual bool IsA(KmlDomType type) const {
     return type == Type_innerBoundaryIs;
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
 
  private:
   friend class KmlFactory;
@@ -434,7 +419,7 @@ class Polygon : public ExtrudeGeometryCommon {
   }
 
   // <outerBoundaryIs>
-  const OuterBoundaryIsPtr& get_outerboundaryis() const {
+  const OuterBoundaryIsPtr get_outerboundaryis() const {
     return outerboundaryis_;
   }
   bool has_outerboundaryis() const { return outerboundaryis_ != NULL; }
@@ -450,17 +435,13 @@ class Polygon : public ExtrudeGeometryCommon {
     AddComplexChild(innerboundaryis, &innerboundaryis_array_);
   }
 
-  size_t get_innerboundaryis_array_size() const {
+  const size_t get_innerboundaryis_array_size() const {
     return innerboundaryis_array_.size();
   }
 
-  const InnerBoundaryIsPtr& get_innerboundaryis_array_at(size_t index) {
+  const InnerBoundaryIsPtr& get_innerboundaryis_array_at(unsigned int index) {
     return innerboundaryis_array_[index];
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-  virtual void AcceptChildren(VisitorDriver* driver);
 
  private:
   friend class KmlFactory;
@@ -491,17 +472,13 @@ class MultiGeometry : public Geometry {
   // The main KML-specific API
   void add_geometry(const GeometryPtr& geometry);
 
-  size_t get_geometry_array_size() const {
+  const size_t get_geometry_array_size() const {
     return geometry_array_.size();
   }
 
-  const GeometryPtr& get_geometry_array_at(size_t index) const {
+  const GeometryPtr& get_geometry_array_at(unsigned int index) const {
     return geometry_array_[index];
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-  virtual void AcceptChildren(VisitorDriver* driver);
 
  private:
   friend class KmlFactory;

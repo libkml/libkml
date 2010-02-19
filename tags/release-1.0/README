@@ -1,0 +1,18 @@
+Welcome to libkml!
+
+This is the source code for the libkml project. The main project page is at:
+http://libkml.googlecode.com/
+
+All of our documentation is on the project wiki:
+http://code.google.com/p/libkml/w/list
+
+The wiki contains documents that describe:
+- An overview of the most recent release
+- Building and running the code
+- Running the unit tests
+- A general API reference guide
+- More details guides to each of the libkml modules
+
+The main project page has links to the discussion group and the mailing list
+that mirrors the commit and issue logs.
+

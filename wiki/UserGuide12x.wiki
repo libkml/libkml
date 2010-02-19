@@ -31,6 +31,7 @@ This library has been compiled and tested on Windows XP, Mac OS X 10.4 and
 
 = Changes since 1.1 =
 
+  * Upgraded third-party UriParser library to latest version
   * Replaced use of `std::string` with `string` to permit direct use in codebases that have their own (STL-compatible) string implementation
   * Replaced use of `char*` and `XML_Char*` with string in the low-level wrapper around Expat
   * Improved Google Maps and Spreadsheets Data API support

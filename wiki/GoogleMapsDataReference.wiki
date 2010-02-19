@@ -90,6 +90,17 @@ The are additional methods on !GoogleMapsData to:
 
 See [http://code.google.com/p/libkml/source/browse/trunk/src/kml/convenience/google_maps_data.h google_maps_data.h] for details.
 
+== Google Maps Data spatial query support ==
+
+The
+[http://code.google.com/p/libkml/source/browse/trunk/src/kml/convenience/google_maps_data.h GetSearchFeed]
+method essentially returns the feature of a map within a given area.
+
+{{{
+string atom_feed;
+google_maps_data->GetSearchFeed(search_feed_uri, search_parameters, atom_feed);
+}}}
+
 == Google Maps Data media support ==
 
 In addition to Atom-based HTTP POST and GET the Google Maps Data API

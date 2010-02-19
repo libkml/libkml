@@ -101,14 +101,41 @@ from each line in a CSV file.
 {{{
 // You'll be reading your CSV from a big file no doubt, but here is
 // a very simple CSV.  First line is the "schema", each subsequent line is
-// a <Point> <Placemark>.
+// a <Point> <Placemark>.  Note how an item with a common is quoted.
 string csv_data = "name,latitude,longitude,description\n"
-                  "hello,-77.066395,-11.968312,"Welcome to Lima,Peru!"\n";
+                  "Hello,-11.968312,-77.066395,"Welcome to Lima,Peru!"\n";
 
 // This does exactly one HTTP POST.  Your code will check for errors.
 AtomEntryPtr entry = google_maps_data->PostCsv("Hello Lima", csv_data, NULL);
 
 // Here's how to get the URL for the KML of your new map.
+string kml_url;  // Put this in a <NetworkLink>, for example.
+GoogleMapsData::GetKmlUri(entry, &kml_uri);
+}}}
+
+The [http://code.google.com/p/libkml/source/browse/trunk/src/kml/convenience/google_maps_data.h PostKml] method creates a new map and adds to it a feature
+from each `Placemark` in the KML file.  Note that this does not preserve
+the KML file in full.  Think of the KML file as a means to transport
+KML `Placemark`s to the Google Maps Data API.
+
+{{{
+// You'll be reading your KML from a big file no doubt, but here is
+// a very simple KML file.
+// a <Point> <Placemark>.
+string kml_data = "<kml>"
+                  "  <Placemark>"
+                  "  <name>Hello</name>"
+                  "  <description>Welcome to Lima,Peru!</description>"
+                  "    <Point>"
+                  "      <coordinates>-77.066395,-11.968312</coordinates>"
+                  "    </Point>"
+                  "  </Placemark>"
+                  "</kml>";
+
+// This does exactly one HTTP POST.  Your code will check for errors.
+AtomEntryPtr entry = google_maps_data->PostKml("Hello Lima", kml_data);
+
+// Here's how to get the URL of your new map.
 string kml_url;
 GoogleMapsData::GetKmlUri(entry, &kml_uri);
 }}}
@@ -118,9 +145,9 @@ GoogleMapsData::GetKmlUri(entry, &kml_uri);
 There are many example command line programs using the !GoogleMapsData and
 other Google Data API classes:
 
-Also see the
-[http://code.google.com/p/libkml/source/browse/trunk/examples/hellonet/listgmaps.cc listgmaps.cc],
-[http://code.google.com/p/libkml/source/browse/trunk/examples/hellonet/getgmapkml.cc getgmapkml.cc],
-and
-[http://code.google.com/p/libkml/source/browse/trunk/examples/hellonet/uploadgmap.cc uploadgmap.cc]
-examples.
+  * [http://code.google.com/p/libkml/source/browse/trunk/examples/hellonet/listgmaps.cc listgmaps.cc] - list your maps
+  * [http://code.google.com/p/libkml/source/browse/trunk/examples/hellonet/getgmapkml.cc getgmapkml.cc] - get the KML for a map
+  * [http://code.google.com/p/libkml/source/browse/trunk/examples/hellonet/uploadgmap.cc uploadgmap.cc] - upload KML using Atom
+  * [http://code.google.com/p/libkml/source/browse/trunk/examples/hellonet/uploadgmapcsv.cc uploadgmapcsv.cc] - create a new map from CSV
+  * [http://code.google.com/p/libkml/source/browse/trunk/examples/hellonet/uploadgmapkml.cc uploadgmapkml.cc] - create a new map from KML
+  * [http://code.google.com/p/libkml/source/browse/trunk/examples/hellonet/gsheet2gmap.cc gsheet2gmap.cc] - create a map from a Google Spreadsheet

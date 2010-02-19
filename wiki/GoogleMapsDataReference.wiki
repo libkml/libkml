@@ -3,9 +3,12 @@
 = !GoogleMapsData and !HttpClient =
 
 The !GoogleMapsData class provides a C++ API to the Google Maps Data API.
+This document provides an overview of the functionality of this API.
 
-There are two main components: the !GoogleMapsData class and a class
-you supply derived from the !HttpClient class.
+There are two main components: the 
+[http://code.google.com/p/libkml/source/browse/trunk/src/kml/convenience/google_maps_data.h GoogleMapsData]
+class and a class you supply derived from the
+[http://code.google.com/p/libkml/source/browse/trunk/src/kml/convenience/http_client.h HttpClient] class.
 
 For the most part the !GoogleMapsData methods package up HTTP POST
 and GET requests, thus this class is part of the convenience methods
@@ -15,15 +18,19 @@ and media where media is CSV or KML all of which are supported in libkml.
 See the
 [http://code.google.com/apis/maps/documentation/mapsdata/developers_guide_protocol.html Google Maps Data API HTTP Protocol Guide] for the details of the HTTP protocol.
 
-A !GoogleMapsData instance requires a !HttpClient to perform communications.
-
 In addition to the Google Maps Data API there are also classes in libkml with
 limited support for
 [http://code.google.com/apis/documents/overview.html Google Documents List Data API],
 [http://code.google.com/apis/spreadsheets/data/3.0/developers_guide.html Google Spreadsheets Data API], and
-[Google PicasaWeb API http://code.google.com/apis/picasaweb/overview.html] in the [
+[http://code.google.com/apis/picasaweb/overview.html Google PicasaWeb API]
+in the
+[http://code.google.com/p/libkml/source/browse/trunk/src/kml/convenience/google_doc_list.h GoogleDocList],
+[http://code.google.com/p/libkml/source/browse/trunk/src/kml/convenience/google_spreadsheets.h GoogleSpreadsheets], and
+[http://code.google.com/p/libkml/source/browse/trunk/src/kml/convenience/google_picasa_web.h GooglePicasaWeb] classes respectively.
 
 == !HttpClient ==
+
+A !GoogleMapsData instance requires a !HttpClient to perform communications.
 
 {{{
 class YourHttpClient : public kmlconvenience::HttpClient {
@@ -34,11 +41,15 @@ class YourHttpClient : public kmlconvenience::HttpClient {
 };
 }}}
 
-The !HttpClient must be logged in to the "local" service:
+An !HttpClient must be logged in to the appropriate service.
+Here is an example of an !HttpClient logged in to the Google Maps Data API:
 
 {{{
-YourHttpClient* your_http_client = new YourHttpClient;
-your_http_client->Login("local", "user@gmail.com", "users-password");
+YourHttpClient* your_http_client = new YourHttpClient("your-app-name");
+const string& maps_data = GoogleMapsData::get_service_name();
+string user_name = [prompt user]
+string password = [prompt user]
+your_http_client->Login(maps_data, user_name, password);
 }}}
 
 See
@@ -63,7 +74,7 @@ the user's maps:
 kmldom::AtomFeedPtr meta_feed = maps_data->GetMetaFeed();
 }}}
 
-The Atom &lt;entry&gt; and &lt;feed&gt; elements are supported by libkml:
+The Atom `entry and `feed` elements are supported by libkml:
 
 {{{
 for (size_t e = 0; e < meta_feed->get_entry_array_size(); ++e) {

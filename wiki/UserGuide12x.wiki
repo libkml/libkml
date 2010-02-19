@@ -55,11 +55,8 @@ See the [Reference Reference].
 
 Some TODO items in the near future may include:
 
-  * Continued Google Maps Data API support
-  * Upgrade of dependent libraries
   * Singleton deleter
   * Improve SWIG support
-
 
 = Found a bug? =
 

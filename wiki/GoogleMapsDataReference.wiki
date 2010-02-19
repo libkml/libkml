@@ -114,9 +114,9 @@ GoogleMapsData::GetKmlUri(entry, &kml_uri);
 }}}
 
 The [http://code.google.com/p/libkml/source/browse/trunk/src/kml/convenience/google_maps_data.h PostKml] method creates a new map and adds to it a feature
-from each `Placemark` in the KML file.  Note that this does not preserve
+from each `<Placemark>` in the KML file.  Note that this does not preserve
 the KML file in full.  Think of the KML file as a means to transport
-KML `Placemark`s to the Google Maps Data API.
+KML `<Placemark>`s to the Google Maps Data API.
 
 {{{
 // You'll be reading your KML from a big file no doubt, but here is

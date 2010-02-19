@@ -90,6 +90,29 @@ The are additional methods on !GoogleMapsData to:
 
 See [http://code.google.com/p/libkml/source/browse/trunk/src/kml/convenience/google_maps_data.h google_maps_data.h] for details.
 
+== Google Maps Data media support ==
+
+In addition to Atom-based HTTP POST and GET the Google Maps Data API
+supports raw media-based HTTP POST as well.
+
+The [http://code.google.com/p/libkml/source/browse/trunk/src/kml/convenience/google_maps_data.h PostCsv] method creates a new map and adds to it a feature
+from each line in a CSV file.
+
+{{{
+// You'll be reading your CSV from a big file no doubt, but here is
+// a very simple CSV.  First line is the "schema", each subsequent line is
+// a <Point> <Placemark>.
+string csv_data = "name,latitude,longitude,description\n"
+                  "hello,-77.066395,-11.968312,"Welcome to Lima,Peru!"\n";
+
+// This does exactly one HTTP POST.  Your code will check for errors.
+AtomEntryPtr entry = google_maps_data->PostCsv("Hello Lima", csv_data, NULL);
+
+// Here's how to get the URL for the KML of your new map.
+string kml_url;
+GoogleMapsData::GetKmlUri(entry, &kml_uri);
+}}}
+
 == Examples ==
 
 There are many example command line programs using the !GoogleMapsData and

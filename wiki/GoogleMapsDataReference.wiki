@@ -1,0 +1,92 @@
+﻿#summary libkml google maps data reference
+
+= !GoogleMapsData and !HttpClient =
+
+The !GoogleMapsData class provides a C++ API to the Google Maps Data API.
+
+There are two main components: the !GoogleMapsData class and a class
+you supply derived from the !HttpClient class.
+
+For the most part the !GoogleMapsData methods package up HTTP POST
+and GET requests, thus this class is part of the convenience methods
+of libkml.  There are two kinds of data passed over HTTP: Atom
+and media where media is CSV or KML all of which are supported in libkml.
+
+See the
+[http://code.google.com/apis/maps/documentation/mapsdata/developers_guide_protocol.html Google Maps Data API HTTP Protocol Guide] for the details of the HTTP protocol.
+
+A !GoogleMapsData instance requires a !HttpClient to perform communications.
+
+In addition to the Google Maps Data API there are also classes in libkml with
+limited support for
+[http://code.google.com/apis/documents/overview.html Google Documents List Data API],
+[http://code.google.com/apis/spreadsheets/data/3.0/developers_guide.html Google Spreadsheets Data API], and
+[Google PicasaWeb API http://code.google.com/apis/picasaweb/overview.html] in the [
+
+== !HttpClient ==
+
+{{{
+class YourHttpClient : public kmlconvenience::HttpClient {
+ public:
+  virtual bool SendRequest(...) const {
+    ...your network I/O code goes here...
+  }
+};
+}}}
+
+The !HttpClient must be logged in to the "local" service:
+
+{{{
+YourHttpClient* your_http_client = new YourHttpClient;
+your_http_client->Login("local", "user@gmail.com", "users-password");
+}}}
+
+See
+[http://code.google.com/p/libkml/source/browse/trunk/examples/hellonet/curlfetch.h CurlHttpFetch]
+for an !HttpClient using [http://curl.haxx.se/libcurl/ libcurl].
+libcurl is not provided with libkml but it is
+available for most any platform.
+
+== !GoogleMapsData ==
+
+The !GoogleMapsData::Create static method creates a !GoogleMapsData object
+using the created and logged-in !HttpClient:
+
+{{{
+GoogleMapsData* maps_data = GoogleMapsData::Create(your_http_client);
+}}}
+
+The !GetMetaFeed() method fetches and parses the Atom feed of the list of
+the user's maps:
+
+{{{
+kmldom::AtomFeedPtr meta_feed = maps_data->GetMetaFeed();
+}}}
+
+The Atom &lt;entry&gt; and &lt;feed&gt; elements are supported by libkml:
+
+{{{
+for (size_t e = 0; e < meta_feed->get_entry_array_size(); ++e) {
+  const kmldom::AtomEntryPtr& entry = meta_feed->get_entry_array_at(e);
+  std::cout << "[title] " << entry->get_title() << std::endl;
+}
+}}}
+
+The are additional methods on !GoogleMapsData to:
+  * Create a new map
+  * Add KML Features to a map
+  * Get KML Features in a map
+
+See [http://code.google.com/p/libkml/source/browse/trunk/src/kml/convenience/google_maps_data.h google_maps_data.h] for details.
+
+== Examples ==
+
+There are many example command line programs using the !GoogleMapsData and
+other Google Data API classes:
+
+Also see the
+[http://code.google.com/p/libkml/source/browse/trunk/examples/hellonet/listgmaps.cc listgmaps.cc],
+[http://code.google.com/p/libkml/source/browse/trunk/examples/hellonet/getgmapkml.cc getgmapkml.cc],
+and
+[http://code.google.com/p/libkml/source/browse/trunk/examples/hellonet/uploadgmap.cc uploadgmap.cc]
+examples.

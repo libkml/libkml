@@ -30,17 +30,6 @@ namespace kmldom {
 
 class AbstractLatLonBoxTest : public testing::Test {
  protected:
-  void CheckDefaults() {
-  ASSERT_FALSE(latlonbox.has_north());
-  ASSERT_DOUBLE_EQ(180.0, latlonbox.get_north());
-  ASSERT_FALSE(latlonbox.has_south());
-  ASSERT_DOUBLE_EQ(-180.0, latlonbox.get_south());
-  ASSERT_FALSE(latlonbox.has_east());
-  ASSERT_DOUBLE_EQ(180.0, latlonbox.get_east());
-  ASSERT_FALSE(latlonbox.has_west());
-  ASSERT_DOUBLE_EQ(-180.0, latlonbox.get_west());
-  }
-
   // AbstractLatLonBox is abstract, hence its constructor is protected.
   class TestLatLonBox : public AbstractLatLonBox {
   };
@@ -54,17 +43,14 @@ TEST_F(AbstractLatLonBoxTest, TestType) {
 
 // Verify proper defaults:
 TEST_F(AbstractLatLonBoxTest, TestDefaults) {
-  CheckDefaults();
-#if 0
   ASSERT_FALSE(latlonbox.has_north());
-  ASSERT_DOUBLE_EQ(180.0, latlonbox.get_north());
+  ASSERT_DOUBLE_EQ(0.0, latlonbox.get_north());
   ASSERT_FALSE(latlonbox.has_south());
-  ASSERT_DOUBLE_EQ(-180.0, latlonbox.get_south());
+  ASSERT_DOUBLE_EQ(0.0, latlonbox.get_south());
   ASSERT_FALSE(latlonbox.has_east());
-  ASSERT_DOUBLE_EQ(180.0, latlonbox.get_east());
+  ASSERT_DOUBLE_EQ(0.0, latlonbox.get_east());
   ASSERT_FALSE(latlonbox.has_west());
-  ASSERT_DOUBLE_EQ(-180.0, latlonbox.get_west());
-#endif
+  ASSERT_DOUBLE_EQ(0.0, latlonbox.get_west());
 }
 
 // Verify setting default makes has_xxx() true:
@@ -112,7 +98,6 @@ TEST_F(AbstractLatLonBoxTest, TestSetGetHasClear) {
   latlonbox.clear_south();
   latlonbox.clear_east();
   latlonbox.clear_west();
-  CheckDefaults();
 }
 
 }  // end namespace kmldom

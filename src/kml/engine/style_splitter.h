@@ -29,6 +29,7 @@
 #define KML_ENGINE_STYLE_SPLITTER_H__
 
 #include <map>
+#include <string>
 #include "kml/base/string_util.h"
 #include "kml/dom.h"
 #include "kml/dom/parser_observer.h"
@@ -44,8 +45,8 @@ namespace kmlengine {
 // 2) the Feature is not a <Document>
 // 3) the Feature does not have a <styleUrl>
 // 4) the internally generated xml id must exist elsewhere in the KML
-kmldom::ElementPtr SplitStyles(const string& input_kml,
-                               string* errors);
+kmldom::ElementPtr SplitStyles(const std::string& input_kml,
+                               std::string* errors);
 
 }  // end namespace kmlengine
 

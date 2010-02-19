@@ -31,8 +31,6 @@
 #include <wx/wx.h>
 #include <wx/filepicker.h>
 
-class wxProgressDialog;
-
 // The main frame class.
 class MainFrame : public wxFrame {
  public:
@@ -41,15 +39,12 @@ class MainFrame : public wxFrame {
   void GenerateRbnl(wxCommandEvent& event);
   void OnQuit(wxCommandEvent& event);
   void OnAbout(wxCommandEvent& event);
-  // kmlconvenience::FeatureListReginator progress callback method.
-  bool RegionatorProgress(unsigned int completed, unsigned int total);
  private:
   bool ValidateFormFields(const wxChar* input_file, const wxString& output_dir);
   bool AskIfOutputDirNotEmpty(const wxString& output_dir);
   wxPanel* panel_;
   wxFilePickerCtrl* input_file_ctrl_;
   wxDirPickerCtrl* output_dir_ctrl_;
-  wxProgressDialog* progress_dialog_;
   DECLARE_EVENT_TABLE()
 };
 

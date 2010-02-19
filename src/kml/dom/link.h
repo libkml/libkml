@@ -1,9 +1,9 @@
 // Copyright 2008, Google Inc. All rights reserved.
 //
-// Redistribution and use in source and binary forms, with or without
+// Redistribution and use in source and binary forms, with or without 
 // modification, are permitted provided that the following conditions are met:
 //
-//  1. Redistributions of source code must retain the above copyright notice,
+//  1. Redistributions of source code must retain the above copyright notice, 
 //     this list of conditions and the following disclaimer.
 //  2. Redistributions in binary form must reproduce the above copyright notice,
 //     this list of conditions and the following disclaimer in the documentation
@@ -13,14 +13,14 @@
 //     specific prior written permission.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
-// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
 // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
 // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
 // PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
 // OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // This file contains the declarations for the the classes for the Link, Icon,
@@ -29,12 +29,11 @@
 #ifndef KML_DOM_LINK_H__
 #define KML_DOM_LINK_H__
 
+#include <string>
 #include "kml/dom/kml22.h"
 #include "kml/dom/object.h"
 
 namespace kmldom {
-
-class Visitor;
 
 // OGC KML 2.2 Standard: 12.9 kml:Icon (kml:BasicLinkType)
 // OGC KML 2.2 XSD: <complexType name="BasicLinkType"...
@@ -47,13 +46,13 @@ class BasicLink : public Object {
   }
 
   // <href>
-  const string& get_href() const {
+  const std::string& get_href() const {
     return href_;
   }
   bool has_href() const {
     return has_href_;
   }
-  void set_href(const string& href) {
+  void set_href(const std::string& href) {
     href_ = href;
     has_href_ = true;
   }
@@ -62,9 +61,6 @@ class BasicLink : public Object {
     has_href_ = false;
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-
  protected:
   // Internal class, not for direct instantiation.
   BasicLink();
@@ -72,7 +68,7 @@ class BasicLink : public Object {
   virtual void Serialize(Serializer& serializer) const;
 
  private:
-  string href_;
+  std::string href_;
   bool has_href_;
   LIBKML_DISALLOW_EVIL_CONSTRUCTORS(BasicLink);
 };
@@ -164,13 +160,13 @@ class AbstractLink : public BasicLink {
   }
 
   // <viewFormat>
-  const string& get_viewformat() const {
+  const std::string& get_viewformat() const {
     return viewformat_;
   }
   bool has_viewformat() const {
     return has_viewformat_;
   }
-  void set_viewformat(const string& viewformat) {
+  void set_viewformat(const std::string& viewformat) {
     viewformat_ = viewformat;
     has_viewformat_ = true;
   }
@@ -180,13 +176,13 @@ class AbstractLink : public BasicLink {
   }
 
   // <httpQuery>
-  const string& get_httpquery() const {
+  const std::string& get_httpquery() const {
     return httpquery_;
   }
   bool has_httpquery() const {
     return has_httpquery_;
   }
-  void set_httpquery(const string& httpquery) {
+  void set_httpquery(const std::string& httpquery) {
     httpquery_ = httpquery;
     has_httpquery_ = true;
   }
@@ -213,9 +209,9 @@ class AbstractLink : public BasicLink {
   bool has_viewrefreshtime_;
   double viewboundscale_;
   bool has_viewboundscale_;
-  string viewformat_;
+  std::string viewformat_;
   bool has_viewformat_;
-  string httpquery_;
+  std::string httpquery_;
   bool has_httpquery_;
   LIBKML_DISALLOW_EVIL_CONSTRUCTORS(AbstractLink);
 };
@@ -228,9 +224,6 @@ class Link : public AbstractLink {
   virtual bool IsA(KmlDomType type) const {
     return type == Type_Link || AbstractLink::IsA(type);
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
 
  private:
   friend class KmlFactory;
@@ -247,9 +240,6 @@ class Icon : public AbstractLink {
     return type == Type_Icon || AbstractLink::IsA(type);
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-
  private:
   friend class KmlFactory;
   Icon();
@@ -264,9 +254,6 @@ class Url : public AbstractLink {
   virtual bool IsA(KmlDomType type) const {
     return type == Type_Url || AbstractLink::IsA(type);
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
 
  private:
   friend class KmlFactory;
@@ -286,9 +273,6 @@ class IconStyleIcon : public BasicLink {
   virtual bool IsA(KmlDomType type) const {
     return type == Type_IconStyleIcon || BasicLink::IsA(type);
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
 
  private:
   friend class KmlFactory;

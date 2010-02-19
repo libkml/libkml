@@ -71,7 +71,7 @@ TEST_F(ColorTest, TestConstruction) {
   ASSERT_EQ(kOpaqueBlue, color_->get_color_abgr());
 
   // Verify construction from a string.
-  const string kOpaqueRedStr("ff0000ff");
+  const std::string kOpaqueRedStr("ff0000ff");
   color_.reset(new Color32(kOpaqueRedStr));
   ASSERT_EQ(kOpaqueRed, color_->get_color_abgr());
 
@@ -81,34 +81,34 @@ TEST_F(ColorTest, TestConstruction) {
   // with zeros (and will thus be completely transparent).
 
   // An fully empty string initalizes to all zeroes (transparent black).
-  const string kEmptyString("");
+  const std::string kEmptyString("");
   color_.reset(new Color32(kEmptyString));
-  string expected = "00000000";
+  std::string expected = "00000000";
   ASSERT_EQ(expected, color_->to_string_abgr());
 
-  const string kOnlySixCharsGiven("ffffff");
+  const std::string kOnlySixCharsGiven("ffffff");
   color_.reset(new Color32(kOnlySixCharsGiven));
   expected = "00ffffff";
   ASSERT_EQ(expected, color_->to_string_abgr());
 
-  const string kOnly2CharsGiven("ff");
+  const std::string kOnly2CharsGiven("ff");
   color_.reset(new Color32(kOnly2CharsGiven));
   expected = "000000ff";
   ASSERT_EQ(expected, color_->to_string_abgr());
 
-  // Only the first eight chars are used for construction from string. Extra
-  // chars at the end of the input string are ignored.
-  const string kTenCharsGiven("aabbccddee");
+  // Only the last eight chars are used for construction from string. Extra
+  // chars at the start of the input string are ignored.
+  const std::string kTenCharsGiven("aabbccddee");
   color_.reset(new Color32(kTenCharsGiven));
-  expected = "aabbccdd";
+  expected = "bbccddee";
   ASSERT_EQ(expected, color_->to_string_abgr());
 
-  // The input string here has two valid hex values in the first eight chars.
-  // ( the "a" and "c" in "Not a c") and those are the only chars that
+  // The input string here has only two valid hex values in the last eight
+  // chars ( the "a" and "e" in "or value") and those are the only chars that
   // won't be replaced with zeroes.
-  const string kBadString("Not a color value");
+  const std::string kBadString("This isn't even close to a color value");
   color_.reset(new Color32(kBadString));
-  expected = "0000a0c0";
+  expected = "0000a00e";
   ASSERT_EQ(expected, color_->to_string_abgr());
 }
 
@@ -139,13 +139,13 @@ TEST_F(ColorTest, TestGetSet) {
   ASSERT_EQ(kOpaqueGreenARGB, color_->get_color_argb());
 
   // Verify reconstruction to AABBGGRR string.
-  const string kOpaqueRedStr("ff0000ff");
+  const std::string kOpaqueRedStr("ff0000ff");
   color_.reset(new Color32(kOpaqueRedStr));
   ASSERT_EQ(kOpaqueRedStr, color_->to_string_abgr());
 
   // Verify to_argb_string.
   ASSERT_EQ(kOpaqueRedStr, color_->to_string_abgr());
-  const string kOpaqueRedStr_argb("ffff0000");
+  const std::string kOpaqueRedStr_argb("ffff0000");
   ASSERT_EQ(kOpaqueRedStr_argb, color_->to_string_argb());
 }
 
@@ -190,16 +190,6 @@ TEST_F(ColorTest, TestSetFromUint32Argb) {
   ASSERT_EQ(static_cast<uint32_t>(0x11), color_->get_red());
   ASSERT_EQ(static_cast<uint32_t>(0x22), color_->get_green());
   ASSERT_EQ(static_cast<uint32_t>(0x33), color_->get_blue());
-}
-
-TEST_F(ColorTest, TestSetColorArgbFromString) {
-  // The first 8 characters are a valid color (green). The remainder of the
-  // string is garbage. Assert we correctly set the color.
-  const string kLongStr("01234567nowSomeNonsense");
-  const string kStr("01234567");
-  color_.reset(new Color32());
-  color_->set_color_abgr(kLongStr);
-  ASSERT_EQ(kStr, color_->to_string_abgr());
 }
 
 }  // end namespace kmlbase

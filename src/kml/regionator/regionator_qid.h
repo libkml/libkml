@@ -30,7 +30,7 @@
 #define KML_REGIONATOR_REGIONATOR_QID_H__
 
 #include <sstream>
-#include "kml/base/util.h"
+#include <string>
 
 namespace kmlregionator {
 
@@ -46,7 +46,7 @@ enum quadrant_t {
 class Qid {
 public:
   Qid() {}
-  Qid(const string& qid) : qid_(qid) {}
+  Qid(std::string qid) : qid_(qid) {}
   static Qid CreateRoot() {
     return Qid("q0");
   }
@@ -58,11 +58,11 @@ public:
   size_t depth() const {
     return qid_.size() - 1;
   }
-  const string& str() const {
+  const std::string& str() const {
     return qid_;
   }
 private:
-  string qid_;
+  std::string qid_;
 };
 
 }  // end namespace kmlregionator

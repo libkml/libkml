@@ -28,6 +28,7 @@
 #ifndef KML_BASE_TEMPFILE_H__
 #define KML_BASE_TEMPFILE_H__
 
+#include <string>
 #include "boost/intrusive_ptr.hpp"
 #include "kml/base/file.h"
 #include "kml/base/referent.h"
@@ -45,7 +46,7 @@ typedef boost::intrusive_ptr<kmlbase::TempFile> TempFilePtr;
 class TempFile : public Referent {
  public:
   static TempFile* CreateTempFile() {
-    string tempfile;
+    std::string tempfile;
     if (!File::CreateNewTempFile(&tempfile)) {
       return NULL;
     }
@@ -56,13 +57,13 @@ class TempFile : public Referent {
       File::Delete(name_);
     }
   }
-  const string& name() {
+  const std::string& name() {
     return name_;
   }
  private:
-  TempFile(const string& filename) : name_(filename) {
+  TempFile(const std::string& filename) : name_(filename) {
   }
-  string name_;
+  std::string name_;
 };
 
 }  // end namespace kmlbase

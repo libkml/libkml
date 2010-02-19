@@ -1,9 +1,9 @@
 // Copyright 2008, Google Inc. All rights reserved.
 //
-// Redistribution and use in source and binary forms, with or without
+// Redistribution and use in source and binary forms, with or without 
 // modification, are permitted provided that the following conditions are met:
 //
-//  1. Redistributions of source code must retain the above copyright notice,
+//  1. Redistributions of source code must retain the above copyright notice, 
 //     this list of conditions and the following disclaimer.
 //  2. Redistributions in binary form must reproduce the above copyright notice,
 //     this list of conditions and the following disclaimer in the documentation
@@ -13,14 +13,14 @@
 //     specific prior written permission.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
-// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
 // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
 // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
 // PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
 // OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // This file contains the declarations for the abstract Overlay element
@@ -44,8 +44,6 @@
 namespace kmldom {
 
 class Serializer;
-class Visitor;
-class VisitorDriver;
 
 // OGC KML 2.2 Standard: 11.1 kml:AbstractOverlayGroup
 // OGC KML 2.2 XSD: <element name="AbstractOverlayGroup"...
@@ -99,9 +97,6 @@ class Overlay : public Feature {
     set_icon(NULL);
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void AcceptChildren(VisitorDriver* driver);
-
  protected:
   // Overlay is abstract.
   Overlay();
@@ -142,9 +137,6 @@ class LatLonBox : public AbstractLatLonBox {
     has_rotation_ = false;
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-
  private:
   friend class KmlFactory;
   LatLonBox();
@@ -171,7 +163,7 @@ class GxLatLonQuad : public Object {
   }
 
   // <coordinates>
-  const CoordinatesPtr& get_coordinates() const { return coordinates_; }
+  const CoordinatesPtr get_coordinates() const { return coordinates_; }
   bool has_coordinates() const { return coordinates_ != NULL; }
   void set_coordinates(const CoordinatesPtr& coordinates) {
     SetComplexChild(coordinates, &coordinates_);
@@ -179,10 +171,6 @@ class GxLatLonQuad : public Object {
   void clear_coordinates() {
     set_coordinates(NULL);
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-  virtual void AcceptChildren(VisitorDriver* driver);
 
  private:
   friend class KmlFactory;
@@ -272,10 +260,6 @@ class GroundOverlay : public Overlay {
     set_gx_latlonquad(NULL);
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-  virtual void AcceptChildren(VisitorDriver* driver);
-
  private:
   friend class KmlFactory;
   GroundOverlay();
@@ -305,9 +289,6 @@ class OverlayXY : public Vec2 {
     return type == Type_overlayXY || Vec2::IsA(type);
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-
  private:
   friend class KmlFactory;
   OverlayXY();
@@ -322,9 +303,6 @@ class ScreenXY : public Vec2 {
   virtual bool IsA(KmlDomType type) const {
     return type == Type_screenXY || Vec2::IsA(type);
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
 
  private:
   friend class KmlFactory;
@@ -341,9 +319,6 @@ class RotationXY : public Vec2 {
     return type == Type_rotationXY || Vec2::IsA(type);
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-
  private:
   friend class KmlFactory;
   RotationXY();
@@ -358,9 +333,6 @@ class Size : public Vec2 {
   virtual bool IsA(KmlDomType type) const {
     return type == Type_size || Vec2::IsA(type);
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
 
  private:
   friend class KmlFactory;
@@ -432,10 +404,6 @@ class ScreenOverlay : public Overlay {
     rotation_ = 0.0;
     has_rotation_ = false;
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-  virtual void AcceptChildren(VisitorDriver* driver);
 
  private:
   friend class KmlFactory;
@@ -542,9 +510,6 @@ class ViewVolume : public Object {
     has_near_ = false;
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-
  private:
   friend class KmlFactory;
   ViewVolume();
@@ -638,9 +603,6 @@ class ImagePyramid : public Object {
     has_gridorigin_ = false;
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-
  private:
   friend class KmlFactory;
   ImagePyramid();
@@ -729,10 +691,6 @@ class PhotoOverlay : public Overlay {
     shape_ = SHAPE_RECTANGLE;
     has_shape_ = false;
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-  virtual void AcceptChildren(VisitorDriver* driver);
 
  private:
   friend class KmlFactory;

@@ -31,11 +31,10 @@
 #ifndef KML_CONVENIENCE_ATOM_UTIL_H_
 #define KML_CONVENIENCE_ATOM_UTIL_H_
 
+#include <string>
 #include "kml/dom.h"
 
 namespace kmlconvenience {
-
-class HttpClient;
 
 // This class is an API of Atom (RFC 4287) utility functions especially with
 // particular emphasis on wrapping KML.
@@ -43,8 +42,8 @@ class AtomUtil {
  public:
   // This creates an <atom:entry> with the specified values for <atom:title>
   // and <atom:summary>.
-  static kmldom::AtomEntryPtr CreateBasicEntry(const string& title,
-                                               const string& summary);
+  static kmldom::AtomEntryPtr CreateBasicEntry(const std::string& title,
+                                               const std::string& summary);
 
   // This creates an <atom:entry> from and for the KML Feature.  The
   // <atom:entry>'s <atom:title> is set from the Feature's <name> and the
@@ -57,35 +56,13 @@ class AtomUtil {
   // <atom:content> or if the <atom:content> has no src=.  Passing a NULL
   // src is safe and has no bearing on the return value.
   static bool GetContentSrc(const kmldom::AtomEntryPtr& entry,
-                            string* src);
-
-  // This returns the first <atom:category> who's scheme= ends with scheme.
-  // NULL is returned if no matching <atom:category> is found.
-  static kmldom::AtomCategoryPtr FindCategoryByScheme(
-      const kmldom::AtomCommon& atom_common, const string& scheme);
-
-  // This returns true if the given <atom:link>'s rel= ends with rel_type.
-  static bool LinkIsOfRel(const kmldom::AtomLinkPtr& link,
-                          const string& rel_type);
-
-  // This returns the first <atom:link> matching the given link relation
-  // (rel= attribute) and mimetype (type= attribute).  LinkIsOfRel is used
-  // to match the rel_type.  The mime_type is an exact match.  NULL is
-  // returned if no matching <atom:link> is found.
-  static kmldom::AtomLinkPtr FindLink(const kmldom::AtomCommon& atom_common,
-                                      const string& rel_type,
-                                      const string& mime_type);
-
-  // Return the first <entry> in the feed with the given title.
-  // This returns NULL if no <entry>'s have this exact <title>.
-  static kmldom::AtomEntryPtr FindEntryByTitle(const kmldom::AtomFeedPtr& feed,
-                                               const string& title);
+                            std::string* src);
 
   // This returns the href= value of the first <atom:link> whose first rel=
   // ends with the given link relation type.  Both AtomFeed (<atom:feed>)
   // and AtomEntry (<atom:entry>) are of the AtomCommon type.
   static bool FindRelUrl(const kmldom::AtomCommon& atom_common,
-                         const string& rel_type, string* href);
+                         const std::string& rel_type, std::string* href);
 
   // This returns a clone of the KML Feature contained in the <atom:entry>.
   // The returned clone Feature's <atom:link> is set to the <atom:entry>'s
@@ -107,26 +84,8 @@ class AtomUtil {
   // relation if such is found in the <atom:feed>.
   static void GetFeedFeatures(const kmldom::AtomFeedPtr& feed,
                               kmldom::ContainerPtr container);
-
-  // This fetches and parses the given <atom:feed> at the given URL.  NULL is
-  // returned on any fetch or parse errors.  The HttpClient is expected to be
-  // "logged in" as appropriate for the URL.
-  static kmldom::AtomFeedPtr GetAndParseFeed(const string& feed_url,
-                                             const HttpClient& http_client);
-
-  // This fetches and parses the given feed's rel="next" link if it has one.
-  // The HttpClient is expected to be "logged in" as appropriate for the URL.
-  static kmldom::AtomFeedPtr GetNextFeed(const kmldom::AtomFeedPtr& feed,
-                                         const HttpClient& http_client);
-
-  // If the <atom:entry> has a <gd:resourceId> true is returned.  Also return
-  // the value of this element if a resource_id string is supplied.
-  // Note: the gd:resourceId is a Google Data API extension to Atom.
-  static bool GetGdResourceId(const kmldom::AtomEntryPtr& entry,
-                              string* resource_id);
-
 };
 
-}  // end namespace kmlconvenience
+}  // end namespace kmlconvenience 
 
 #endif  // KML_CONVENIENCE_ATOM_UTIL_H

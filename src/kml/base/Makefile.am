@@ -1,8 +1,7 @@
 AM_CPPFLAGS = -I$(top_srcdir)/src \
               -I$(top_srcdir)/third_party/boost_1_34_1 \
               -I$(top_srcdir)/third_party/googletest-r108/include \
-              -I$(top_srcdir)/third_party/uriparser-0.7.5/include \
-              -I$(top_srcdir)/third_party/zlib-1.2.3/contrib
+              -I$(top_srcdir)/third_party/uriparser-0.7.1/include
 
 if GCC
 AM_CXXFLAGS = -Wall -Wextra -Wno-unused-parameter -Werror -ansi -pedantic -fno-rtti
@@ -14,31 +13,27 @@ libkmlbase_la_LDFLAGS = -lexpat
 lib_LTLIBRARIES = libkmlbase.la
 libkmlbase_la_SOURCES = \
 	attributes.cc \
-	csv_splitter.cc \
+	color32.h \
 	date_time.cc \
 	expat_handler_ns.cc \
 	expat_parser.cc \
 	file.cc \
 	file_posix.cc \
 	math_util.cc \
-	mimetypes.cc \
 	referent.cc \
 	string_util.cc \
 	time_util.cc \
 	uri_parser.cc \
 	version.cc \
-	xml_namespaces.cc \
-	zip_file.cc
+	xml_namespaces.cc
 
 libkmlbase_la_LIBADD = \
-	$(top_builddir)/third_party/libminizip.la \
 	$(top_builddir)/third_party/liburiparser.la
 
 # These header files will be installed in $(includedir)/kml/base
 libkmlbaseincludedir = $(includedir)/kml/base
 libkmlbaseinclude_HEADERS = \
 	attributes.h \
-	csv_splitter.h \
 	date_time.h \
 	color32.h \
 	expat_handler.h \
@@ -47,7 +42,6 @@ libkmlbaseinclude_HEADERS = \
 	file.h \
 	math_util.h \
 	memory_file.h \
-	mimetypes.h \
 	net_cache.h \
 	referent.h \
 	string_util.h \
@@ -59,8 +53,7 @@ libkmlbaseinclude_HEADERS = \
 	xml_element.h \
 	xml_file.h \
 	xml_namespaces.h \
-	xmlns.h \
-	zip_file.h
+	xmlns.h
 
 EXTRA_DIST = \
 	file_win32.cc \
@@ -72,7 +65,6 @@ DATA_DIR = $(top_srcdir)/testdata
 TESTS = \
 	attributes_test \
 	color32_test \
-	csv_splitter_test \
 	date_time_test \
 	expat_handler_ns_test \
 	expat_parser_test \
@@ -90,8 +82,7 @@ TESTS = \
 	xml_element_test \
 	xml_file_test \
 	xml_namespaces_test \
-	xmlns_test \
-	zip_file_test
+	xmlns_test
 
 check_PROGRAMS = $(TESTS)
 
@@ -105,11 +96,6 @@ color32_test_CXXFLAGS = $(AM_TEST_CXXFLAGS)
 color32_test_LDADD = libkmlbase.la \
 		     $(top_builddir)/third_party/libgtest.la
 
-csv_splitter_test_SOURCES = csv_splitter_test.cc
-csv_splitter_test_CXXFLAGS = -DDATADIR=\"$(DATA_DIR)\" $(AM_TEST_CXXFLAGS)
-csv_splitter_test_LDADD = libkmlbase.la \
-			$(top_builddir)/third_party/libgtest.la
-
 date_time_test_SOURCES = date_time_test.cc
 date_time_test_CXXFLAGS = $(AM_TEST_CXXFLAGS)
 date_time_test_LDADD = libkmlbase.la \
@@ -121,7 +107,7 @@ expat_handler_ns_test_LDADD = libkmlbase.la \
 			      $(top_builddir)/third_party/libgtest.la
 
 expat_parser_test_SOURCES = expat_parser_test.cc
-expat_parser_test_CXXFLAGS = -DDATADIR=\"$(DATA_DIR)\" $(AM_TEST_CXXFLAGS)
+expat_parser_test_CXXFLAGS = $(AM_TEST_CXXFLAGS)
 expat_parser_test_LDADD = libkmlbase.la \
 			      $(top_builddir)/third_party/libgtest.la
 
@@ -201,12 +187,6 @@ xmlns_test_SOURCES = xmlns_test.cc
 xmlns_test_CXXFLAGS = $(AM_TEST_CXXFLAGS)
 xmlns_test_LDADD= libkmlbase.la \
 		  $(top_builddir)/third_party/libgtest.la
-
-zip_file_test_SOURCES = zip_file_test.cc
-zip_file_test_CXXFLAGS = -DDATADIR=\"$(DATA_DIR)\" $(AM_TEST_CXXFLAGS)
-zip_file_test_LDADD= libkmlbase.la \
-		 $(top_builddir)/third_party/libminizip.la \
-		 $(top_builddir)/third_party/libgtest.la
 
 CLEANFILES = check_PROGRAMS
 

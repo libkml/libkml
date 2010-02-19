@@ -28,6 +28,7 @@
 
 #include "kml/engine/id_mapper.h"
 #include "kml/engine/id_mapper_internal.h"
+#include <string>
 #include "boost/scoped_ptr.hpp"
 #include "gtest/gtest.h"
 #include "kml/base/file.h"
@@ -97,7 +98,7 @@ TEST_F(IdMapperTest, TestIdMapperEmpty) {
 
 TEST_F(IdMapperTest, TestIdMapperOne) {
   // Save an element with an id.
-  const string kPlacemark0Id("id-of-placemark0");
+  const std::string kPlacemark0Id("id-of-placemark0");
   placemark0_->set_id(kPlacemark0Id);
   id_mapper_->SaveElement(placemark0_);
   ASSERT_TRUE(dup_id_vector_.empty());
@@ -108,7 +109,7 @@ TEST_F(IdMapperTest, TestIdMapperOne) {
 // Verify MapIds() on an element with an id.
 TEST_F(IdMapperTest, TestMapIdsOne) {
   // Save an element with an id.
-  const string kPlacemark0Id("id-of-placemark0");
+  const std::string kPlacemark0Id("id-of-placemark0");
   placemark0_->set_id(kPlacemark0Id);
   MapIds(placemark0_, &object_id_map_, &dup_id_vector_);
   ASSERT_TRUE(dup_id_vector_.empty());
@@ -119,7 +120,7 @@ TEST_F(IdMapperTest, TestMapIdsOne) {
 // Verify MapIds() is well behaved when presented with no dup vector pointer.
 TEST_F(IdMapperTest, TestMapIdsNoDupVector) {
   // Save an element with an id.
-  const string kPlacemark0Id("id-of-placemark0");
+  const std::string kPlacemark0Id("id-of-placemark0");
   placemark0_->set_id(kPlacemark0Id);
   MapIds(placemark0_, &object_id_map_, NULL);
   ASSERT_EQ(static_cast<size_t>(1), object_id_map_.size());
@@ -128,7 +129,7 @@ TEST_F(IdMapperTest, TestMapIdsNoDupVector) {
 
 TEST_F(IdMapperTest, TestIdMapperDupe) {
   // Save an element whose child has the same id.
-  const string kDupeId("xml-does-not-like-duplicate-ids");
+  const std::string kDupeId("xml-does-not-like-duplicate-ids");
   point0_->set_id(kDupeId);
   placemark0_->set_id(kDupeId);
   placemark0_->set_geometry(point0_);
@@ -155,12 +156,12 @@ TEST_F(IdMapperTest, TestNoIds) {
 }
 
 TEST_F(IdMapperTest, TestSomeIds) {
-  const string kId0("id0");
-  const string kName0("name0");
+  const std::string kId0("id0");
+  const std::string kName0("name0");
   placemark0_->set_id(kId0);
   placemark0_->set_name(kName0);
-  const string kId1("id1");
-  const string kName1("name1");
+  const std::string kId1("id1");
+  const std::string kName1("name1");
   placemark1_->set_id(kId1);
   placemark1_->set_name(kName1);
   folder0_->add_feature(placemark0_);
@@ -175,7 +176,7 @@ TEST_F(IdMapperTest, TestSomeIds) {
 }
 
 TEST_F(IdMapperTest, TestAllObjects) {
-  string kml;
+  std::string kml;
   ASSERT_TRUE(File::ReadFileToString(
       File::JoinPaths(DATADIR, File::JoinPaths("kml",
                                                "all-unknown-attrs-input.kml")),
@@ -187,7 +188,7 @@ TEST_F(IdMapperTest, TestAllObjects) {
   ObjectIdMap::const_iterator iter = object_id_map_.begin();
   for (; iter != object_id_map_.end(); ++iter) {
     const ObjectPtr& object = iter->second;
-    const string& id = iter->first;
+    const std::string& id = iter->first;
     // The id of the object is the id that maps to the object.
     ASSERT_EQ(id, object->get_id());
     // Each id in all-unknown-attrs-input.kml is the same as the element name.
@@ -197,7 +198,7 @@ TEST_F(IdMapperTest, TestAllObjects) {
 
 TEST_F(IdMapperTest, TestDupeDetection) {
   // Create a KML hierarchy with duplicate ids.
-  const string kDupeId("some-id-to-duplicate");
+  const std::string kDupeId("some-id-to-duplicate");
   placemark0_->set_id(kDupeId);
   folder0_->set_id(kDupeId);
   folder0_->add_feature(placemark0_);
@@ -208,7 +209,7 @@ TEST_F(IdMapperTest, TestDupeDetection) {
 
 TEST_F(IdMapperTest, TestClearIds) {
   placemark0_->set_id("placemark123");
-  const string kFolderName("folder name");
+  const std::string kFolderName("folder name");
   folder0_->set_id("folder123");
   folder0_->set_name(kFolderName);
   folder0_->add_feature(placemark0_);
@@ -222,7 +223,7 @@ TEST_F(IdMapperTest, TestClearIds) {
 }
 
 TEST_F(IdMapperTest, TestClearManyIds) {
-  string kml;
+  std::string kml;
   ASSERT_TRUE(File::ReadFileToString(
       File::JoinPaths(DATADIR, File::JoinPaths("kml",
                                                "all-unknown-attrs-input.kml")),
@@ -246,12 +247,12 @@ TEST_F(IdMapperTest, TestRemapIdsNull) {
 
 // Verify remapping for a simple case.
 TEST_F(IdMapperTest, TestRemapIdsSimple) {
-  const string kId0("id0");
-  const string kName0("name0");
+  const std::string kId0("id0");
+  const std::string kName0("name0");
   placemark0_->set_id(kId0);
   placemark0_->set_name(kName0);
-  const string kId1("id1");
-  const string kName1("name1");
+  const std::string kId1("id1");
+  const std::string kName1("name1");
   placemark1_->set_id(kId1);
   placemark1_->set_name(kName1);
   folder0_->add_feature(placemark0_);
@@ -270,15 +271,15 @@ TEST_F(IdMapperTest, TestRemapIdsSimple) {
 
 // Verify remapping for a simple case with output object_id_map.
 TEST_F(IdMapperTest, TestRemapIdsSimpleWithOutput) {
-  const string kId0("id0");
-  const string kName0("name0");
+  const std::string kId0("id0");
+  const std::string kName0("name0");
   placemark0_->set_id(kId0);
   placemark0_->set_name(kName0);
-  const string kId1("id1");
-  const string kName1("name1");
+  const std::string kId1("id1");
+  const std::string kName1("name1");
   placemark1_->set_id(kId1);
   placemark1_->set_name(kName1);
-  const string kFolderId("folder-id");
+  const std::string kFolderId("folder-id");
   folder0_->set_id(kFolderId);
   folder0_->add_feature(placemark0_);
   folder0_->add_feature(placemark1_);
@@ -304,7 +305,7 @@ TEST_F(IdMapperTest, TestRemapIdsSimpleWithOutput) {
 }
 
 TEST_F(IdMapperTest, TestRemapManyIds) {
-  string kml;
+  std::string kml;
   ASSERT_TRUE(File::ReadFileToString(
       File::JoinPaths(DATADIR, File::JoinPaths("kml",
                                                "all-unknown-attrs-input.kml")),
@@ -314,7 +315,7 @@ TEST_F(IdMapperTest, TestRemapManyIds) {
   ASSERT_EQ(static_cast<size_t>(44), object_id_map_.size());
 
   // Create a "newid-OLDID" for half the objects in the file.
-  const string kNewIdBase("newid-");
+  const std::string kNewIdBase("newid-");
   kmlbase::StringMap id_map;
   ObjectIdMap::const_iterator iter = object_id_map_.begin();
   for (; iter != object_id_map_.end(); ++iter, ++iter) {
@@ -343,9 +344,9 @@ TEST_F(IdMapperTest, TestRemapManyIds) {
 }
 
 TEST_F(IdMapperTest, TestUnknownElements) {
-  const string kStyleId("hist1_b");
-  const string kIconStyleId("khIconStyle671");
-  const string kKml(string("<Style id='") + kStyleId + "'>"
+  const std::string kStyleId("hist1_b");
+  const std::string kIconStyleId("khIconStyle671");
+  const std::string kKml(std::string("<Style id='") + kStyleId + "'>"
     "<IconStyle id='" + kIconStyleId + "'>"
     "<color>ff00f6ff</color>"
     "<scale>0.7</scale>"

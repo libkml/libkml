@@ -47,7 +47,7 @@ namespace kmlengine {
 // TODO: verify unsigned int to int init of nesting_depth_ ok on MSVC
 StyleMerger::StyleMerger(const SharedStyleMap& shared_style_map,
                          KmlCache* kml_cache,
-                         const string& base_url,
+                         const std::string& base_url,
                          StyleStateEnum style_state)
     : shared_style_map_(shared_style_map),
       kml_cache_(kml_cache),
@@ -60,7 +60,7 @@ StyleMerger::StyleMerger(const SharedStyleMap& shared_style_map,
 // TODO: verify unsigned int to int init of nesting_depth_ ok on MSVC
 StyleMerger::StyleMerger(const SharedStyleMap& shared_style_map,
                          KmlCache* kml_cache,
-                         const string& base_url,
+                         const std::string& base_url,
                          StyleStateEnum style_state,
                          unsigned int nesting_depth)
     : shared_style_map_(shared_style_map),
@@ -80,12 +80,12 @@ StyleMerger* StyleMerger::CreateFromKmlFile(
                          style_state);
 }
 
-void StyleMerger::MergeStyleUrl(const string& styleurl) {
+void StyleMerger::MergeStyleUrl(const std::string& styleurl) {
   if (--nesting_depth_ < 0) {
     return;
   }
-  string path;
-  string style_id;  // fragment
+  std::string path;
+  std::string style_id;  // fragment
   if (styleurl.empty() ||
       !SplitUri(styleurl, NULL, NULL, NULL, &path, NULL, &style_id) ||
       style_id.empty()) {
@@ -124,7 +124,7 @@ void StyleMerger::MergeStyleUrl(const string& styleurl) {
 }
 
 // Both Feature and Pair have a styleUrl and/or StyleSelector.
-void StyleMerger::MergeStyle(const string& styleurl,
+void StyleMerger::MergeStyle(const std::string& styleurl,
                              const StyleSelectorPtr& styleselector) {
   // If there's a styleUrl to a shared style merge that in first.
   MergeStyleUrl(styleurl);

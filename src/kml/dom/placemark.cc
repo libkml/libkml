@@ -56,15 +56,4 @@ void Placemark::Serialize(Serializer& serializer) const {
   }
 }
 
-void Placemark::Accept(Visitor* visitor) {
-  visitor->VisitPlacemark(PlacemarkPtr(this));
-}
-
-void Placemark::AcceptChildren(VisitorDriver* driver) {
-  Feature::AcceptChildren(driver);
-  if (has_geometry()) {
-    driver->Visit(get_geometry());
-  }
-}
-
 }  // namespace kmldom

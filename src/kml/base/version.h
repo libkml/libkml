@@ -28,7 +28,7 @@
 #ifndef KML_BASE_VERSION_H__
 #define KML_BASE_VERSION_H__
 
-#include "kml/base/util.h"
+#include <string>
 
 namespace kmlbase {
 
@@ -37,14 +37,14 @@ namespace kmlbase {
 // your code and libkml.  It is the intention that these values match those
 // used in the configure.ac file's AC_INIT.
 #define LIBKML_MAJOR_VERSION 1
-#define LIBKML_MINOR_VERSION 2
-#define LIBKML_MICRO_VERSION 0
+#define LIBKML_MINOR_VERSION 0
+#define LIBKML_MICRO_VERSION 1
 
 // This API provides the version info this library was compiled with.
 class Version {
  public:
   // This returns the major.minor.micro in string form.
-  static string GetString();
+  static std::string GetString();
 
   // This is an advisory method which provides the given libkml instance the
   // oportunity to guess at its compatibility with the given version info.

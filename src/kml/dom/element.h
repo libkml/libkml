@@ -1,9 +1,9 @@
 // Copyright 2008, Google Inc. All rights reserved.
 //
-// Redistribution and use in source and binary forms, with or without
+// Redistribution and use in source and binary forms, with or without 
 // modification, are permitted provided that the following conditions are met:
 //
-//  1. Redistributions of source code must retain the above copyright notice,
+//  1. Redistributions of source code must retain the above copyright notice, 
 //     this list of conditions and the following disclaimer.
 //  2. Redistributions in binary form must reproduce the above copyright notice,
 //     this list of conditions and the following disclaimer in the documentation
@@ -13,14 +13,14 @@
 //     specific prior written permission.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
-// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
 // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
 // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
 // PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
 // OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // This file contains the declaration of the Element and Field classes.
@@ -35,11 +35,11 @@
 #ifndef KML_DOM_ELEMENT_H__
 #define KML_DOM_ELEMENT_H__
 
+#include <string>
 #include <vector>
 #include "boost/scoped_ptr.hpp"
 #include "kml/dom/kml22.h"
 #include "kml/dom/kml_ptr.h"
-#include "kml/dom/visitor_driver.h"
 #include "kml/base/util.h"
 #include "kml/base/xml_element.h"
 
@@ -50,7 +50,6 @@ class Attributes;
 namespace kmldom {
 
 class Serializer;
-class Visitor;
 class Xsd;
 
 // This is a KML-specific implementation of the somewhat abstracted
@@ -67,10 +66,10 @@ class Element : public kmlbase::XmlElement {
   ElementPtr GetParent() const;
 
   // This is the concatenation of all character data found parsing this element.
-  const string& get_char_data() const {
+  const std::string& get_char_data() const {
     return char_data_;
   }
-  void set_char_data(const string& char_data) {
+  void set_char_data(const std::string& char_data) {
     char_data_ = char_data;
   }
 
@@ -107,7 +106,7 @@ class Element : public kmlbase::XmlElement {
   virtual void SerializeAttributes(kmlbase::Attributes* attributes) const;
 
   // Each fully unknown element (and its children) is saved in raw XML form.
-  void AddUnknownElement(const string& s);
+  void AddUnknownElement(const std::string& s);
 
   // Called by concrete elements to serialize unknown and/or misplaced
   // elements discovered at parse time.
@@ -117,7 +116,7 @@ class Element : public kmlbase::XmlElement {
   size_t get_unknown_elements_array_size() const {
     return unknown_elements_array_.size();
   }
-  const string& get_unknown_elements_array_at(size_t i) const {
+  const std::string& get_unknown_elements_array_at(size_t i) const {
     return unknown_elements_array_[i];
   }
 
@@ -161,19 +160,7 @@ class Element : public kmlbase::XmlElement {
   virtual bool SetDouble(double* val) { return false; }
   virtual bool SetInt(int* val) { return false; }
   virtual bool SetEnum(int* val) { return false; }
-  virtual bool SetString(string* val) { return false; }
-
-  // Accepts the visitor for this element (this must be overridden for each
-  // element type).
-  // TODO(dbeaumont): Make pure virtual when all sub-classes implement Accept().
-  virtual void Accept(Visitor* visitor);
-
-  // This needs to be implemented by subclasses with child elements and must
-  // call its parent's implementation first. The default implementation does
-  // nothing.
-  virtual void AcceptChildren(VisitorDriver* driver) {
-    /* Inlinable for efficiency */
-  }
+  virtual bool SetString(std::string* val) { return false; }
 
  protected:
   // Element is an abstract base class and is never created directly.
@@ -207,21 +194,12 @@ class Element : public kmlbase::XmlElement {
     return false;
   }
 
-  // Allows subclasses to easily visit repeated fields.
-  template <class T>
-  static void AcceptRepeated(std::vector<T>* elements, VisitorDriver* driver) {
-    typename std::vector<T>::iterator it;
-    for (it = elements->begin(); it != elements->end(); ++it) {
-      driver->Visit(*it);
-    }
-  }
-
  private:
   KmlDomType type_id_;
-  string char_data_;
+  std::string char_data_;
   // A vector of strings to contain unknown non-KML elements discovered during
   // parse.
-  std::vector<string> unknown_elements_array_;
+  std::vector<std::string> unknown_elements_array_;
   // A vector of Element*'s to contain known KML elements found during parse
   // to be in illegal positions, e.g. <Placemark><Document>.
   std::vector<ElementPtr> unknown_legal_elements_array_;
@@ -299,7 +277,7 @@ class Field : public Element {
 
   // Sets the given string from the character data.  If no val pointer is
   // supplied false is returned, else true is returned and the val is set.
-  bool SetString(string* val);
+  bool SetString(std::string* val);
 
  private:
   const Xsd& xsd_;

@@ -1,9 +1,9 @@
 // Copyright 2009, Google Inc. All rights reserved.
 //
-// Redistribution and use in source and binary forms, with or without
+// Redistribution and use in source and binary forms, with or without 
 // modification, are permitted provided that the following conditions are met:
 //
-//  1. Redistributions of source code must retain the above copyright notice,
+//  1. Redistributions of source code must retain the above copyright notice, 
 //     this list of conditions and the following disclaimer.
 //  2. Redistributions in binary form must reproduce the above copyright notice,
 //     this list of conditions and the following disclaimer in the documentation
@@ -13,14 +13,14 @@
 //     specific prior written permission.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
-// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
 // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
 // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
 // PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
 // OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // This file contains the declaration of <gx:Tour>, <gx:Playlist>,
@@ -43,8 +43,6 @@ class Attributes;
 namespace kmldom {
 
 class Serializer;
-class Visitor;
-class VisitorDriver;
 
 // <gx:Tour>
 class GxTour : public Feature {
@@ -67,10 +65,6 @@ class GxTour : public Feature {
   void clear_gx_playlist() {
     set_gx_playlist(NULL);
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-  virtual void AcceptChildren(VisitorDriver* driver);
 
  private:
   friend class KmlFactory;
@@ -99,10 +93,6 @@ class GxPlaylist : public Object {
   void add_gx_tourprimitive(const GxTourPrimitivePtr& tourprimitive);
   size_t get_gx_tourprimitive_array_size() const;
   const GxTourPrimitivePtr& get_gx_tourprimitive_array_at(size_t index) const;
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-  virtual void AcceptChildren(VisitorDriver* driver);
 
  private:
   friend class KmlFactory;
@@ -191,10 +181,6 @@ class GxAnimatedUpdate : public GxTourPrimitiveCommon {
     set_update(NULL);
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-  virtual void AcceptChildren(VisitorDriver* driver);
-
  private:
   friend class KmlFactory;
   GxAnimatedUpdate();
@@ -240,10 +226,6 @@ class GxFlyTo : public GxTourPrimitiveCommon {
     set_abstractview(NULL);
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-  virtual void AcceptChildren(VisitorDriver* driver);
-
  private:
   int gx_flytomode_;
   bool has_gx_flytomode_;
@@ -269,9 +251,6 @@ class GxWait : public GxTourPrimitiveCommon {
     return type == ElementType() || GxTourPrimitive::IsA(type);
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-
  private:
   friend class KmlFactory;
   GxWait();
@@ -293,13 +272,13 @@ class GxSoundCue : public GxTourPrimitive {
   }
 
   // <href>
-  const string& get_href() const {
+  const std::string& get_href() const {
     return href_;
   }
   bool has_href() const {
     return has_href_;
   }
-  void set_href(const string& href) {
+  void set_href(const std::string& href) {
     href_ = href;
     has_href_ = true;
   }
@@ -308,11 +287,8 @@ class GxSoundCue : public GxTourPrimitive {
     has_href_ = false;
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-
  private:
-  string href_;
+  std::string href_;
   bool has_href_;
   friend class KmlFactory;
   GxSoundCue();
@@ -350,9 +326,6 @@ class GxTourControl : public GxTourPrimitive {
     gx_playmode_ = GX_PLAYMODE_PAUSE;
     has_gx_playmode_ = false;
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
 
  private:
   int gx_playmode_;

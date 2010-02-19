@@ -80,18 +80,4 @@ void Kml::Serialize(Serializer& serializer) const {
   }
 }
 
-void Kml::Accept(Visitor* visitor) {
-  visitor->VisitKml(KmlPtr(this));
-}
-
-void Kml::AcceptChildren(VisitorDriver* driver) {
-  Element::AcceptChildren(driver);
-  if (has_networklinkcontrol()) {
-    driver->Visit(get_networklinkcontrol());
-  }
-  if (has_feature()) {
-    driver->Visit(get_feature());
-  }
-}
-
 }  // end namespace kmldom

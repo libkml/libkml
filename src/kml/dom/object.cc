@@ -71,5 +71,4 @@ void Object::SerializeAttributes(Attributes* attributes) const {
   }
 }
 
-
 }  // namespace kmldom

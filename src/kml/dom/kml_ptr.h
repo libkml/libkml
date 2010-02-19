@@ -50,7 +50,6 @@ class Vec2;
 
 class Alias;
 class AtomAuthor;
-class AtomCategory;
 class AtomContent;
 class AtomEntry;
 class AtomFeed;
@@ -162,7 +161,6 @@ typedef boost::intrusive_ptr<Vec2> Vec2Ptr;
 
 typedef boost::intrusive_ptr<Alias> AliasPtr;
 typedef boost::intrusive_ptr<AtomAuthor> AtomAuthorPtr;
-typedef boost::intrusive_ptr<AtomCategory> AtomCategoryPtr;
 typedef boost::intrusive_ptr<AtomContent> AtomContentPtr;
 typedef boost::intrusive_ptr<AtomEntry> AtomEntryPtr;
 typedef boost::intrusive_ptr<AtomFeed> AtomFeedPtr;

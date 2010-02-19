@@ -27,6 +27,7 @@
 // various internals of the KmlHandler class.
 
 #include "kml/dom/kml_funcs.h"
+#include <string>
 #include "kml/dom/element.h"
 #include "kml/dom/kml.h"
 #include "kml/dom/kml_cast.h"
@@ -37,7 +38,7 @@ namespace kmldom {
 // Verify proper behavior for good KML.  The XML is valid and all elements
 // are known and contained by proper parents.
 TEST(ParserTest, TestValidKml) {
-  string errors;
+  std::string errors;
   ElementPtr root = Parse("<kml>"
                           "<Placemark>"
                           "<name>a good Placemark</name>"
@@ -68,7 +69,7 @@ TEST(ParserTest, TestValidKml) {
 
 TEST(ParserTest, TestJunkInput) {
   // Parse a garbage string.
-  string errors;
+  std::string errors;
   ElementPtr root = Parse("This is not even xml", &errors);
   // Since the parse failed there will be an error string and NULL is returned.
   ASSERT_FALSE(errors.empty());
@@ -85,7 +86,7 @@ TEST(ParserTest, TestFullyUnknownXml) {
   // the root element is not known.  When Parse returns NULL an error string
   // is set.  The error string is considered human readable and not
   // examined further by this test.
-  string errors;
+  std::string errors;
   ElementPtr root;
 
   // These test some subtle variations of the inner workings of expat.
@@ -125,7 +126,7 @@ TEST(ParserTest, TestFullyUnknownXml) {
 TEST(ParserTest, TestPartlyValidKml) {
   // This pushes several elements onto the stack within the parser to
   // excercise the destructor which frees them all.
-  string errors;
+  std::string errors;
   ElementPtr root = Parse("<kml>"
                           "<Folder>"
                           "<Document>"
@@ -144,9 +145,9 @@ TEST(ParserTest, TestKmlWithUnknownEmptyFields) {
   // Note that the unknown element handling logic still engages expat handlers
   // hence nil elements (<c/>) are turned into <c></c>.  Note also the newline
   // added by the unknown element handler.
-  const string kUnknownXml("<a>b<c></c></a>\n");
-  const string kKml(
-      string("<kml>") + kUnknownXml + "</kml>");
+  const std::string kUnknownXml("<a>b<c></c></a>\n");
+  const std::string kKml(
+      std::string("<kml>") + kUnknownXml + "</kml>");
   ElementPtr root = Parse(kKml, NULL);
   ASSERT_TRUE(root);
   ASSERT_EQ(static_cast<size_t>(1), root->get_unknown_elements_array_size());
@@ -158,7 +159,7 @@ TEST(ParserTest, TestParseAtomOnJunk) {
 }
 
 TEST(ParserTest, TestBasicParseAtomError) {
-  string errors;
+  std::string errors;
   ElementPtr root = ParseAtom("<feed xmlns='http://www.w3.org/2005/Atom'>",
                               &errors);
   ASSERT_FALSE(root.get());
@@ -166,7 +167,7 @@ TEST(ParserTest, TestBasicParseAtomError) {
 }
 
 TEST(ParserTest, TestBasicParseAtom) {
-  string errors;
+  std::string errors;
   ElementPtr root = ParseAtom("<feed xmlns='http://www.w3.org/2005/Atom'/>",
                               &errors);
   ASSERT_TRUE(errors.empty());
@@ -188,7 +189,7 @@ TEST(ParserTest, TestBasicParseAtomWithKml) {
             content->get_misplaced_elements_array_size());
   kmldom::PlacemarkPtr placemark =
       kmldom::AsPlacemark(content->get_misplaced_elements_array_at(0));
-  ASSERT_EQ(string("pm0"), placemark->get_id());
+  ASSERT_EQ(std::string("pm0"), placemark->get_id());
 }
 
 }  // end namespace kmldom

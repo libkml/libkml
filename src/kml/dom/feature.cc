@@ -191,26 +191,4 @@ void Feature::Serialize(Serializer& serializer) const {
   Feature::SerializeAfterStyleSelector(serializer);
 }
 
-void Feature::AcceptChildren(VisitorDriver* driver) {
-  Object::AcceptChildren(driver);
-  if (has_snippet()) {
-    driver->Visit(get_snippet());
-  }
-  if (has_abstractview()) {
-    driver->Visit(get_abstractview());
-  }
-  if (has_timeprimitive()) {
-    driver->Visit(get_timeprimitive());
-  }
-  if (has_styleselector()) {
-    driver->Visit(get_styleselector());
-  }
-  if (has_region()) {
-    driver->Visit(get_region());
-  }
-  if (has_extendeddata()) {
-    driver->Visit(get_extendeddata());
-  }
-}
-
 }  // namespace kmldom

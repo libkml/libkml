@@ -80,15 +80,15 @@ TEST_F(GxTourTest, TestSetGetHasClear) {
 }
 
 TEST_F(GxTourTest, TestParse) {
-  string kName = "My Favorite GxTour";
-  string kSnippet = "Left panel stuff about my favorite place...";
-  string kGxTour =
+  std::string kName = "My Favorite GxTour";
+  std::string kSnippet = "Left panel stuff about my favorite place...";
+  std::string kGxTour =
     "<gx:Tour>"
     "<name>" + kName + "</name>"
     "<Snippet>" + kSnippet + "</Snippet>"
     "<gx:Playlist/>"
     "</gx:Tour>";
-  string errors;
+  std::string errors;
   ElementPtr root = Parse(kGxTour, &errors);
   ASSERT_TRUE(root);
   ASSERT_TRUE(errors.empty());
@@ -123,7 +123,7 @@ TEST_F(GxTourTest, TestSerialize) {
   gx_tour_->set_region(KmlFactory::GetFactory()->CreateRegion());
   gx_tour_->set_gx_playlist(KmlFactory::GetFactory()->CreateGxPlaylist());
 
-  string expected(
+  std::string expected(
     "<gx:Tour>"
     "<name>name</name>"
     "<visibility>1</visibility>"
@@ -172,22 +172,22 @@ TEST_F(GxPlaylistTest, TestSetGetHasClear) {
 }
 
 TEST_F(GxPlaylistTest, TestParse) {
-  string kName = "My Favorite Place";
-  string kSnippet = "Left panel stuff about my favorite place...";
-  string kGxPlaylist =
+  std::string kName = "My Favorite Place";
+  std::string kSnippet = "Left panel stuff about my favorite place...";
+  std::string kGxPlaylist =
     "<gx:Playlist id=\"gx_playlist123\">"
     "<gx:AnimatedUpdate/>"
     "<gx:FlyTo/>"
     "<gx:Wait/>"
     "</gx:Playlist>";
-  string errors;
+  std::string errors;
   ElementPtr root = Parse(kGxPlaylist, &errors);
   ASSERT_TRUE(root);
   ASSERT_TRUE(errors.empty());
   const GxPlaylistPtr gx_playlist = AsGxPlaylist(root);
   ASSERT_TRUE(gx_playlist);
   ASSERT_TRUE(gx_playlist->has_id());
-  ASSERT_EQ(string("gx_playlist123"), gx_playlist->get_id());
+  ASSERT_EQ(std::string("gx_playlist123"), gx_playlist->get_id());
   ASSERT_FALSE(gx_playlist->has_targetid());
   ASSERT_EQ(static_cast<size_t>(3),
       gx_playlist->get_gx_tourprimitive_array_size());
@@ -249,12 +249,12 @@ TEST_F(GxAnimatedUpdateTest, TestSetGetHasClear) {
 }
 
 TEST_F(GxAnimatedUpdateTest, TestParse) {
-  const string kGxAnimatedUpdate =
+  const std::string kGxAnimatedUpdate =
     "<gx:AnimatedUpdate>"
     "<gx:duration>1.1</gx:duration>"
     "<Update/>"
     "</gx:AnimatedUpdate>";
-  string errors;
+  std::string errors;
   ElementPtr root = Parse(kGxAnimatedUpdate, &errors);
   ASSERT_TRUE(root);
   ASSERT_TRUE(errors.empty());
@@ -271,7 +271,7 @@ TEST_F(GxAnimatedUpdateTest, TestSerialize) {
   const UpdatePtr kUpdate = KmlFactory::GetFactory()->CreateUpdate();
   gx_animatedupdate_->set_gx_duration(kDuration);
   gx_animatedupdate_->set_update(kUpdate);
-  const string kExpected =
+  const std::string kExpected =
     "<gx:AnimatedUpdate>"
     "<gx:duration>1.2</gx:duration>"
     "<Update/>"
@@ -350,13 +350,13 @@ TEST_F(GxFlyToTest, TestSetGetHasClear) {
 }
 
 TEST_F(GxFlyToTest, TestParse) {
-  const string kGxFlyTo =
+  const std::string kGxFlyTo =
     "<gx:FlyTo>"
     "<gx:duration>10</gx:duration>"
     "<gx:flyToMode>smooth</gx:flyToMode>"
     "<Camera/>"
     "</gx:FlyTo>";
-  string errors;
+  std::string errors;
   ElementPtr root = Parse(kGxFlyTo, &errors);
   ASSERT_TRUE(root);
   ASSERT_TRUE(errors.empty());
@@ -374,7 +374,7 @@ TEST_F(GxFlyToTest, TestSerialize) {
   gx_flyto_->set_gx_duration(10.0);
   gx_flyto_->set_gx_flytomode(GX_FLYTOMODE_SMOOTH);
   gx_flyto_->set_abstractview(KmlFactory::GetFactory()->CreateCamera());
-  const string kExpected =
+  const std::string kExpected =
     "<gx:FlyTo>"
     "<gx:duration>10</gx:duration>"
     "<gx:flyToMode>smooth</gx:flyToMode>"
@@ -414,7 +414,7 @@ TEST_F(GxSoundCueTest, TestSetToDefaultValues) {
 
 TEST_F(GxSoundCueTest, TestSetGetHasClear) {
   // Non-default values.
-  const string kHref("my/cool/music.mp3");
+  const std::string kHref("my/cool/music.mp3");
 
   // Set all fields.
   gx_soundcue_->set_href(kHref);
@@ -432,11 +432,11 @@ TEST_F(GxSoundCueTest, TestSetGetHasClear) {
 }
 
 TEST_F(GxSoundCueTest, TestParse) {
-  const string kGxSoundCue =
+  const std::string kGxSoundCue =
     "<gx:SoundCue>"
     "<href>some/cool/file.mp3</href>"
     "</gx:SoundCue>";
-  string errors;
+  std::string errors;
   ElementPtr root = Parse(kGxSoundCue, &errors);
   ASSERT_TRUE(root);
   ASSERT_TRUE(errors.empty());
@@ -448,7 +448,7 @@ TEST_F(GxSoundCueTest, TestParse) {
 
 TEST_F(GxSoundCueTest, TestSerialize) {
   gx_soundcue_->set_href("some/cool/file.mp3");
-  const string kExpected =
+  const std::string kExpected =
     "<gx:SoundCue>"
     "<href>some/cool/file.mp3</href>"
     "</gx:SoundCue>";
@@ -504,11 +504,11 @@ TEST_F(GxTourControlTest, TestSetGetHasClear) {
 }
 
 TEST_F(GxTourControlTest, TestParse) {
-  const string kGxTourControl =
+  const std::string kGxTourControl =
     "<gx:TourControl>"
     "<gx:playMode>pause</gx:playMode>"
     "</gx:TourControl>";
-  string errors;
+  std::string errors;
   ElementPtr root = Parse(kGxTourControl, &errors);
   ASSERT_TRUE(root);
   ASSERT_TRUE(errors.empty());
@@ -520,7 +520,7 @@ TEST_F(GxTourControlTest, TestParse) {
 
 TEST_F(GxTourControlTest, TestSerialize) {
   gx_tourcontrol_->set_gx_playmode(GX_PLAYMODE_PAUSE);
-  const string kExpected =
+  const std::string kExpected =
     "<gx:TourControl>"
     "<gx:playMode>pause</gx:playMode>"
     "</gx:TourControl>";

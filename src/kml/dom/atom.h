@@ -39,9 +39,9 @@ class AtomAuthor : public BasicElement<Type_AtomAuthor> {
   virtual ~AtomAuthor();
 
   // <atom:name>
-  const string& get_name() const { return name_; }
+  const std::string& get_name() const { return name_; }
   bool has_name() const { return has_name_; }
-  void set_name(const string& value) {
+  void set_name(const std::string& value) {
     name_ = value;
     has_name_ = true;
   }
@@ -51,9 +51,9 @@ class AtomAuthor : public BasicElement<Type_AtomAuthor> {
   }
 
   // <atom:uri>, RFC 3987
-  const string& get_uri() const { return uri_; }
+  const std::string& get_uri() const { return uri_; }
   bool has_uri() const { return has_uri_; }
-  void set_uri(const string& value) {
+  void set_uri(const std::string& value) {
     uri_ = value;
     has_uri_ = true;
   }
@@ -63,9 +63,9 @@ class AtomAuthor : public BasicElement<Type_AtomAuthor> {
   }
 
   // <atom:email>, RFC 2822
-  const string& get_email() const { return email_; }
+  const std::string& get_email() const { return email_; }
   bool has_email() const { return has_email_; }
-  void set_email(const string& value) {
+  void set_email(const std::string& value) {
     email_ = value;
     has_email_ = true;
   }
@@ -76,11 +76,11 @@ class AtomAuthor : public BasicElement<Type_AtomAuthor> {
 
  private:
   bool has_name_;
-  string name_;
+  std::string name_;
   bool has_uri_;
-  string uri_;
+  std::string uri_;
   bool has_email_;
-  string email_;
+  std::string email_;
   friend class KmlFactory;
   AtomAuthor();
   friend class KmlHandler;
@@ -94,9 +94,9 @@ class AtomAuthor : public BasicElement<Type_AtomAuthor> {
 class AtomCommon : public Element {
  public:
   // <atom:id>
-  const string& get_id() const { return id_; }
+  const std::string& get_id() const { return id_; }
   bool has_id() const { return has_id_; }
-  void set_id(const string& value) {
+  void set_id(const std::string& value) {
     id_ = value;
     has_id_ = true;
   }
@@ -106,9 +106,9 @@ class AtomCommon : public Element {
   }
 
   // <atom:title>
-  const string& get_title() const { return title_; }
+  const std::string& get_title() const { return title_; }
   bool has_title() const { return has_title_; }
-  void set_title(const string& value) {
+  void set_title(const std::string& value) {
     title_ = value;
     has_title_ = true;
   }
@@ -118,24 +118,15 @@ class AtomCommon : public Element {
   }
 
   // <atom:updated>
-  const string& get_updated() const { return updated_; }
+  const std::string& get_updated() const { return updated_; }
   bool has_updated() const { return has_updated_; }
-  void set_updated(const string& value) {
+  void set_updated(const std::string& value) {
     updated_ = value;
     has_updated_ = true;
   }
   void clear_updated() {
     updated_.clear();
     has_updated_ = false;
-  }
-
-  // <atom:category>...
-  void add_category(const AtomCategoryPtr& entry);
-  size_t get_category_array_size() const {
-    return category_array_.size();
-  }
-  const AtomCategoryPtr& get_category_array_at(size_t index) const {
-    return category_array_[index];
   }
 
   // <atom:link>...
@@ -157,86 +148,25 @@ class AtomCommon : public Element {
   friend class KmlHandler;
   friend class Serializer;
   bool has_id_;
-  string id_;
+  std::string id_;
   bool has_title_;
-  string title_;
+  std::string title_;
   bool has_updated_;
-  string updated_;
-  std::vector<AtomCategoryPtr> category_array_;
+  std::string updated_;
   std::vector<AtomLinkPtr> link_array_;
   LIBKML_DISALLOW_EVIL_CONSTRUCTORS(AtomCommon);
 };
 
-// <atom:category scheme="..." term="..." label=..."/>, RFC 4287 4.2.2
-// NOTE: This element is not part of the OGC KML 2.2 standard.
-class AtomCategory : public BasicElement<Type_AtomCategory> {
- public:
-  virtual ~AtomCategory();
-
-  // term=
-  const string& get_term() const { return term_; }
-  bool has_term() const { return has_term_; }
-  void set_term(const string& value) {
-    term_ = value;
-    has_term_ = true;
-  }
-  void clear_term() {
-    term_.clear();
-    has_term_ = false;
-  }
-
-  // scheme=
-  const string& get_scheme() const { return scheme_; }
-  bool has_scheme() const { return has_scheme_; }
-  void set_scheme(const string& value) {
-    scheme_ = value;
-    has_scheme_ = true;
-  }
-  void clear_scheme() {
-    scheme_.clear();
-    has_scheme_ = false;
-  }
-
-  // label=
-  const string& get_label() const { return label_; }
-  bool has_label() const { return has_label_; }
-  void set_label(const string& value) {
-    label_ = value;
-    has_label_ = true;
-  }
-  void clear_label() {
-    label_.clear();
-    has_label_ = false;
-  }
-
- private:
-  friend class KmlFactory;
-  AtomCategory();
-  friend class KmlHandler;
-  virtual void AddElement(const ElementPtr& element);
-  virtual void ParseAttributes(kmlbase::Attributes* attributes);
-  friend class Serializer;
-  virtual void Serialize(Serializer& serializer) const;
-  virtual void SerializeAttributes(kmlbase::Attributes* attributes) const;
-  bool has_term_;
-  string term_;
-  bool has_scheme_;
-  string scheme_;
-  bool has_label_;
-  string label_;
-  LIBKML_DISALLOW_EVIL_CONSTRUCTORS(AtomCategory);
-};
-
-// <atom:content src="..."  type="...">, RFC 4287 4.1.3
+// <atom:content src="..."  type="...">
 // NOTE: This element is not part of the OGC KML 2.2 standard.
 class AtomContent : public BasicElement<Type_AtomContent> {
  public:
   virtual ~AtomContent();
 
   // src=
-  const string& get_src() const { return src_; }
+  const std::string& get_src() const { return src_; }
   bool has_src() const { return has_src_; }
-  void set_src(const string& value) {
+  void set_src(const std::string& value) {
     src_ = value;
     has_src_ = true;
   }
@@ -246,9 +176,9 @@ class AtomContent : public BasicElement<Type_AtomContent> {
   }
 
   // type=
-  const string& get_type() const { return type_; }
+  const std::string& get_type() const { return type_; }
   bool has_type() const { return has_type_; }
-  void set_type(const string& value) {
+  void set_type(const std::string& value) {
     type_ = value;
     has_type_ = true;
   }
@@ -266,13 +196,13 @@ class AtomContent : public BasicElement<Type_AtomContent> {
   friend class Serializer;
   virtual void Serialize(Serializer& serializer) const;
   bool has_src_;
-  string src_;
+  std::string src_;
   bool has_type_;
-  string type_;
+  std::string type_;
   LIBKML_DISALLOW_EVIL_CONSTRUCTORS(AtomContent);
 };
 
-// <atom:entry>, RFC 4287 4.1.2
+// <atom:entry>
 // NOTE: This element is not part of the OGC KML 2.2 standard.
 class AtomEntry : public AtomCommon {
  public:
@@ -287,9 +217,9 @@ class AtomEntry : public AtomCommon {
   }
 
   // <atom:summary>
-  const string& get_summary() const { return summary_; }
+  const std::string& get_summary() const { return summary_; }
   bool has_summary() const { return has_summary_; }
-  void set_summary(const string& value) {
+  void set_summary(const std::string& value) {
     summary_ = value;
     has_summary_ = true;
   }
@@ -316,12 +246,12 @@ class AtomEntry : public AtomCommon {
   friend class Serializer;
   virtual void Serialize(Serializer& serializer) const;
   bool has_summary_;
-  string summary_;
+  std::string summary_;
   AtomContentPtr content_;
   LIBKML_DISALLOW_EVIL_CONSTRUCTORS(AtomEntry);
 };
 
-// <atom:feed>, RFC 4287 4.1.1
+// <atom:feed>
 // NOTE: This element is not part of the OGC KML 2.2 standard.
 class AtomFeed : public AtomCommon {
  public:
@@ -361,9 +291,9 @@ class AtomLink : public BasicElement<Type_AtomLink> {
   virtual ~AtomLink();
 
   // href=, RFC 4287 4.2.7.1, RFC 3987
-  const string& get_href() const { return href_; }
+  const std::string& get_href() const { return href_; }
   bool has_href() const { return has_href_; }
-  void set_href(const string& value) {
+  void set_href(const std::string& value) {
     href_ = value;
     has_href_ = true;
   }
@@ -373,9 +303,9 @@ class AtomLink : public BasicElement<Type_AtomLink> {
   }
 
   // rel=, RFC 4287 4.2.7.2, RFC 3987
-  const string& get_rel() const { return rel_; }
+  const std::string& get_rel() const { return rel_; }
   bool has_rel() const { return has_rel_; }
-  void set_rel(const string& value) {
+  void set_rel(const std::string& value) {
     rel_ = value;
     has_rel_ = true;
   }
@@ -385,9 +315,9 @@ class AtomLink : public BasicElement<Type_AtomLink> {
   }
 
   // type=, RFC 4287 4.2.7.3, MIME
-  const string& get_type() const { return type_; }
+  const std::string& get_type() const { return type_; }
   bool has_type() const { return has_type_; }
-  void set_type(const string& value) {
+  void set_type(const std::string& value) {
     type_ = value;
     has_type_ = true;
   }
@@ -397,9 +327,9 @@ class AtomLink : public BasicElement<Type_AtomLink> {
   }
 
   // hreflang=, RFC 4287 4.2.7.4, RFC 3066
-  const string& get_hreflang() const { return hreflang_; }
+  const std::string& get_hreflang() const { return hreflang_; }
   bool has_hreflang() const { return has_hreflang_; }
-  void set_hreflang(const string& value) {
+  void set_hreflang(const std::string& value) {
     hreflang_ = value;
     has_hreflang_ = true;
   }
@@ -409,9 +339,9 @@ class AtomLink : public BasicElement<Type_AtomLink> {
   }
 
   // title=, RFC 4287 4.2.7.5
-  const string& get_title() const { return title_; }
+  const std::string& get_title() const { return title_; }
   bool has_title() const { return has_title_; }
-  void set_title(const string& value) {
+  void set_title(const std::string& value) {
     title_ = value;
     has_title_ = true;
   }
@@ -434,15 +364,15 @@ class AtomLink : public BasicElement<Type_AtomLink> {
 
  private:
   bool has_href_;
-  string href_;
+  std::string href_;
   bool has_rel_;
-  string rel_;
+  std::string rel_;
   bool has_type_;
-  string type_;
+  std::string type_;
   bool has_hreflang_;
-  string hreflang_;
+  std::string hreflang_;
   bool has_title_;
-  string title_;
+  std::string title_;
   bool has_length_;
   int length_;
   friend class KmlFactory;

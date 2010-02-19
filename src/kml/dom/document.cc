@@ -59,14 +59,4 @@ void Document::Serialize(Serializer& serializer) const {
   Container::SerializeFeatureArray(serializer);
 }
 
-void Document::Accept(Visitor* visitor) {
-  visitor->VisitDocument(DocumentPtr(this));
-}
-
-void Document::AcceptChildren(VisitorDriver* driver) {
-  Container::AcceptChildren(driver);
-  Element::AcceptRepeated<SchemaPtr>(&schema_array_, driver);
-  Element::AcceptRepeated<StyleSelectorPtr>(&styleselector_array_, driver);
-}
-
 }  // end namespace kmldom

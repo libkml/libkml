@@ -77,7 +77,7 @@ TEST_F(XalAddressDetailsTest, TestSetGetHasClear) {
 }
 
 TEST_F(XalAddressDetailsTest, TestParseSerialize) {
-  const string kAddressDetails(
+  const std::string kAddressDetails(
       "<xal:AddressDetails>"
       "<xal:Country/>"
       "</xal:AddressDetails>");
@@ -88,8 +88,8 @@ TEST_F(XalAddressDetailsTest, TestParseSerialize) {
 // This verifies that all expected elements in a test file parse and are
 // accessible from the dom API.
 TEST_F(XalAddressDetailsTest, TestParseDom) {
-  string gaddr_content;
-  const string kXalGaddr(
+  std::string gaddr_content;
+  const std::string kXalGaddr(
       File::JoinPaths(DATADIR, File::JoinPaths("xal", "gaddr.kml")));
   ASSERT_TRUE(File::ReadFileToString(kXalGaddr, &gaddr_content));
   ElementPtr root = kmldom::Parse(gaddr_content, NULL);
@@ -107,29 +107,29 @@ TEST_F(XalAddressDetailsTest, TestParseDom) {
   ASSERT_TRUE(xaladdressdetails->has_country());
   XalCountryPtr country = xaladdressdetails->get_country();
   ASSERT_TRUE(country->has_countrynamecode());
-  ASSERT_EQ(string("US"), country->get_countrynamecode());
+  ASSERT_EQ(std::string("US"), country->get_countrynamecode());
   XalAdministrativeAreaPtr administrativearea =
       country->get_administrativearea();
   ASSERT_TRUE(administrativearea);
-  ASSERT_EQ(string("CA"),
+  ASSERT_EQ(std::string("CA"),
       administrativearea->get_administrativeareaname());
   XalSubAdministrativeAreaPtr subadministrativearea =
       administrativearea->get_subadministrativearea();
   ASSERT_TRUE(subadministrativearea);
-  ASSERT_EQ(string("Santa Clara"),
+  ASSERT_EQ(std::string("Santa Clara"),
             subadministrativearea->get_subadministrativeareaname());
   XalLocalityPtr locality = subadministrativearea->get_locality();
   ASSERT_TRUE(locality);
-  ASSERT_EQ(string("Mountain View"), locality->get_localityname());
+  ASSERT_EQ(std::string("Mountain View"), locality->get_localityname());
   XalThoroughfarePtr thoroughfare = locality->get_thoroughfare();
   ASSERT_TRUE(thoroughfare);
-  ASSERT_EQ(string("Amphitheatre Pkwy"),
+  ASSERT_EQ(std::string("Amphitheatre Pkwy"),
             thoroughfare->get_thoroughfarename());
-  ASSERT_EQ(string("1600"),
+  ASSERT_EQ(std::string("1600"),
             thoroughfare->get_thoroughfarenumber());
   XalPostalCodePtr postalcode = locality->get_postalcode();
   ASSERT_TRUE(postalcode);
-  ASSERT_EQ(string("94043"), postalcode->get_postalcodenumber());
+  ASSERT_EQ(std::string("94043"), postalcode->get_postalcodenumber());
 }
 
 TEST_F(XalAddressDetailsTest, TestDomSerialize) {
@@ -190,7 +190,7 @@ TEST_F(XalCountryTest, TestDefault) {
 TEST_F(XalCountryTest, TestSetGetHasClear) {
   XalAdministrativeAreaPtr administrativearea(
       KmlFactory::GetFactory()->CreateXalAdministrativeArea());
-  const string kCountryCodeName("US");
+  const std::string kCountryCodeName("US");
   xalcountry_->set_countrynamecode(kCountryCodeName);
   xalcountry_->set_administrativearea(administrativearea);
   ASSERT_TRUE(xalcountry_->has_countrynamecode());
@@ -206,7 +206,7 @@ TEST_F(XalCountryTest, TestSetGetHasClear) {
 }
 
 TEST_F(XalCountryTest, TestParseSerialize) {
-  const string kCountry(
+  const std::string kCountry(
       "<xal:Country>"
       "<xal:CountryNameCode>US</xal:CountryNameCode>"
       "<xal:AdministrativeArea/>"

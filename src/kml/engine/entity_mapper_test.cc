@@ -26,6 +26,7 @@
 // TODO: file comment.
 
 #include "kml/engine/entity_mapper.h"
+#include <string>
 #include "boost/scoped_ptr.hpp"
 #include "gtest/gtest.h"
 
@@ -42,7 +43,7 @@ class EntitiesTest : public testing::Test {
 };
 
 // A hunk of KML that uses all possible entities.
-const static string kEntityKml(
+const static std::string kEntityKml(
   "<Document>\n"
   "  <Schema name=\"TrailHeadType\" id=\"TrailHeadTypeId\">\n"
   "    <SimpleField type=\"string\" name=\"TrailHeadName\">\n"
@@ -80,8 +81,8 @@ const static string kEntityKml(
 // A table mapping all entities contained in the above KML document with their
 // expected replacement strings.
 const static struct {
-  string entity;
-  string replacement;
+  std::string entity;
+  std::string replacement;
 } kEntityMap[] = {
   {"id", "foo"},
   {"targetId", "bar"},
@@ -100,7 +101,7 @@ const static struct {
 };
 
 TEST_F(EntitiesTest, TestGetEntityFields) {
-  string errs;
+  std::string errs;
   kml_file_ = KmlFile::CreateFromParse(kEntityKml, NULL);
   ASSERT_TRUE(kml_file_);
   ASSERT_TRUE(errs.empty());
@@ -128,8 +129,8 @@ TEST_F(EntitiesTest, TestGetEntityFields) {
 
 // A table mapping entities to their expected replacements.
 const static struct {
-  string raw_text;
-  string expanded_text;
+  std::string raw_text;
+  std::string expanded_text;
 } kReplacments[] = {
   {
     "abcdef",

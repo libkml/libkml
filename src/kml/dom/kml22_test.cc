@@ -32,9 +32,6 @@
 
 namespace kmldom {
 
-// Yes, must exactly match kml22.h
-static const int kNumberOfComplexElements = 88;
-
 class Kml22Test : public testing::Test {
  protected:
   virtual void SetUp() {
@@ -49,31 +46,31 @@ class Kml22Test : public testing::Test {
 
 // Verify proper enum defaults:
 TEST_F(Kml22Test, TestEnumDefaults) {
-  ASSERT_EQ(string("clampToGround"),
+  ASSERT_EQ(std::string("clampToGround"),
             xsd_->EnumValue(Type_altitudeMode, ALTITUDEMODE_CLAMPTOGROUND));
-  ASSERT_EQ(string("normal"),
+  ASSERT_EQ(std::string("normal"),
             xsd_->EnumValue(Type_colorMode, COLORMODE_NORMAL));
-  ASSERT_EQ(string("default"),
+  ASSERT_EQ(std::string("default"),
             xsd_->EnumValue(Type_displayMode, DISPLAYMODE_DEFAULT));
-  ASSERT_EQ(string("lowerLeft"),
+  ASSERT_EQ(std::string("lowerLeft"),
             xsd_->EnumValue(Type_gridOrigin, GRIDORIGIN_LOWERLEFT));
-  ASSERT_EQ(string("open"),
+  ASSERT_EQ(std::string("open"),
             xsd_->EnumValue(Type_state, ITEMICONSTATE_OPEN));
-  ASSERT_EQ(string("check"),
+  ASSERT_EQ(std::string("check"),
             xsd_->EnumValue(Type_listItemType, LISTITEMTYPE_CHECK));
-  ASSERT_EQ(string("onChange"),
+  ASSERT_EQ(std::string("onChange"),
             xsd_->EnumValue(Type_refreshMode, REFRESHMODE_ONCHANGE));
-  ASSERT_EQ(string("rectangle"),
+  ASSERT_EQ(std::string("rectangle"),
             xsd_->EnumValue(Type_shape, SHAPE_RECTANGLE));
-  ASSERT_EQ(string("normal"),
+  ASSERT_EQ(std::string("normal"),
             xsd_->EnumValue(Type_key, STYLESTATE_NORMAL));
-  ASSERT_EQ(string("fraction"),
+  ASSERT_EQ(std::string("fraction"),
             xsd_->EnumValue(Type_units, UNITS_FRACTION));
-  ASSERT_EQ(string("never"),
+  ASSERT_EQ(std::string("never"),
             xsd_->EnumValue(Type_viewRefreshMode, VIEWREFRESHMODE_NEVER));
-  ASSERT_EQ(string("bounce"),
+  ASSERT_EQ(std::string("bounce"),
             xsd_->EnumValue(Type_GxFlyToMode, GX_FLYTOMODE_BOUNCE));
-  ASSERT_EQ(string("pause"),
+  ASSERT_EQ(std::string("pause"),
             xsd_->EnumValue(Type_GxPlayMode, GX_PLAYMODE_PAUSE));
 }
 
@@ -117,7 +114,7 @@ TEST_F(Kml22Test, TestElementNull) {
       ++complex_count;
     }
   }
-  ASSERT_EQ(kNumberOfComplexElements, complex_count);
+  ASSERT_EQ(87, complex_count);  // Yes, must exactly match kml22.h
 }
 
 // This Serializer is specifically designed to capture the output of the
@@ -173,7 +170,7 @@ TEST_F(Kml22Test, TestElementSerializerEmpty) {
       ++complex_count;
     }
   }
-  ASSERT_EQ(kNumberOfComplexElements, complex_count);
+  ASSERT_EQ(87, complex_count);  // Yes, must exactly match kml22.h
 }
 
 void Kml22Test::AssertXmlNamespaceForRange(KmlDomType begin_dom_type,
@@ -217,7 +214,7 @@ TEST_F(Kml22Test, TestSaveUnknown) {
       ++complex_count;
     }
   }
-  ASSERT_EQ(kNumberOfComplexElements, complex_count);
+  ASSERT_EQ(87, complex_count);  // Yes, must exactly match kml22.h
 }
 
 }  // end namespace kmldom

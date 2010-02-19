@@ -44,7 +44,6 @@ ElementPtr KmlFactory::CreateElementById(KmlDomType id) const {
   switch (id) {
   case Type_Alias: return CreateAlias();
   case Type_AtomAuthor: return CreateAtomAuthor();
-  case Type_AtomCategory: return CreateAtomCategory();
   case Type_AtomContent: return CreateAtomContent();
   case Type_AtomEntry: return CreateAtomEntry();
   case Type_AtomFeed: return CreateAtomFeed();
@@ -146,10 +145,6 @@ Alias* KmlFactory::CreateAlias() const {
 
 AtomAuthor* KmlFactory::CreateAtomAuthor() const {
   return new AtomAuthor();
-}
-
-AtomCategory* KmlFactory::CreateAtomCategory() const {
-  return new AtomCategory();
 }
 
 AtomContent* KmlFactory::CreateAtomContent() const {

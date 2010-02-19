@@ -96,58 +96,6 @@ TEST(Vec3Test, TestSet2d) {
   ASSERT_FALSE(vec.has_altitude());
 }
 
-TEST(Vec3Test, TestEquivalence) {
-  Vec3 vec0(0.1, 1.2, 2.3);
-  Vec3 vec1(1.1, 1.2, 2.3);
-  Vec3 vec2(1.1, 1.2, 0.0);
-  Vec3 vec3(1.1, 1.2);
-  Vec3 vec4(1.1, 1.2, 0.1);
-  ASSERT_FALSE(vec0 == vec1);
-  ASSERT_TRUE(vec0 == vec0);
-  ASSERT_TRUE(vec1 == vec1);
-  ASSERT_TRUE(vec3 == vec3);
-  ASSERT_TRUE(vec2 == vec3);
-  ASSERT_FALSE(vec3 == vec4);
-}
-
-TEST(Vec3Test, TestCopyConstruct3d) {
-  Vec3 vec3d(0.1, 1.2, 2.3);
-  Vec3 copy3d(vec3d);
-  ASSERT_EQ(0.1, copy3d.get_longitude());
-  ASSERT_EQ(1.2, copy3d.get_latitude());
-  ASSERT_TRUE(copy3d.has_altitude());
-  ASSERT_EQ(2.3, copy3d.get_altitude());
-}
-
-TEST(Vec3Test, TestCopyConstruct2d) {
-  Vec3 vec2d(10.11, -12.13);
-  Vec3 copy2d(vec2d);
-  ASSERT_EQ(10.11, copy2d.get_longitude());
-  ASSERT_EQ(-12.13, copy2d.get_latitude());
-  ASSERT_FALSE(copy2d.has_altitude());
-  ASSERT_EQ(0, copy2d.get_altitude());
-}
-
-TEST(Vec3Test, TestAssign3d) {
-  Vec3 vec3d(0.1, 1.2, 2.3);
-  Vec3 copy3d;
-  copy3d = vec3d;
-  ASSERT_EQ(0.1, copy3d.get_longitude());
-  ASSERT_EQ(1.2, copy3d.get_latitude());
-  ASSERT_TRUE(copy3d.has_altitude());
-  ASSERT_EQ(2.3, copy3d.get_altitude());
-}
-
-TEST(Vec3Test, TestAssign2d) {
-  Vec3 vec2d(10.11, -12.13);
-  Vec3 copy2d;
-  copy2d = vec2d;
-  ASSERT_EQ(10.11, copy2d.get_longitude());
-  ASSERT_EQ(-12.13, copy2d.get_latitude());
-  ASSERT_FALSE(copy2d.has_altitude());
-  ASSERT_EQ(0, copy2d.get_altitude());
-}
-
 }  // end namespace kmlbase
 
 int main(int argc, char** argv) {

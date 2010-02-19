@@ -38,12 +38,10 @@ using kmlbase::DateTime;
 using kmlbase::Vec3;
 using kmldom::AbstractViewPtr;
 using kmldom::CameraPtr;
-using kmldom::ChangePtr;
 using kmldom::CoordinatesPtr;
 using kmldom::DataPtr;
 using kmldom::ExtendedDataPtr;
 using kmldom::FeaturePtr;
-using kmldom::GxAnimatedUpdatePtr;
 using kmldom::GxFlyToPtr;
 using kmldom::GxWaitPtr;
 using kmldom::KmlFactory;
@@ -56,11 +54,10 @@ using kmldom::PointPtr;
 using kmldom::PolygonPtr;
 using kmldom::RegionPtr;
 using kmldom::TimeStampPtr;
-using kmldom::UpdatePtr;
 
 namespace kmlconvenience {
 
-void AddExtendedDataValue(const string& name, const string& value,
+void AddExtendedDataValue(const std::string& name, const std::string& value,
                           FeaturePtr feature) {
   if (!feature) {
     return;
@@ -69,23 +66,6 @@ void AddExtendedDataValue(const string& name, const string& value,
     feature->set_extendeddata(KmlFactory::GetFactory()->CreateExtendedData());
   }
   feature->get_extendeddata()->add_data(CreateDataNameValue(name, value));
-}
-
-kmldom::GxAnimatedUpdatePtr CreateAnimatedUpdateChangePoint(
-    const string& target_id, const kmlbase::Vec3& vec3, double duration) {
-  KmlFactory* factory = KmlFactory::GetFactory();
-  PlacemarkPtr placemark = factory->CreatePlacemark();
-  placemark->set_targetid(target_id);
-  placemark->set_geometry(CreatePointFromVec3(vec3));
-  ChangePtr change = factory->CreateChange();
-  change->add_object(placemark);
-  UpdatePtr update = factory->CreateUpdate();
-  update->add_updateoperation(change);
-  update->set_targethref("");
-  GxAnimatedUpdatePtr animated_update = factory->CreateGxAnimatedUpdate();
-  animated_update->set_update(update);
-  animated_update->set_gx_duration(duration);
-  return animated_update;
 }
 
 PlacemarkPtr CreateBasicPolygonPlacemark(
@@ -123,7 +103,7 @@ CoordinatesPtr CreateCoordinatesCircle(double lat, double lng,
   return coords;
 }
 
-DataPtr CreateDataNameValue(const string& name, const string& value) {
+DataPtr CreateDataNameValue(const std::string& name, const std::string& value) {
   DataPtr data = KmlFactory::GetFactory()->CreateData();
   data->set_name(name);
   data->set_value(value);
@@ -181,7 +161,7 @@ PointPtr CreatePointLatLon(double lat, double lon) {
 }
 
 // This is a convenience function to create a Point Placemark.
-PlacemarkPtr CreatePointPlacemark(const string& name, double lat,
+PlacemarkPtr CreatePointPlacemark(const std::string& name, double lat,
                                   double lon) {
   PlacemarkPtr placemark = KmlFactory::GetFactory()->CreatePlacemark();
   placemark->set_name(name);
@@ -236,8 +216,8 @@ GxWaitPtr CreateWait(double duration) {
 }
 
 bool GetExtendedDataValue(const FeaturePtr& feature,
-                          const string& name,
-                          string* value) {
+                          const std::string& name,
+                          std::string* value) {
   if (value && feature->has_extendeddata()) {
     ExtendedDataPtr extendeddata = feature->get_extendeddata();
     for (size_t i = 0; i < extendeddata->get_data_array_size(); ++i) {
@@ -251,7 +231,7 @@ bool GetExtendedDataValue(const FeaturePtr& feature,
   return false;
 }
 
-void SetExtendedDataValue(const string& name, const string& value,
+void SetExtendedDataValue(const std::string& name, const std::string& value,
                           FeaturePtr feature) {
   if (!feature) {
     return;
@@ -268,7 +248,7 @@ PlacemarkPtr CreatePointPlacemarkWithTimeStamp(const PointPtr& point,
   // <name>
   placemark->set_name(date_time.GetXsdTime());
   // <styleUrl>
-  placemark->set_styleurl(string("#") + style_id);
+  placemark->set_styleurl(std::string("#") + style_id);
   // <TimeStamp>
   TimeStampPtr time_stamp = kml_factory->CreateTimeStamp();
   time_stamp->set_when(date_time.GetXsdDateTime());

@@ -1,9 +1,9 @@
 // Copyright 2008, Google Inc. All rights reserved.
 //
-// Redistribution and use in source and binary forms, with or without
+// Redistribution and use in source and binary forms, with or without 
 // modification, are permitted provided that the following conditions are met:
 //
-//  1. Redistributions of source code must retain the above copyright notice,
+//  1. Redistributions of source code must retain the above copyright notice, 
 //     this list of conditions and the following disclaimer.
 //  2. Redistributions in binary form must reproduce the above copyright notice,
 //     this list of conditions and the following disclaimer in the documentation
@@ -13,14 +13,14 @@
 //     specific prior written permission.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
-// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
 // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
 // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
 // PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
 // OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // This file declares the Model, Location, Orientation, Scale, ResourceMap
@@ -29,6 +29,7 @@
 #ifndef KML_DOM_MODEL_H__
 #define KML_DOM_MODEL_H__
 
+#include <string>
 #include <vector>
 #include "kml/dom/geometry.h"
 #include "kml/dom/kml22.h"
@@ -37,9 +38,6 @@
 #include "kml/dom/object.h"
 
 namespace kmldom {
-
-class Visitor;
-class VisitorDriver;
 
 // <Location>
 class Location : public Object {
@@ -97,9 +95,6 @@ class Location : public Object {
     altitude_ = 0.0;
     has_altitude_ = false;
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
 
  private:
   friend class KmlFactory;
@@ -174,9 +169,6 @@ class Orientation : public Object {
     has_roll_ = false;
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-
  private:
   friend class KmlFactory;
   Orientation();
@@ -250,9 +242,6 @@ class Scale : public Object {
     has_z_ = false;
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-
  private:
   friend class KmlFactory;
   Scale();
@@ -279,13 +268,13 @@ class Alias : public Object {
   }
 
   // <targetHref>
-  const string& get_targethref() const {
+  const std::string& get_targethref() const {
     return targethref_;
   }
   bool has_targethref() const {
     return has_targethref_;
   }
-  void set_targethref(const string& targethref) {
+  void set_targethref(const std::string& targethref) {
     targethref_ = targethref;
     has_targethref_ = true;
   }
@@ -295,13 +284,13 @@ class Alias : public Object {
   }
 
   // <sourceHref>
-  const string& get_sourcehref() const {
+  const std::string& get_sourcehref() const {
     return sourcehref_;
   }
   bool has_sourcehref() const {
     return has_sourcehref_;
   }
-  void set_sourcehref(const string& sourcehref) {
+  void set_sourcehref(const std::string& sourcehref) {
     sourcehref_ = sourcehref;
     has_sourcehref_ = true;
   }
@@ -310,9 +299,6 @@ class Alias : public Object {
     has_sourcehref_ = false;
   }
 
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-
  private:
   friend class KmlFactory;
   Alias();
@@ -320,9 +306,9 @@ class Alias : public Object {
   virtual void AddElement(const ElementPtr& element);
   friend class Serializer;
   virtual void Serialize(Serializer& serializer) const;
-  string targethref_;
+  std::string targethref_;
   bool has_targethref_;
-  string sourcehref_;
+  std::string sourcehref_;
   bool has_sourcehref_;
   LIBKML_DISALLOW_EVIL_CONSTRUCTORS(Alias);
 };
@@ -345,10 +331,6 @@ class ResourceMap : public Object {
   const AliasPtr& get_alias_array_at(size_t index) const {
     return alias_array_[index];
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-  virtual void AcceptChildren(VisitorDriver* driver);
 
  private:
   friend class KmlFactory;
@@ -419,10 +401,6 @@ class Model : public AltitudeGeometryCommon {
   void clear_resourcemap() {
     resourcemap_ = NULL;
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-  virtual void AcceptChildren(VisitorDriver* driver);
 
  private:
   friend class KmlFactory;

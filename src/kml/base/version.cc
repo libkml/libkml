@@ -32,7 +32,7 @@
 namespace kmlbase {
 
 // static
-string Version::GetString() {
+std::string Version::GetString() {
   return ToString(get_major()) + "." + ToString(get_minor()) + "." +
          ToString(get_micro());
 }

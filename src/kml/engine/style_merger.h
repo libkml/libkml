@@ -30,6 +30,7 @@
 #ifndef KML_ENGINE_STYLE_MERGER_H__
 #define KML_ENGINE_STYLE_MERGER_H__
 
+#include <string>
 #include "kml/dom.h"
 #include "kml/engine/engine_types.h"
 #include "kml/engine/kml_file.h"
@@ -70,11 +71,11 @@ class StyleMerger {
   // internal maximum: see engine_constants.h -- as such styleUrl "loops" are
   // detected.
   StyleMerger(const SharedStyleMap& shared_style_map, KmlCache* kml_cache,
-              const string& base_url, kmldom::StyleStateEnum style_state);
+              const std::string& base_url, kmldom::StyleStateEnum style_state);
 
   // This constructor permits an arbirary styleUrl nesting level to be set.
   StyleMerger(const SharedStyleMap& shared_style_map, KmlCache* kml_cache,
-              const string& base_url, kmldom::StyleStateEnum style_state,
+              const std::string& base_url, kmldom::StyleStateEnum style_state,
               unsigned int max_nested_styleurls);
 
   // This is a convenience method to create a StyleMerger from a KmlFile.
@@ -89,7 +90,7 @@ class StyleMerger {
   }
 
   // Both Feature and Pair have a styleUrl and/or StyleSelector.
-  void MergeStyle(const string& styleurl,
+  void MergeStyle(const std::string& styleurl,
                   const kmldom::StyleSelectorPtr& styleselector);
 
   // Merge in the StyleSelector this styleurl references.  Remote fetches are
@@ -97,7 +98,7 @@ class StyleMerger {
   // remote fetches are quietly ignored.  An empty styleurl is quietly ignored.
   // This returns immediately and has no action if the styleUrl nesting depth
   // is < 0; this facilitates styleUrl loop detection.
-  void MergeStyleUrl(const string& styleurl);
+  void MergeStyleUrl(const std::string& styleurl);
 
   // Merge in the given StyleMap's Pair's whose key's match the style_state_.
   void MergeStyleMap(const kmldom::StyleMapPtr& stylemap);
@@ -115,7 +116,7 @@ class StyleMerger {
  private:
   const SharedStyleMap& shared_style_map_;
   KmlCache* kml_cache_;
-  string base_url_;
+  std::string base_url_;
   const kmldom::StyleStateEnum style_state_;
   kmldom::StylePtr resolved_style_;
   int nesting_depth_;

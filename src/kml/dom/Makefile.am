@@ -45,7 +45,6 @@ libkmldom_la_SOURCES = \
 	styleselector.cc \
 	substyle.cc \
 	timeprimitive.cc \
-	gx_timeprimitive.cc \
 	gx_tour.cc \
 	vec2.cc \
 	kml_handler.cc \
@@ -54,9 +53,7 @@ libkmldom_la_SOURCES = \
 	serializer.cc \
 	xal.cc \
 	xml_serializer.cc \
-	xsd.cc \
-	visitor.cc \
-	visitor_driver.cc
+	xsd.cc
 
 libkmldomincludedir = $(includedir)/kml/dom
 libkmldominclude_HEADERS = \
@@ -105,9 +102,7 @@ libkmldominclude_HEADERS = \
 	gx_timeprimitive.h \
 	gx_tour.h \
 	vec2.h \
-	xal.h \
-	visitor.h \
-	visitor_driver.h
+	xal.h
 
 EXTRA_DIST = \
 	kml_handler.h \
@@ -168,9 +163,7 @@ TESTS = abstractlatlonbox_test \
 	gx_tour_test \
 	xal_test \
 	xml_serializer_test \
-	xsd_test \
-	visitor_test \
-	visitor_driver_test
+	xsd_test
 
 
 check_PROGRAMS = $(TESTS)
@@ -429,7 +422,7 @@ unknown_test_LDADD= libkmldom.la \
 	$(top_builddir)/third_party/libgtest.la
 
 kml_handler_test_SOURCES = kml_handler_test.cc
-kml_handler_test_CXXFLAGS =  -DDATADIR=\"$(DATA_DIR)\" $(AM_TEST_CXXFLAGS)
+kml_handler_test_CXXFLAGS = $(AM_TEST_CXXFLAGS)
 kml_handler_test_LDADD= libkmldom.la \
 	$(top_builddir)/src/kml/base/libkmlbase.la \
 	$(top_builddir)/third_party/libgtest.la
@@ -467,18 +460,6 @@ xml_serializer_test_LDADD= libkmldom.la \
 xsd_test_SOURCES = xsd_test.cc
 xsd_test_CXXFLAGS = $(AM_TEST_CXXFLAGS)
 xsd_test_LDADD= libkmldom.la \
-	$(top_builddir)/src/kml/base/libkmlbase.la \
-	$(top_builddir)/third_party/libgtest.la
-
-visitor_test_SOURCES = visitor_test.cc
-visitor_test_CXXFLAGS = $(AM_TEST_CXXFLAGS)
-visitor_test_LDADD= libkmldom.la \
-	$(top_builddir)/src/kml/base/libkmlbase.la \
-	$(top_builddir)/third_party/libgtest.la
-
-visitor_driver_test_SOURCES = visitor_driver_test.cc
-visitor_driver_test_CXXFLAGS = $(AM_TEST_CXXFLAGS)
-visitor_driver_test_LDADD= libkmldom.la \
 	$(top_builddir)/src/kml/base/libkmlbase.la \
 	$(top_builddir)/third_party/libgtest.la
 

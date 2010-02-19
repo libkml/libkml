@@ -1,5 +1,6 @@
 AM_CPPFLAGS= -I$(top_srcdir)/src \
 	     -I$(top_srcdir)/third_party/boost_1_34_1 \
+	     -I$(top_srcdir)/third_party/zlib-1.2.3/contrib \
 	     -I$(top_srcdir)/third_party/googletest-r108/include
 
 if GCC
@@ -38,6 +39,7 @@ libkmlengine_la_SOURCES = \
 	update.cc
 
 libkmlengine_la_LIBADD = \
+	$(top_builddir)/third_party/libminizip.la \
 	$(top_builddir)/src/kml/base/libkmlbase.la
 
 # These header files will be installed in $(includedir)/kml/engine for use in
@@ -110,7 +112,6 @@ TESTS = bbox_test \
 	location_util_test \
 	merge_test \
 	object_id_parser_observer_test \
-	old_schema_parser_observer_test \
 	parse_old_schema_test \
 	schema_parser_observer_test \
 	shared_style_parser_observer_test \
@@ -267,13 +268,6 @@ merge_test_LDADD= libkmlengine.la \
 object_id_parser_observer_test_SOURCES = object_id_parser_observer_test.cc
 object_id_parser_observer_test_CXXFLAGS = $(AM_TEST_CXXFLAGS)
 object_id_parser_observer_test_LDADD= libkmlengine.la \
-	$(top_builddir)/src/kml/dom/libkmldom.la \
-	$(top_builddir)/src/kml/base/libkmlbase.la \
-	$(top_builddir)/third_party/libgtest.la
-
-old_schema_parser_observer_test_SOURCES = old_schema_parser_observer_test.cc
-old_schema_parser_observer_test_CXXFLAGS = $(AM_TEST_CXXFLAGS)
-old_schema_parser_observer_test_LDADD= libkmlengine.la \
 	$(top_builddir)/src/kml/dom/libkmldom.la \
 	$(top_builddir)/src/kml/base/libkmlbase.la \
 	$(top_builddir)/third_party/libgtest.la

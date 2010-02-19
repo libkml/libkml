@@ -52,9 +52,9 @@ void ItemIcon::AddElement(const ElementPtr& element) {
     case Type_state:
       {
         clear_state();
-        std::vector<string> v;
+        std::vector<std::string> v;
         kmlbase::SplitStringUsing(element->get_char_data(), " ", &v);
-        std::vector<string>::const_iterator itr;
+        std::vector<std::string>::const_iterator itr;
         for (itr = v.begin(); itr != v.end(); ++itr) {
           int val = Xsd::GetSchema()->EnumId(Type_state, *itr);
           if (val != -1) {
@@ -77,9 +77,9 @@ void ItemIcon::Serialize(Serializer& serializer) const {
   ElementSerializer element_serializer(*this, serializer);
   Object::Serialize(serializer);
   if (has_state()) {
-    string content;
+    std::string content;
     for (size_t i = 0; i != get_state_array_size(); ++i) {
-      string s = Xsd::GetSchema()->EnumValue(Type_state,
+      std::string s = Xsd::GetSchema()->EnumValue(Type_state,
                                                   get_state_array_at(i));
       content.append(s);
       if (i != get_state_array_size() - 1) {
@@ -91,10 +91,6 @@ void ItemIcon::Serialize(Serializer& serializer) const {
   if (has_href()) {
     serializer.SaveFieldById(Type_href, get_href());
   }
-}
-
-void ItemIcon::Accept(Visitor* visitor) {
-  visitor->VisitItemIcon(ItemIconPtr(this));
 }
 
 // <ListStyle>
@@ -142,15 +138,6 @@ void ListStyle::Serialize(Serializer& serializer) const {
   if (has_maxsnippetlines()) {
     serializer.SaveFieldById(Type_maxSnippetLines, get_maxsnippetlines());
   }
-}
-
-void ListStyle::Accept(Visitor* visitor) {
-  visitor->VisitListStyle(ListStylePtr(this));
-}
-
-void ListStyle::AcceptChildren(VisitorDriver* driver) {
-  SubStyle::AcceptChildren(driver);
-  Element::AcceptRepeated<ItemIconPtr>(&itemicon_array_, driver);
 }
 
 }  // end namespace kmldom

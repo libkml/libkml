@@ -55,51 +55,6 @@ TEST_F(AtomAuthorTest, TestXmlNamespace) {
   ASSERT_EQ(kmlbase::XMLNS_ATOM, atomauthor_->get_xmlns());
 }
 
-class AtomCategoryTest : public testing::Test {
- protected:
-  virtual void SetUp() {
-    atomcategory_ = KmlFactory::GetFactory()->CreateAtomCategory();
-  }
-
-  AtomCategoryPtr atomcategory_;
-};
-
-TEST_F(AtomCategoryTest, TestType) {
-  ASSERT_EQ(Type_AtomCategory, atomcategory_->Type());
-  ASSERT_FALSE(atomcategory_->IsA(Type_Object));
-  ASSERT_TRUE(atomcategory_->IsA(Type_AtomCategory));
-}
-
-TEST_F(AtomCategoryTest, TestParseScheme) {
-  const string kScheme("http://schemas.google.com/g/2005#kind");
-  // ParseKml calls AddElement.
-  atomcategory_ = AsAtomCategory(
-      ParseKml(string("<atom:category scheme='") + kScheme + "'/>"));
-  ASSERT_TRUE(atomcategory_);
-  ASSERT_TRUE(atomcategory_->has_scheme());
-  ASSERT_EQ(kScheme, atomcategory_->get_scheme());
-}
-
-TEST_F(AtomCategoryTest, TestParseLabel) {
-  const string kLabel("document");
-  // ParseKml calls AddElement.
-  atomcategory_ = AsAtomCategory(
-      ParseKml(string("<atom:category label='") + kLabel + "'/>"));
-  ASSERT_TRUE(atomcategory_);
-  ASSERT_TRUE(atomcategory_->has_label());
-  ASSERT_EQ(kLabel, atomcategory_->get_label());
-}
-
-TEST_F(AtomCategoryTest, TestParseTerm) {
-  const string kTerm("item");
-  // ParseKml calls AddElement.
-  atomcategory_ = AsAtomCategory(
-      ParseKml(string("<atom:category term='") + kTerm + "'/>"));
-  ASSERT_TRUE(atomcategory_);
-  ASSERT_TRUE(atomcategory_->has_term());
-  ASSERT_EQ(kTerm, atomcategory_->get_term());
-}
-
 class AtomContentTest : public testing::Test {
  protected:
   virtual void SetUp() {
@@ -120,29 +75,29 @@ TEST_F(AtomContentTest, TestXmlNamespace) {
 }
 
 TEST_F(AtomContentTest, TestParseSrc) {
-  const string kSrc("http://somewhere.com/over/the/rainbow");
+  const std::string kSrc("http://somewhere.com/over/the/rainbow");
   // ParseKml calls AddElement.
   atomcontent_ = AsAtomContent(
-      ParseKml(string("<atom:content src='") + kSrc + "'/>"));
+      ParseKml(std::string("<atom:content src='") + kSrc + "'/>"));
   ASSERT_TRUE(atomcontent_);
   ASSERT_TRUE(atomcontent_->has_src());
   ASSERT_EQ(kSrc, atomcontent_->get_src());
 }
 
 TEST_F(AtomContentTest, TestParseType) {
-  const string kType("text/blah");
+  const std::string kType("text/blah");
   // ParseKml calls AddElement.
   atomcontent_ = AsAtomContent(
-      ParseKml(string("<atom:content type='") + kType + "'/>"));
+      ParseKml(std::string("<atom:content type='") + kType + "'/>"));
   ASSERT_TRUE(atomcontent_);
   ASSERT_TRUE(atomcontent_->has_type());
   ASSERT_EQ(kType, atomcontent_->get_type());
 }
 
 TEST_F(AtomContentTest, TestParseUnknownContent) {
-  const string kContent("<goo:bar>baz<goo:a>foo</goo:a></goo:bar>\n");
+  const std::string kContent("<goo:bar>baz<goo:a>foo</goo:a></goo:bar>\n");
   atomcontent_ = AsAtomContent(
-      ParseKml(string("<atom:content>") + kContent + "</atom:content>"));
+      ParseKml(std::string("<atom:content>") + kContent + "</atom:content>"));
   ASSERT_TRUE(atomcontent_);
   ASSERT_EQ(static_cast<size_t>(1),
             atomcontent_->get_unknown_elements_array_size());
@@ -153,13 +108,13 @@ TEST_F(AtomContentTest, TestParseUnknownContent) {
 TEST_F(AtomContentTest, TestParseUnknownContentWithUnknownAttributes) {
   // Note that libkml emits attributes using double quotes and appends
   // a newline after each unknown item.
-  const string kContent(
+  const std::string kContent(
        "<div xmlns=\"http://www.w3.org/1999/xhtml\">"
          "<p><i>[Update: The Atom draft is finished.]</i></p>"
         "</div>\n");
   // ParseKml is _not_ namespace aware, hence the atom: prefix.
   atomcontent_ = AsAtomContent(ParseKml(
-     string("<atom:content type='xhtml' xml:lang='en'") +
+     std::string("<atom:content type='xhtml' xml:lang='en'") +
                     " xml:base='http://diveintomark.org/'>" + kContent +
                  "</atom:content>"));
   ASSERT_TRUE(atomcontent_);
@@ -170,22 +125,22 @@ TEST_F(AtomContentTest, TestParseUnknownContentWithUnknownAttributes) {
       atomcontent_->GetUnknownAttributes();
   ASSERT_TRUE(unknown_attributes);
   ASSERT_EQ(static_cast<size_t>(2), unknown_attributes->GetSize());
-  string val;
+  std::string val;
   ASSERT_TRUE(unknown_attributes->GetValue("xml:lang", &val));
-  ASSERT_EQ(string("en"), val);
+  ASSERT_EQ(std::string("en"), val);
   ASSERT_TRUE(unknown_attributes->GetValue("xml:base", &val));
-  ASSERT_EQ(string("http://diveintomark.org/"), val);
+  ASSERT_EQ(std::string("http://diveintomark.org/"), val);
 }
 
 // Within libkml <Placemark> and any other kml element is only ever
 // considered misplaced.  The <Placemark> itself _is_ fully parsed and
 // available in dom form on the parents misplaced elements list.  Neat!
 TEST_F(AtomContentTest, TestParseMisplacedContent) {
-  const string kName("my name");
-  const string kPlacemark(string("<Placemark><name>") + kName +
+  const std::string kName("my name");
+  const std::string kPlacemark(std::string("<Placemark><name>") + kName +
                                "</name></Placemark>");
   atomcontent_ = AsAtomContent(
-      ParseKml(string("<atom:content>") + kPlacemark + "</atom:content>"));
+      ParseKml(std::string("<atom:content>") + kPlacemark + "</atom:content>"));
   ASSERT_TRUE(atomcontent_);
   ASSERT_EQ(static_cast<size_t>(0),
             atomcontent_->get_unknown_elements_array_size());
@@ -198,12 +153,12 @@ TEST_F(AtomContentTest, TestParseMisplacedContent) {
 }
 
 TEST_F(AtomContentTest, TestSerializeAttributes) {
-  const string kSrc("http://somewhere.com/over/the/rainbow");
-  const string kType("text/blah");
+  const std::string kSrc("http://somewhere.com/over/the/rainbow");
+  const std::string kType("text/blah");
   atomcontent_->set_src(kSrc);
   atomcontent_->set_type(kType);
-  const string kExpected(
-    string("<atom:content") +
+  const std::string kExpected(
+    std::string("<atom:content") +
                 " src=\"" + kSrc + "\""
                 " type=\"" + kType + "\""
                "/>");
@@ -237,9 +192,9 @@ TEST_F(AtomCommonTest, TestDefault) {
 }
 
 TEST_F(AtomCommonTest, TestSetGetClear) {
-  const string kId("very-mostly-highly-unique");
-  const string kTitle("Your Lordship");
-  const string kUpdated("today!");
+  const std::string kId("very-mostly-highly-unique");
+  const std::string kTitle("Your Lordship");
+  const std::string kUpdated("today!");
   feed_->set_id(kId);
   entry_->set_id(kId);
   feed_->set_title(kTitle);
@@ -301,19 +256,19 @@ TEST_F(AtomCommonTest, TestAddMultipleLinks) {
 
 // This tests AtomCommon::AddElement()
 TEST_F(AtomCommonTest, TestParse) {
-  const string kId("very-mostly-highly-unique");
-  const string kTitle("Your Lordship");
-  const string kUpdated("today!");
-  const string kHrefA("http://a.com");
-  const string kHrefB("http://b.net");
-  const string kLinks(string("<atom:link href='" + kHrefA + "'/>"
+  const std::string kId("very-mostly-highly-unique");
+  const std::string kTitle("Your Lordship");
+  const std::string kUpdated("today!");
+  const std::string kHrefA("http://a.com");
+  const std::string kHrefB("http://b.net");
+  const std::string kLinks(std::string("<atom:link href='" + kHrefA + "'/>"
                                        "<atom:link href='" + kHrefB + "'/>"));
-  const string kChildren(
-      string("<atom:id>") + kId + "</atom:id>"
+  const std::string kChildren(
+      std::string("<atom:id>") + kId + "</atom:id>"
       "<atom:title>" + kTitle + "</atom:title>"
       "<atom:updated>" + kUpdated + "</atom:updated>" +
       kLinks);
-  entry_ = AsAtomEntry(ParseKml(string("<atom:entry>") + kChildren +
+  entry_ = AsAtomEntry(ParseKml(std::string("<atom:entry>") + kChildren +
                                "</atom:entry>"));
   ASSERT_TRUE(entry_.get());
   ASSERT_TRUE(entry_->has_id());
@@ -325,7 +280,7 @@ TEST_F(AtomCommonTest, TestParse) {
   ASSERT_EQ(static_cast<size_t>(2), entry_->get_link_array_size());
   ASSERT_EQ(kHrefA, entry_->get_link_array_at(0)->get_href());
   ASSERT_EQ(kHrefB, entry_->get_link_array_at(1)->get_href());
-  feed_ = AsAtomFeed(ParseKml(string("<atom:feed>") + kChildren +
+  feed_ = AsAtomFeed(ParseKml(std::string("<atom:feed>") + kChildren +
                                "</atom:feed>"));
   ASSERT_TRUE(feed_.get());
   ASSERT_TRUE(feed_->has_id());
@@ -340,25 +295,25 @@ TEST_F(AtomCommonTest, TestParse) {
 }
 
 TEST_F(AtomCommonTest, TestSerialize) {
-  const string kId("very-mostly-highly-unique");
-  const string kTitle("Your Lordship");
-  const string kUpdated("today!");
-  const string kHrefA("http://a.com");
-  const string kHrefB("http://b.net");
-  const string kLinks(string("<atom:link href=\"" + kHrefA + "\"/>"
+  const std::string kId("very-mostly-highly-unique");
+  const std::string kTitle("Your Lordship");
+  const std::string kUpdated("today!");
+  const std::string kHrefA("http://a.com");
+  const std::string kHrefB("http://b.net");
+  const std::string kLinks(std::string("<atom:link href=\"" + kHrefA + "\"/>"
                                        "<atom:link href=\"" + kHrefB + "\"/>"));
-  const string kChildren(
-      string("<atom:id>") + kId + "</atom:id>"
+  const std::string kChildren(
+      std::string("<atom:id>") + kId + "</atom:id>"
       "<atom:title>" + kTitle + "</atom:title>"
       "<atom:updated>" + kUpdated + "</atom:updated>" +
       kLinks);
-  entry_ = AsAtomEntry(ParseKml(string("<atom:entry>") + kChildren +
+  entry_ = AsAtomEntry(ParseKml(std::string("<atom:entry>") + kChildren +
                                "</atom:entry>"));
-  feed_ = AsAtomFeed(ParseKml(string("<atom:feed>") + kChildren +
+  feed_ = AsAtomFeed(ParseKml(std::string("<atom:feed>") + kChildren +
                                "</atom:feed>"));
-  ASSERT_EQ(string("<atom:entry>") + kChildren + "</atom:entry>",
+  ASSERT_EQ(std::string("<atom:entry>") + kChildren + "</atom:entry>",
             SerializeRaw(entry_));
-  ASSERT_EQ(string("<atom:feed>") + kChildren + "</atom:feed>",
+  ASSERT_EQ(std::string("<atom:feed>") + kChildren + "</atom:feed>",
             SerializeRaw(feed_));
 }
 
@@ -393,7 +348,7 @@ TEST_F(AtomEntryTest, TestXmlNamespace) {
 }
 
 TEST_F(AtomEntryTest, TestSetSummary) {
-  const string kSummary("and in summary");
+  const std::string kSummary("and in summary");
   atomentry_->set_summary(kSummary);
   ASSERT_TRUE(atomentry_->has_summary());
   ASSERT_EQ(kSummary, atomentry_->get_summary());
@@ -406,8 +361,8 @@ TEST_F(AtomEntryTest, TestSetContent) {
 }
 
 TEST_F(AtomEntryTest, TestParseSummary) {
-  const string kSummary("and in summary");
-  atomentry_ = AsAtomEntry(ParseKml(string("<atom:entry><atom:summary>") +
+  const std::string kSummary("and in summary");
+  atomentry_ = AsAtomEntry(ParseKml(std::string("<atom:entry><atom:summary>") +
                                     kSummary + "</atom:summary></atom:entry>"));
   ASSERT_TRUE(atomentry_.get());
   ASSERT_TRUE(atomentry_->has_summary());

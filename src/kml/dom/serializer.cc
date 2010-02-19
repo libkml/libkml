@@ -27,7 +27,7 @@
 // functions and the implementation of the Serialize class.
 
 #include "kml/dom/serializer.h"
-#include "kml/base/string_util.h"
+#include <string>
 #include "kml/base/vec3.h"
 #include "kml/dom/element.h"
 #include "kml/dom/xsd.h"
@@ -36,43 +36,26 @@ using kmlbase::ToString;
 
 namespace kmldom {
 
-static string EnityEscapeXml(const string& xml) {
-  kmlbase::StringMap map;
-  map["&"] = "&amp;";
-  map["<"] = "&lt;";
-  map[">"] = "&gt;";
-  map["'"] = "&apos;";
-  map["\""] = "&quot;";
-  return kmlbase::CreateExpandedStrings(xml, map, "", "");
-}
-
 Serializer::Serializer() : xsd_(*Xsd::GetSchema()) {
 }
 
 // Study the incoming string for chars that are invalid to represent in XML.
-// Wrap the whole thing in a CDATA if any found. Avoids CDATA-ing any string
-// that's already a CDATA, and will entity-escape any reserved XML chars in
-// the process. Returns a string that's legal for an XML value.
-const string Serializer::MaybeQuoteString(const string& value) {
-  // If there's a CDATA anywhere in this string, it must have been set through
-  // the API (since the underlying XML parser will strip it out). We need to
-  // entity-replace any reserved characters.
-  if (value.find("<![CDATA[") != string::npos) {
-    return EnityEscapeXml(value);
-  }
-  // If the string contains any reserved characters (but does not have any
-  // raw CDATA as checked above), wrap it in CDATA.
-  if (value.find_first_of("&'<>\"") != string::npos) {
+// Wrap the whole thing in a CDATA if any found.  Doesn't try to '&amp;'-ify.
+// Avoids CDATA-ing any string that's already a CDATA.
+// Returns a string that's legal for an XML value.
+const std::string Serializer::MaybeQuoteString(const std::string& value) {
+  if ((value.find("<![CDATA[",0) != 0) &&
+      (value.find_first_of("&'<>\"", 0) != std::string::npos))
     return "<![CDATA[" + value + "]]>";
-  }
-  return value;
+  else
+    return value;
 }
 
 // This emits the string for the given enum and enum value.
 // For example, type_id=Type_altitudeMode, enum_value=ALTITUDEMODE_ABSOLUTE.
 // If enum_value is not valid for the given type_id nothing is emitted.
 void Serializer::SaveEnum(int type_id, int enum_value) {
-  string enum_string = xsd_.EnumValue(type_id, enum_value);
+  std::string enum_string = xsd_.EnumValue(type_id, enum_value);
   if (!enum_string.empty()) {
     SaveFieldById(type_id, enum_string);
   }

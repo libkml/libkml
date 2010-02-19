@@ -28,25 +28,22 @@
 #ifndef KML_ENGINE_KMZ_FILE_H__
 #define KML_ENGINE_KMZ_FILE_H__
 
+#include <string>
 #include <vector>
-#include "boost/intrusive_ptr.hpp"
 #include "boost/scoped_ptr.hpp"
 #include "kml/base/referent.h"
+#include "kml/base/tempfile.h"
 #include "kml/base/util.h"
 #include "kml/engine/kml_file.h"
 
-// ZipFile hides the implementation details of the underlying zip library from
-// this interface.
-namespace kmlbase {
-class ZipFile;
-}
-
 namespace kmlengine {
 
+// ZlibImpl hides the implementation details of Zlib's Minizip from our
+// interface.
+class ZlibImpl;
+
 // The Kmz class represents an instance of a KMZ file. It contains methods
-// for reading and writing KMZ files. By default, there is an upper limit of
-// 2 GB on uncompressed file sizes. If you need to lower this limit, use
-// the set_max_uncompressed_size method.
+// for reading and writing KMZ files.
 class KmzFile : public kmlbase::Referent {
  public:
   ~KmzFile();
@@ -59,24 +56,14 @@ class KmzFile : public kmlbase::Referent {
   // Open a KMZ file from a string. Returns a pointer to a KmzFile object if a
   // temporary file could be created, the data was recognizably KMZ. Otherwise
   // returns NULL.
-  static KmzFile* OpenFromString(const string& kmz_data);
+  static KmzFile* OpenFromString(const std::string& kmz_data);
 
-  static KmzFile* CreateFromString(const string& kmz_data) {
+  static KmzFile* CreateFromString(const std::string& kmz_data) {
     return OpenFromString(kmz_data);
   }
 
-  // Sets the upper limit for the largest uncompressed file size (in bytes)
-  // for the underlying Zip implementation to handle. By default it is 2 GB.
-  // If this is exceeded, any attempt to read the archived file will return
-  // false.
-  void set_max_uncompressed_file_size(unsigned int i);
-
-  // Returns the maximum uncompressed file size that the underlying Zip
-  // implementation will handle in bytes.
-  unsigned int get_max_uncompressed_file_size();
-
   // Checks to see if kmz_data looks like a PK ZIP file.
-  static bool IsKmz(const string& kmz_data);
+  static bool IsKmz(const std::string& kmz_data);
 
   // Read the default KML file from a KMZ archive. This is defined as the first
   // entry in the ZIP table of contents that ends in ".kml". Note that it may
@@ -84,28 +71,25 @@ class KmzFile : public kmlbase::Referent {
   // contents is exactly the order in which the source files were added to the
   // archive. Returns false if no KML file. The output string is not cleared
   // before being written to.
-  bool ReadKml(string* output) const;
+  bool ReadKml(std::string* output) const;
 
   // This does the same as ReadKml() and in addition returns the path of the
   // KML file within the KMZ archive if a non-NULL kml_path is supplied.
   // NOTE: While it is considered a best practice to have The KML file of
   // a KMZ archive be "doc.kml" this is not always the case.
-  bool ReadKmlAndGetPath(string* output, string* kml_path) const;
+  bool ReadKmlAndGetPath(std::string* output, std::string* kml_path) const;
 
   // Read a specific file from a KMZ archive. Returns false if subfile was not
   // found, or if subfile could not be read. Note: subfile must be a full path
   // from the archive root. Relative references of "../../foo" are not handled.
   // The output string is not cleared before being written to.
-  bool ReadFile(const char* subfile, string* output) const;
+  bool ReadFile(const char* subfile, std::string* output) const;
 
   // Fills a vector of strings of the files contained in the opened KMZ archive.
   // The vector is not cleared, only appended to. The string is the full path
   // name of the KML file from the archive root, with '/' as the separator.
   // Returns false upon error.
-  bool List(std::vector<string>* subfiles);
-
-  // Saves the raw bytes of the in-memory KMZ file.
-  bool SaveToString(string* kmz_bytes);
+  bool List(std::vector<std::string>* subfiles);
 
   // These are for the creation of KMZ files:
 
@@ -116,7 +100,7 @@ class KmzFile : public kmlbase::Referent {
   // Writes data to path_in_kmz. The path must be relative to the root of the
   // archive. e.g. AddFile(data, "somedir/file.png"). If not, false is returned.
   // False is also returned on any interal zipfile error.
-  bool AddFile(const string& data, const string& path_in_kmz);
+  bool AddFile(const std::string& data, const std::string& path_in_kmz);
 
   // Adds a StringVector of hrefs to the KMZ file, resolved against a base
   // URL. The base URL is usually from kmz_file->get_url() and the hrefs
@@ -126,21 +110,21 @@ class KmzFile : public kmlbase::Referent {
   // Errors may result from failure to normalize an href, an href that points
   // above the base url, or failure to read the resolved file prior to writing.
   // Duplicate entries are ignored and not considered errors.
-  size_t AddFileList(const string& base_url,
+  size_t AddFileList(const std::string& base_url,
                      const kmlbase::StringVector& file_paths);
 
   // Creates a KMZ file from a string of KML data. Returns true if
   // kmz_filepath could be successfully created and written.
   // TODO: Permit adding resources (images, models, etc.) to the KMZ archive.
-  static bool WriteKmz(const char* kmz_filepath, const string& kml);
+  static bool WriteKmz(const char* kmz_filepath, const std::string& kml);
 
   // Creates a KMZ file at kmz_filepath from a string of KML. Any local
   // references in the file are written to the KMZ as archived resources
   // according to the rules explained in CreateFromElement.
   // TODO: handle <Model> references.
   // TODO: handle references in <description>.
-  static bool CreateFromKmlFilepath(const string& kml_filepath,
-                                    const string& kmz_filepath);
+  static bool CreateFromKmlFilepath(const std::string& kml_filepath,
+                                    const std::string& kmz_filepath);
 
   // Creates a KMZ file at kmz_filepath from an ElementPtr and a base url. Any
   // local references in the file are written to the KMZ as archived resources
@@ -151,8 +135,8 @@ class KmzFile : public kmlbase::Referent {
   // TODO: handle <Model> references.
   // TODO: handle references in <description>.
   static bool CreateFromElement(const kmldom::ElementPtr& element,
-                                const string& base_url,
-                                const string& kmz_filepath);
+                                const std::string& base_url,
+                                const std::string& kmz_filepath);
 
   // Creates a KMZ file at kmz_filepath from a KmlFile. Any local
   // references in the file are written to the KMZ as archived resources
@@ -163,12 +147,18 @@ class KmzFile : public kmlbase::Referent {
   // TODO: handle <Model> references.
   // TODO: handle references in <description>.
   static bool CreateFromKmlFile(const KmlFilePtr& kml_file,
-                                const string& kmz_filepath);
+                                const std::string& kmz_filepath);
 
  private:
   // Class can only be created from static methods.
-  KmzFile(kmlbase::ZipFile* zip_file);
-  boost::scoped_ptr<kmlbase::ZipFile> zip_file_;
+  KmzFile(ZlibImpl* zlibimpl_, const kmlbase::TempFilePtr& tempfile);
+  ZlibImpl* zlibimpl_;
+  kmlbase::TempFilePtr tempfile_;
+  // Internal helper function to read the file currently pointed to by the
+  // zipfile cursor.
+  bool ReadCurrentFile(std::string* result) const;
+  // Internal helper function to read one named file from an archive.
+  bool ReadOne(const char* subfile, std::string* output) const;
   LIBKML_DISALLOW_EVIL_CONSTRUCTORS(KmzFile);
 };
 

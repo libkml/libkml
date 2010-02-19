@@ -27,8 +27,8 @@
 
 #include "kml/convenience/atom_util.h"
 
+#include <string>
 #include "kml/base/string_util.h"
-#include "kml/convenience/http_client.h"
 #include "kml/dom.h"
 #include "kml/engine/clone.h"
 
@@ -44,8 +44,8 @@ using kmldom::KmlFactory;
 namespace kmlconvenience {
 
 // static
-AtomEntryPtr AtomUtil::CreateBasicEntry(const string& title,
-                                        const string& summary) {
+AtomEntryPtr AtomUtil::CreateBasicEntry(const std::string& title,
+                                        const std::string& summary) {
   AtomEntryPtr entry = KmlFactory::GetFactory()->CreateAtomEntry();
   entry->set_title(title);
   entry->set_summary(summary);
@@ -72,8 +72,8 @@ kmldom::AtomEntryPtr AtomUtil::CreateEntryForFeature(
 }
 
 // static
-bool AtomUtil::GetContentSrc(const AtomEntryPtr& entry, string* src) {
-  if (entry.get() && entry->has_content() && entry->get_content()->has_src()) {
+bool AtomUtil::GetContentSrc(const AtomEntryPtr& entry, std::string* src) {
+  if (entry->has_content() && entry->get_content()->has_src()) {
     if (src) {
       *src = entry->get_content()->get_src();
     }
@@ -83,34 +83,13 @@ bool AtomUtil::GetContentSrc(const AtomEntryPtr& entry, string* src) {
 }
 
 // static
-bool AtomUtil::LinkIsOfRel(const kmldom::AtomLinkPtr& link,
-                           const string& rel_type) {
-  return link.get() && !rel_type.empty() &&
-      kmlbase::StringEndsWith(link->get_rel(), rel_type);
-}
-
-// static
-kmldom::AtomCategoryPtr AtomUtil::FindCategoryByScheme(
-    const kmldom::AtomCommon& atom_common, const string& scheme) {
-  size_t category_size = atom_common.get_category_array_size();
-  for (size_t i = 0; i < category_size; ++i) {
-    const kmldom::AtomCategoryPtr& category =
-        atom_common.get_category_array_at(i);
-    if (category->has_scheme() &&
-        kmlbase::StringEndsWith(category->get_scheme(), scheme)) {
-      return category;
-    }
-  }
-  return NULL;
-}
-
-// static
 bool AtomUtil::FindRelUrl(const kmldom::AtomCommon& atom_common,
-                          const string& rel_type, string* href) {
+                          const std::string& rel_type, std::string* href) {
   size_t link_size = atom_common.get_link_array_size();
   for (size_t i = 0; i < link_size; ++i) {
     const kmldom::AtomLinkPtr& link = atom_common.get_link_array_at(i);
-    if (link->has_href() && LinkIsOfRel(link, rel_type)) {
+    if (link->has_href() && link->has_rel() &&
+        kmlbase::StringEndsWith(link->get_rel(), rel_type)) {
       if (href) {
         *href = link->get_href();
       }
@@ -121,22 +100,8 @@ bool AtomUtil::FindRelUrl(const kmldom::AtomCommon& atom_common,
 }
 
 // static
-kmldom::AtomLinkPtr AtomUtil::FindLink(const kmldom::AtomCommon& atom_common,
-                                       const string& rel_type,
-                                       const string& mime_type) {
-  size_t link_size = atom_common.get_link_array_size();
-  for (size_t i = 0; i < link_size; ++i) {
-    const kmldom::AtomLinkPtr& link = atom_common.get_link_array_at(i);
-    if (LinkIsOfRel(link, rel_type) && link->get_type() == mime_type) {
-      return link;
-    }
-  }
-  return NULL;
-}
-
-// static
 FeaturePtr AtomUtil::GetEntryFeature(const AtomEntryPtr& entry) {
-  // Any KML child of <content> will appear as a misplaced element.
+  // Any KML child of <content> will appear as a misplaced element. 
   if (entry.get() && entry->has_content() &&
       entry->get_content()->get_misplaced_elements_array_size() > 0) {
     return kmldom::AsFeature(
@@ -148,7 +113,7 @@ FeaturePtr AtomUtil::GetEntryFeature(const AtomEntryPtr& entry) {
 // static
 FeaturePtr AtomUtil::CloneEntryFeature(const AtomEntryPtr& entry) {
   if (FeaturePtr feature = GetEntryFeature(entry)) {
-    string href;
+    std::string href;
     if (FindRelUrl(*entry.get(), "self", &href)) {
       AtomLinkPtr link = KmlFactory::GetFactory()->CreateAtomLink();
       link->set_href(href);
@@ -170,79 +135,6 @@ void AtomUtil::GetFeedFeatures(const AtomFeedPtr& feed,
       container->add_feature(CloneEntryFeature(feed->get_entry_array_at(i)));
     }
   }
-}
-
-// static
-AtomEntryPtr AtomUtil::FindEntryByTitle(const kmldom::AtomFeedPtr& feed,
-                                        const string& title) {
-  for (size_t e = 0; e < feed->get_entry_array_size(); ++e) {
-    const kmldom::AtomEntryPtr& entry = feed->get_entry_array_at(e);
-    if (entry->get_title() == title) {
-      return entry;
-    }
-  }
-  return NULL;
-}
-
-// static
-kmldom::AtomFeedPtr AtomUtil::GetAndParseFeed(const string& feed_uri,
-                                              const HttpClient& http_client) {
-  string feed_xml;
-  if (http_client.SendRequest(HTTP_GET, feed_uri, NULL, NULL, &feed_xml)) {
-    return kmldom::AsAtomFeed(kmldom::ParseAtom(feed_xml, NULL));
-  }
-  return NULL;
-}
-
-// static
-kmldom::AtomFeedPtr AtomUtil::GetNextFeed(const kmldom::AtomFeedPtr& feed,
-                                          const HttpClient& http_client) {
-  string next_feed_url;
-  if (kmlconvenience::AtomUtil::FindRelUrl(*feed, "next", &next_feed_url)) {
-    return GetAndParseFeed(next_feed_url, http_client);
-  }
-  return NULL;
-}
-
-// Parse a string of this form: <namempace|key>val</namespace|key>.
-// TODO: put this in kmlbase as a general facility.
-static bool HackParseElement(const string& element, string* key, string* val) {
-  size_t pipe = element.find('|');
-  if (pipe == string::npos) {
-    return false;
-  }
-  size_t gt = element.find('>', pipe + 1);
-  if (gt == string::npos) {
-    return false;
-  }
-  size_t lt = element.find('<', gt + 1);
-  if (lt == string::npos) {
-    return false;
-  }
-  *key = element.substr(pipe + 1, gt - pipe - 1);
-  *val = element.substr(gt + 1, lt - gt - 1);
-  return true;
-}
-
-// Look for something about like this in the <atom:entry>'s unknown (unparsed)
-// elements array:
-// <gd:resourceId>document:0ARX2bBe7ATEpZHg1a3poY18xOWNwZ2NuN2Qy</gd:resourceId>
-bool AtomUtil::GetGdResourceId(const kmldom::AtomEntryPtr& entry,
-                               string* resource_id) {
-  // Since libkml does not presently know about the gd namespace we look for
-  // this element in the unknown elements list.
-  size_t num_un = entry->get_unknown_elements_array_size();
-  for (size_t i = 0; i < num_un; ++i) {
-    string tag;
-    string content;
-    if (HackParseElement(entry->get_unknown_elements_array_at(i), &tag,
-                         &content) &&
-        tag == "resourceId") {
-      *resource_id = content;
-      return true;
-    }
-  }
-  return false;
 }
 
 }  // end namespace kmlconvenience

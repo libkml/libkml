@@ -26,23 +26,14 @@
 // This file contains the implementation of the KmlFile class methods.
 
 #include "kml/engine/kml_file.h"
-#include "kml/base/xml_namespaces.h"
-#include "kml/engine/find_xml_namespaces.h"
 #include "kml/engine/id_mapper.h"
-#include "kml/engine/kmz_file.h"
 #include "kml/dom.h"
-
-using kmlbase::FindXmlNamespaceAndPrefix;
-using kmlbase::XmlnsId;
 
 namespace kmlengine {
 
-static const char kDefaultXmlns[] = "http://www.opengis.net/kml/2.2";
-static const char kDefaultEncoding[] = "utf-8";
-
 // static
-KmlFile* KmlFile::CreateFromParse(const string& kml_or_kmz_data,
-                                  string* errors) {
+KmlFile* KmlFile::CreateFromParse(const std::string& kml_or_kmz_data,
+                                  std::string* errors) {
   // Here our focus is on managing the KmlFile storage.  If _CreateFromParse()
   // fails we release the storage else we return a pointer to it.
   KmlFile* kml_file = new KmlFile;
@@ -54,8 +45,8 @@ KmlFile* KmlFile::CreateFromParse(const string& kml_or_kmz_data,
 }
 
 // static
-KmlFile* KmlFile::CreateFromStringWithUrl(const string& kml_data,
-                                          const string& url,
+KmlFile* KmlFile::CreateFromStringWithUrl(const std::string& kml_data,
+                                          const std::string& url,
                                           KmlCache* kml_cache) {
   if (KmlFile* kml_file = CreateFromString(kml_data)) {
     kml_file->set_url(url);
@@ -67,8 +58,8 @@ KmlFile* KmlFile::CreateFromStringWithUrl(const string& kml_data,
 
 // private
 // This is an internal helper function used in CreateFromParse().
-bool KmlFile::_CreateFromParse(const string& kml_or_kmz_data,
-                               string* errors) {
+bool KmlFile::_CreateFromParse(const std::string& kml_or_kmz_data,
+                               std::string* errors) {
   // Here our focus is on deciding KML vs KMZ.
   if (kmlengine::KmzFile::IsKmz(kml_or_kmz_data)) {
     return OpenAndParseKmz(kml_or_kmz_data, errors);
@@ -79,11 +70,11 @@ bool KmlFile::_CreateFromParse(const string& kml_or_kmz_data,
 // private
 // The caller is expected to have called KmzFile::IsKmz on this, thus the return
 // status represents file handling errors.
-bool KmlFile::OpenAndParseKmz(const string& kmz_data,
-                              string* errors) {
-  string kml_data;
-  KmzFilePtr kmz_file = kmlengine::KmzFile::OpenFromString(kmz_data);
-  if (!kmz_file || !kmz_file->ReadKml(&kml_data)) {
+bool KmlFile::OpenAndParseKmz(const std::string& kmz_data,
+                              std::string* errors) {
+  std::string kml_data;
+  kmz_file_ = kmlengine::KmzFile::OpenFromString(kmz_data);
+  if (!kmz_file_ || !kmz_file_->ReadKml(&kml_data)) {
       return false;
   }
   return ParseFromString(kml_data, errors);
@@ -93,12 +84,13 @@ bool KmlFile::OpenAndParseKmz(const string& kmz_data,
 // TODO: push strict parsing out as a Create() method arg
 KmlFile::KmlFile()
   : encoding_(kDefaultEncoding),
+    default_xmlns_(kDefaultXmlns),
     kml_cache_(NULL),
     strict_parse_(false) {
 }
 
 // private
-bool KmlFile::ParseFromString(const string& kml, string* errors) {
+bool KmlFile::ParseFromString(const std::string& kml, std::string* errors) {
   // Create a parser object.
   kmldom::Parser parser;
 
@@ -130,73 +122,50 @@ bool KmlFile::ParseFromString(const string& kml, string* errors) {
 }
 
 // static
-KmlFile* KmlFile::CreateFromImportInternal(const kmldom::ElementPtr& element,
-                                           bool strict) {
+// TODO: add a bool strict arg and decide on dup handling strategy in MapIds
+// in the case of lax import.  At present the import is strict and fails
+// completely if there are any dups.
+KmlFile* KmlFile::CreateFromImport(kmldom::ElementPtr element) {
   if (!element) {
     return NULL;
   }
   KmlFile* kml_file = new KmlFile;
   ElementVector dup_id_elements;
-  ObjectIdMap* map_ptr = &kml_file->object_id_map_;
-  MapIds(element, map_ptr, &dup_id_elements);
-  if (strict && !dup_id_elements.empty()) {
-    delete kml_file;
-    return NULL;
+  MapIds(element, &kml_file->object_id_map_, &dup_id_elements);
+  if (dup_id_elements.empty()) {
+    // TODO: look for shared styles in object_id_map_ and add to
+    // shared_style_map_
+    // TODO check/set all elements under elements to be in this file.
+    kml_file->set_root(element);
+    return kml_file;
   }
-  // Add all the shared styles to the style map. A shared style is any style
-  // with an id whose parent is a document (and by defintion anything in
-  // object_id_map_ has an id).
-  ObjectIdMap::const_iterator it;
-  for (it = map_ptr->begin(); it != map_ptr->end(); it++) {
-    if (kmldom::StyleSelectorPtr ss = kmldom::AsStyleSelector(it->second)) {
-      if (kmldom::AsDocument(ss->GetParent())) {
-        (kml_file->shared_style_map_)[ss->get_id()] = ss;
-      }
-    }
-  }
-  // TODO check/set all elements under elements to be in this file.
-  kml_file->set_root(element);
-  return kml_file;
+  delete kml_file;
+  return NULL;
 }
 
-KmlFile* KmlFile::CreateFromImport(const kmldom::ElementPtr& element) {
-  return CreateFromImportInternal(element, true);
+const std::string KmlFile::CreateXmlHeader() const {
+  return std::string("<?xml version=\"1.0\" encoding=\"" + encoding_ + "\"?>\n");
 }
 
-KmlFile* KmlFile::CreateFromImportLax(const kmldom::ElementPtr& element) {
-  return CreateFromImportInternal(element, false);
-}
-
-const string KmlFile::CreateXmlHeader() const {
-  return string("<?xml version=\"1.0\" encoding=\"" + encoding_ + "\"?>\n");
-}
-
-bool KmlFile::SerializeToString(string* xml_output) const {
+bool KmlFile::SerializeToString(std::string* xml_output) const {
   if (!xml_output || !get_root()) {
     return false;
   }
   xml_output->append(CreateXmlHeader());
-
-  // Find all xml namespaces known to libkml used by all elements descending
-  // from the root and insert the appropriate xmlns attributes to the root
-  // element.  See kmlengine::FindAndInsertXmlNamespaces() for more info on
-  // how KML vs other namespaces are treated.
-  FindAndInsertXmlNamespaces(get_root());
-  
-  // Append the serialization to the XML header.
+  get_root()->set_default_xmlns(default_xmlns_);
   xml_output->append(kmldom::SerializePretty(get_root()));
   return true;
 }
 
-kmldom::ObjectPtr KmlFile::GetObjectById(const string& id) const {
+kmldom::ObjectPtr KmlFile::GetObjectById(std::string id) const {
   ObjectIdMap::const_iterator find = object_id_map_.find(id);
   return find != object_id_map_.end() ? kmldom::AsObject(find->second) : NULL;
 }
 
-kmldom::StyleSelectorPtr KmlFile::GetSharedStyleById(
-    const string& id) const {
+kmldom::StyleSelectorPtr KmlFile::GetSharedStyleById(std::string id) const {
   SharedStyleMap::const_iterator find = shared_style_map_.find(id);
   return find != shared_style_map_.end() ? find->second : NULL;
 }
+
 
 }  // end namespace kmlengine

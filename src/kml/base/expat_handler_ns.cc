@@ -25,6 +25,7 @@
 
 #include "kml/base/expat_handler_ns.h"
 #include "boost/scoped_ptr.hpp"
+#include "expat.h" // XML_Char
 #include "kml/base/xmlns.h"
 #include "kml/base/expat_parser.h"
 
@@ -34,11 +35,11 @@ ExpatHandlerNs::ExpatHandlerNs(ExpatHandler* expat_handler, const Xmlns* xmlns)
   : expat_handler_(expat_handler), xmlns_(xmlns) {
 }
 
-const string ExpatHandlerNs::TranslatePrefixedName(
-    const string prefixed_name) const {
-  string::size_type sep = prefixed_name.find(kExpatNsSeparator);
+const std::string ExpatHandlerNs::TranslatePrefixedName(
+    const std::string prefixed_name) const {
+  std::string::size_type sep = prefixed_name.find(kExpatNsSeparator);
   // Name has no separator?  Just return it.
-  if (sep == string::npos) {  // Not expected to happen
+  if (sep == std::string::npos) {  // Not expected to happen
     return prefixed_name;
   }
   // Name is in the default namespace?  Return without the prefix.
@@ -47,7 +48,7 @@ const string ExpatHandlerNs::TranslatePrefixedName(
   }
   // Name is in some other namespace?  Map to the prefix known to the
   // expat_handler as indicated in the Xmlns we were constructed with.
-  string prefix = xmlns_->GetKey(prefixed_name.substr(0, sep));
+  std::string prefix = xmlns_->GetKey(prefixed_name.substr(0, sep));
   if (!prefix.empty()) {
     return prefix + ":" + prefixed_name.substr(sep+1);
   }
@@ -57,24 +58,25 @@ const string ExpatHandlerNs::TranslatePrefixedName(
   return prefixed_name;
 }
 
-void ExpatHandlerNs::StartElement(const string& prefixed_name,
-                                  const kmlbase::StringVector& atts) {
-  expat_handler_->StartElement(TranslatePrefixedName(prefixed_name), atts);
+void ExpatHandlerNs::StartElement(const char *prefixed_name,
+                                  const char **atts) {
+  expat_handler_->StartElement(TranslatePrefixedName(prefixed_name).c_str(),
+                               atts);
 }
 
-void ExpatHandlerNs::EndElement(const string& prefixed_name) {
-  expat_handler_->EndElement(TranslatePrefixedName(prefixed_name));
+void ExpatHandlerNs::EndElement(const char *prefixed_name) {
+  expat_handler_->EndElement(TranslatePrefixedName(prefixed_name).c_str());
 }
 
-void ExpatHandlerNs::CharData(const string& s) {
-  expat_handler_->CharData(s);
+void ExpatHandlerNs::CharData(const XML_Char *s, int len) {
+  expat_handler_->CharData(s, len);
 }
 
-void ExpatHandlerNs::StartNamespace(const string& prefix,
-                                    const string& uri) {
+void ExpatHandlerNs::StartNamespace(const XML_Char *prefix,
+                                    const XML_Char *uri) {
 }
 
-void ExpatHandlerNs::EndNamespace(const string& prefix) {
+void ExpatHandlerNs::EndNamespace(const XML_Char *prefix) {
 }
 
 }  // end namespace kmlbase

@@ -1,11 +1,12 @@
 AM_CPPFLAGS= -I$(top_srcdir)/src \
              -I$(top_srcdir)/third_party/boost_1_34_1 \
+             -I$(top_srcdir)/third_party/uriparser-0.7.1/include \
 	     -I$(top_srcdir)/third_party/googletest-r108/include
 
 
 if GCC
-AM_CXXFLAGS = -Wall -Wextra -Wno-unused-parameter -Werror -ansi -pedantic -fno-rtti
-AM_TEST_CXXFLAGS = -Wall -Wextra -Wno-unused-parameter -Werror -ansi -fno-rtti -DGTEST_HAS_RTTI=0
+AM_CXXFLAGS = -Wall -Werror -ansi -pedantic -fno-rtti
+AM_TEST_CXXFLAGS = -Wall -Werror -ansi -fno-rtti -DGTEST_HAS_RTTI=0
 endif
 
 lib_LTLIBRARIES = libkmlregionator.la
@@ -17,7 +18,6 @@ libkmlregionator_la_SOURCES = \
 # These header files will be installed in $(includedir)/kml/regionator
 libkmlregionatorincludedir = $(includedir)/kml/regionator
 libkmlregionatorinclude_HEADERS = \
-	feature_list_regionator.h \
 	feature_list_region_handler.h \
 	region_handler.h \
 	regionator.h \

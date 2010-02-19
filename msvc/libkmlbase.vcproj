@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\third_party\zlib-1.2.3;..\third_party\zlib-1.2.3\contrib;..\third_party\expat.win32;..\third_party\boost_1_34_1;..\src;&quot;..\third_party\uriparser-0.7.5\include&quot;"
+				AdditionalIncludeDirectories="..\third_party\expat.win32;..\third_party\boost_1_34_1;..\src;&quot;..\third_party\uriparser-0.7.1\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -104,11 +104,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\third_party\zlib-1.2.3;..\third_party\zlib-1.2.3\contrib;..\third_party\expat.win32;..\third_party\boost_1_34_1;..\src;&quot;..\third_party\uriparser-0.7.5\include&quot;"
+				AdditionalIncludeDirectories="..\third_party\expat.win32;..\third_party\boost_1_34_1;..\src;&quot;..\third_party\uriparser-0.7.1\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
-				PrecompiledHeaderThrough=""
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="stdafx.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
@@ -156,10 +156,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\kml\base\csv_splitter.cc"
-				>
-			</File>
-			<File
 				RelativePath="..\src\kml\base\date_time.cc"
 				>
 			</File>
@@ -177,14 +173,6 @@
 			</File>
 			<File
 				RelativePath="..\src\kml\base\file_win32.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\base\math_util.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\base\mimetypes.cc"
 				>
 			</File>
 			<File
@@ -211,22 +199,6 @@
 				RelativePath="..\src\kml\base\time_util.cc"
 				>
 			</File>
-			<File
-				RelativePath="..\src\kml\base\uri_parser.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\base\version.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\base\xml_namespaces.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\base\zip_file.cc"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -239,10 +211,6 @@
 			</File>
 			<File
 				RelativePath="..\src\kml\base\color32.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\base\csv_splitter.h"
 				>
 			</File>
 			<File
@@ -266,19 +234,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\kml\base\google_internal_test.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\base\math_util.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\kml\base\memory_file.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\base\mimetypes.h"
 				>
 			</File>
 			<File
@@ -330,10 +286,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\kml\base\version.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\kml\base\xml_element.h"
 				>
 			</File>
@@ -342,15 +294,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\kml\base\xml_namespaces.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\kml\base\xmlns.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\base\zip_file.h"
 				>
 			</File>
 		</Filter>

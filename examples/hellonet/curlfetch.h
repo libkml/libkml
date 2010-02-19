@@ -28,7 +28,6 @@
 
 #include <string>
 #include "kml/base/net_cache.h"
-#include "kml/convenience/http_client.h"
 
 bool CurlToString(const char* url, std::string* data);
 
@@ -38,20 +37,6 @@ class CurlNetFetcher : public kmlbase::NetFetcher {
   bool FetchUrl(const std::string& url, std::string* data) const {
     return CurlToString(url.c_str(), data);
   }
-};
-
-// This HttpClient uses libcurl to send the request.
-class CurlHttpClient : public kmlconvenience::HttpClient {
- public:
-  CurlHttpClient(const std::string& application_name);
-
-  // HttpClient::SendRequest()
-  virtual bool SendRequest(
-    kmlconvenience::HttpMethodEnum http_method,
-    const std::string& request_uri,
-    const kmlconvenience::StringPairVector* request_headers,
-    const std::string* post_data,
-    std::string* response) const;
 };
 
 #endif  // EXAMPLES_HELLONET_CURLFETCH_H__

@@ -26,6 +26,7 @@
 // This file contains the unit tests for the abstract Serializer base class.
 
 #include "kml/dom/serializer.h"
+#include <string>
 #include "kml/base/attributes.h"
 #include "kml/dom/kml_funcs.h"
 #include "kml/dom/kml_factory.h"
@@ -41,24 +42,16 @@ namespace kmldom {
 class SerializerTest : public testing::Test {
  protected:
   virtual void SetUp() {
-    kml_factory_ = KmlFactory::GetFactory();
-    document_ = kml_factory_->CreateDocument();
-    folder_ = kml_factory_->CreateFolder();
-    placemark_ = kml_factory_->CreatePlacemark();
-    point_ = kml_factory_->CreatePoint();
-    region_ = kml_factory_->CreateRegion();
-    style_ = kml_factory_->CreateStyle();
-    style_map_ = kml_factory_->CreateStyleMap();
+    folder_ = KmlFactory::GetFactory()->CreateFolder();
+    placemark_ = KmlFactory::GetFactory()->CreatePlacemark();
+    point_ = KmlFactory::GetFactory()->CreatePoint();
+    region_ = KmlFactory::GetFactory()->CreateRegion();
   }
 
-  KmlFactory* kml_factory_;
-  DocumentPtr document_;
   FolderPtr folder_;
   PlacemarkPtr placemark_;
   PointPtr point_;
   RegionPtr region_;
-  StylePtr style_;
-  StyleMapPtr style_map_;
 };
 
 // The NullSerializer implementation overrides no Serializer virtual methods.
@@ -66,7 +59,7 @@ class SerializerTest : public testing::Test {
 class NullSerializer : public Serializer {
 };
 
-// This Serializer implementation provides implementations for all virtual
+// This Serialier implementation provides implementations for all virtual
 // methods.  This should build and run and do nothing.
 class MaximalSerializer : public Serializer {
  public:
@@ -74,15 +67,11 @@ class MaximalSerializer : public Serializer {
   virtual void End() {}
   virtual void SaveElement(const ElementPtr& element) {}
   virtual void SaveElementGroup(const ElementPtr& element, int group_id) {}
-  virtual void SaveStringFieldById(int type_id, string value) {}
-  virtual void SaveContent(const string& content, bool maybe_quote) {}
-  virtual void SaveVec3(const kmlbase::Vec3& vec3) {}
+  virtual void SaveStringFieldById(int type_id, std::string value) {}
+  virtual void SaveContent(const std::string& content, bool maybe_quote) {}
+  virtual void SaveLonLatAlt(double longitude, double latitude,
+                             double altitude) {}
   virtual void Indent() {}
-  virtual void SaveColor(int type_id, const kmlbase::Color32& color) {}
-  virtual void BeginElementArray(int type_id, size_t element_count) {}
-  virtual void EndElementArray(int type_id) {}
-  virtual void BeginElementGroupArray(int group_id, size_t element_count) {}
-  virtual void EndElementGroupArray(int group_id) {}
 };
 
 typedef std::vector<KmlDomType> TypeIdVector;
@@ -122,32 +111,11 @@ class FlatSerializer : public Serializer {
   ElementVector element_vector_;
 };
 
-// This serializer implements SaveColor() only.
-typedef std::pair<int, kmlbase::Color32> TypeColorPair;
-typedef std::vector<TypeColorPair> ColorVector;
-class ColorSerializer : public Serializer {
- public:
-  virtual void SaveColor(int type_id, const kmlbase::Color32& color) {
-    color_vector_.push_back(std::make_pair(type_id, color));
-  }
-
-  const ColorVector& get_color_vector() const { return color_vector_; }
- 
- private:
-  ColorVector color_vector_;
-};
-
 // This exists because Serialize is public only on Element.
 static void CallSerializer(const ElementPtr& element, Serializer* serializer) {
   ASSERT_TRUE(element);  // This is basically an internal check.
   ASSERT_TRUE(serializer);  // This is basically an internal check.
   element->Serialize(*serializer);
-}
-
-// Assert the basic SaveElement is well-behaved when passed a NULL element.
-TEST_F(SerializerTest, TestSerializeOfNullElement) {
-  Serializer serializer;
-  serializer.SaveElement(NULL);
 }
 
 // Verify that the default Serializer properly does nothing.
@@ -239,136 +207,6 @@ TEST_F(SerializerTest, TestStatsSerializerOnChildren) {
   ASSERT_EQ(static_cast<size_t>(2), element_vector.size());
   ASSERT_EQ(Type_Region, element_vector[0]->Type());
   ASSERT_EQ(Type_Point, element_vector[1]->Type());
-}
-
-TEST_F(SerializerTest, TestSaveColor) {
-  const kmlbase::Color32 kOpaqueWhite(0xffffffff);
-  const kmlbase::Color32 kOpaqueBlack(0xff000000);
-  const kmlbase::Color32 kOpaqueBlue(0xffff0000);
-  ColorSerializer color_serializer;
-  color_serializer.SaveColor(Type_bgColor, kOpaqueWhite);
-  color_serializer.SaveColor(Type_color, kOpaqueBlack);
-  color_serializer.SaveColor(Type_textColor, kOpaqueBlue);
-
-  const ColorVector& color_vector = color_serializer.get_color_vector();
-  ASSERT_EQ(static_cast<size_t>(3), color_vector.size()); 
-  ASSERT_EQ(Type_bgColor, color_vector[0].first);
-  ASSERT_TRUE(kOpaqueWhite == color_vector[0].second);
-  ASSERT_EQ(Type_color, color_vector[1].first);
-  ASSERT_TRUE(kOpaqueBlack == color_vector[1].second);
-  ASSERT_EQ(Type_textColor, color_vector[2].first);
-  ASSERT_TRUE(kOpaqueBlue == color_vector[2].second);
-}
-
-// This Serializer implementation provides implementations for virtual methods
-// used to serialize element arrays.  This simply logs every id of everything
-// it sees.
-typedef std::vector<int> IntVector;
-class ArraySerializer : public Serializer {
- public:
-  ArraySerializer(IntVector* int_vector)
-    : int_vector_(int_vector) {
-  }
-
-  // Called for each non-substitution-group element including each element
-  // in an array.
-  virtual void SaveElement(const ElementPtr& element) {
-    int_vector_->push_back(element->Type());
-  }
-
-  // Called for each substitution-group element including each element
-  // in an array.
-  virtual void SaveElementGroup(const ElementPtr& element, int group_id) {
-    int_vector_->push_back(element->Type());
-    int_vector_->push_back(group_id);
-  }
-
-  // Called before calling SaveElement on each element in an array.  The
-  // element_count is the number of elements in the array and the type_id
-  // is the type of each element.
-  virtual void BeginElementArray(int type_id, size_t element_count) {
-    int_vector_->push_back(type_id);
-    int_vector_->push_back(static_cast<int>(element_count));
-  }
-
-  // Called after saving each element in an array.  Every element was of
-  // the given type.
-  virtual void EndElementArray(int type_id) {
-    int_vector_->push_back(type_id);
-  }
-
-  // Called before calling SaveElementGroup on each element in an array.  The
-  // element_count is the number of elements in the array and the group_id
-  // is the substitution group type of each element.  Examples of group_id
-  // in KML include Type_Feature, Type_Object, and Type_StyleSelector.
-  virtual void BeginElementGroupArray(int group_id, size_t element_count) {
-    int_vector_->push_back(group_id);
-    int_vector_->push_back(static_cast<int>(element_count));
-  }
-
-  // Called after saving each group element in an array.  Every element was of
-  // the given group type.
-  virtual void EndElementGroupArray(int group_id) {
-    int_vector_->push_back(group_id);
-  }
-
- private:
-  IntVector* int_vector_;
-};
-
-// Test Serializer::SaveElementGroupArray.
-TEST_F(SerializerTest, TestSaveElementGroupArray) {
-  document_->set_region(region_);
-  document_->add_feature(kml_factory_->CreatePlacemark());
-  document_->add_feature(kml_factory_->CreateGroundOverlay());
-  document_->add_feature(kml_factory_->CreateScreenOverlay());
-
-  IntVector int_vector;
-  ArraySerializer array_serializer(&int_vector);
-  CallSerializer(document_, &array_serializer);
-
-  ASSERT_EQ(static_cast<size_t>(10), int_vector.size());
-  // The order presumes that of KML Document.
-  // SaveElement(Region)
-  ASSERT_EQ(Type_Region, int_vector[0]);
-  // BeginElementGroupArray(Type_Feature, 3)
-  ASSERT_EQ(Type_Feature, int_vector[1]);
-  ASSERT_EQ(3, int_vector[2]);
-  // SaveElementGroup(Placemark)
-  ASSERT_EQ(Type_Placemark, int_vector[3]);
-  ASSERT_EQ(Type_Feature, int_vector[4]);
-  // SaveElementGroup(GroundOverlay)
-  ASSERT_EQ(Type_GroundOverlay, int_vector[5]);
-  ASSERT_EQ(Type_Feature, int_vector[6]);
-  // SaveElementGroup(ScreenOverlay)
-  ASSERT_EQ(Type_ScreenOverlay, int_vector[7]);
-  ASSERT_EQ(Type_Feature, int_vector[8]);
-  // EndElementGroupArray(Type_Feature)
-  ASSERT_EQ(Type_Feature, int_vector[9]);
-
-}
-
-// Test Serializer::SaveElementArray.
-TEST_F(SerializerTest, TestSaveElementArray) {
-  document_->set_region(region_);
-  document_->add_schema(kml_factory_->CreateSchema());
-  document_->add_schema(kml_factory_->CreateSchema());
-
-  IntVector int_vector;
-  ArraySerializer array_serializer(&int_vector);
-  CallSerializer(document_, &array_serializer);
-
-  ASSERT_EQ(static_cast<size_t>(6), int_vector.size());
-  // SaveElement(Region)
-  ASSERT_EQ(Type_Region, int_vector[0]);
-  // BeginElementArray(Type_Schema, 2)
-  ASSERT_EQ(Type_Schema, int_vector[1]);
-  ASSERT_EQ(2, int_vector[2]);
-  // SaveElement(Schema) x 2
-  ASSERT_EQ(Type_Schema, int_vector[3]);
-  ASSERT_EQ(Type_Schema, int_vector[4]);
-  // EndElementArray(Type_Schema)
-  ASSERT_EQ(Type_Schema, int_vector[5]);
 }
 
 }  // end namespace kmldom

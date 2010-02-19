@@ -26,10 +26,10 @@
 // This file contains the unit tests for the Clone() function.
 
 #include "kml/engine/clone.h"
+#include <string>
 #include "kml/dom.h"
 #include "gtest/gtest.h"
 
-using kmlbase::Vec3;
 using kmldom::CoordinatesPtr;
 using kmldom::ElementPtr;
 using kmldom::FolderPtr;
@@ -40,6 +40,7 @@ using kmldom::KmlFactory;
 using kmldom::PlacemarkPtr;
 using kmldom::PointPtr;
 using kmldom::SnippetPtr;
+using kmldom::Vec3;
 
 namespace kmlengine {
 
@@ -77,8 +78,8 @@ TEST_F(CloneTest, TestEmptyClone) {
 
 // Verify that a complex element with some fields clones properly.
 TEST_F(CloneTest, TestCloneFields) {
-  const string kName("clone my name");
-  const string kId("clone-my-id");
+  const std::string kName("clone my name");
+  const std::string kId("clone-my-id");
   const bool kVisibility = false;
 
   // Set the fields.
@@ -103,8 +104,8 @@ TEST_F(CloneTest, TestCloneFields) {
 // Verify that a complex element with both some fields and complex children
 // clones properly.
 TEST_F(CloneTest, TestCloneChildren) {
-  const string kDescription("clone my description");
-  const string kId("clone-my-id");
+  const std::string kDescription("clone my description");
+  const std::string kId("clone-my-id");
   const bool kOpen = false;
 
   // Set some fields.
@@ -220,7 +221,7 @@ TEST_F(CloneTest, TestCloneSnippet) {
                        cloned_snippet->get_maxlines());
   ASSERT_EQ(snippet_->get_text(), cloned_snippet->get_text());
 
-  const string kText("some snippet text");
+  const std::string kText("some snippet text");
   snippet_->set_text(kText);
   cloned_snippet = AsSnippet(Clone(snippet_));
   ASSERT_EQ(kText, cloned_snippet->get_text());
@@ -229,7 +230,7 @@ TEST_F(CloneTest, TestCloneSnippet) {
 // <IconStyle>'s <Icon> uses has_icon(), etc but is Type_IconStyleIcon.
 TEST_F(CloneTest, TestCloneIconStyle) {
   IconStyleIconPtr icon = KmlFactory::GetFactory()->CreateIconStyleIcon();
-  const string kImage("icon.png");
+  const std::string kImage("icon.png");
   icon->set_href(kImage);
   IconStylePtr iconstyle = KmlFactory::GetFactory()->CreateIconStyle();
   iconstyle->set_icon(icon);
@@ -243,34 +244,6 @@ TEST_F(CloneTest, TestCloneIconStyle) {
   ASSERT_TRUE(clone->get_icon()->has_href());
   ASSERT_EQ(kmldom::Type_IconStyleIcon, clone->get_icon()->Type());
   ASSERT_EQ(kImage, clone->get_icon()->get_href());
-}
-
-TEST_F(CloneTest, TestCloneWithMisplacedChild) {
-  kmldom::IconPtr icon =
-    kmldom::AsIcon(kmldom::Parse("<Icon><x>64</x></Icon>", NULL));
-  ASSERT_TRUE(icon);
-  ASSERT_EQ(static_cast<size_t>(1), icon->get_misplaced_elements_array_size());
-  ASSERT_EQ(static_cast<size_t>(0), icon->get_unknown_elements_array_size());
-  kmldom::IconPtr clone = kmldom::AsIcon(Clone(icon));
-  ASSERT_TRUE(clone);
-  ASSERT_EQ(static_cast<size_t>(1), clone->get_misplaced_elements_array_size());
-  ASSERT_EQ(static_cast<size_t>(0), clone->get_unknown_elements_array_size());
-  ASSERT_FALSE(kmldom::SerializePretty(clone).empty());
-}
-
-TEST_F(CloneTest, TestCloneWithFullyUnknownChild) {
-  // This originally appeared as IconStyle Icon's child, but the bug is
-  // manifested in cloning any element with a fully unknown child.
-  kmldom::IconPtr icon =
-      kmldom::AsIcon(kmldom::Parse("<Icon><w>64</w></Icon>", NULL));
-  ASSERT_TRUE(icon);
-  ASSERT_EQ(static_cast<size_t>(0), icon->get_misplaced_elements_array_size());
-  ASSERT_EQ(static_cast<size_t>(1), icon->get_unknown_elements_array_size());
-  kmldom::IconPtr clone = kmldom::AsIcon(Clone(icon));
-  ASSERT_TRUE(clone);
-  ASSERT_EQ(static_cast<size_t>(0), clone->get_misplaced_elements_array_size());
-  ASSERT_EQ(static_cast<size_t>(1), clone->get_unknown_elements_array_size());
-  ASSERT_FALSE(kmldom::SerializePretty(clone).empty());
 }
 
 }  // end namespace kmlengine

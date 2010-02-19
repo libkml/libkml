@@ -29,7 +29,10 @@
 
 namespace kmldom {
 
-TEST(KmlFactoryTest, TestFactory) {
+class KmlFactoryTest : public testing::Test {
+};
+
+TEST_F(KmlFactoryTest, TestFactory) {
   KmlFactory* factory(KmlFactory::GetFactory());
 
   // CreateElementById returns an ElementPtr which automatically
@@ -54,18 +57,6 @@ TEST(KmlFactoryTest, TestFactory) {
 
   e = factory->CreateAtomAuthor();
   ASSERT_EQ(Type_AtomAuthor, e->Type());
-
-  e = factory->CreateAtomCategory();
-  ASSERT_EQ(Type_AtomCategory, e->Type());
-
-  e = factory->CreateAtomContent();
-  ASSERT_EQ(Type_AtomContent, e->Type());
-
-  e = factory->CreateAtomEntry();
-  ASSERT_EQ(Type_AtomEntry, e->Type());
-
-  e = factory->CreateAtomFeed();
-  ASSERT_EQ(Type_AtomFeed, e->Type());
 
   e = factory->CreateAtomLink();
   ASSERT_EQ(Type_AtomLink, e->Type());
@@ -270,36 +261,6 @@ TEST(KmlFactoryTest, TestFactory) {
 
   e = factory->CreateXalSubAdministrativeArea();
   ASSERT_EQ(Type_XalSubAdministrativeArea, e->Type());
-
-  e = factory->CreateGxAnimatedUpdate();
-  ASSERT_EQ(Type_GxAnimatedUpdate, e->Type());
-
-  e = factory->CreateGxFlyTo();
-  ASSERT_EQ(Type_GxFlyTo, e->Type());
-
-  e = factory->CreateGxLatLonQuad();
-  ASSERT_EQ(Type_GxLatLonQuad, e->Type());
-
-  e = factory->CreateGxPlaylist();
-  ASSERT_EQ(Type_GxPlaylist, e->Type());
-
-  e = factory->CreateGxSoundCue();
-  ASSERT_EQ(Type_GxSoundCue, e->Type());
-
-  e = factory->CreateGxTimeSpan();
-  ASSERT_EQ(Type_GxTimeSpan, e->Type());
-
-  e = factory->CreateGxTimeStamp();
-  ASSERT_EQ(Type_GxTimeStamp, e->Type());
-
-  e = factory->CreateGxTour();
-  ASSERT_EQ(Type_GxTour, e->Type());
-
-  e = factory->CreateGxTourControl();
-  ASSERT_EQ(Type_GxTourControl, e->Type());
-
-  e = factory->CreateGxWait();
-  ASSERT_EQ(Type_GxWait, e->Type());
 }
 
 }  // end namespace kmldom

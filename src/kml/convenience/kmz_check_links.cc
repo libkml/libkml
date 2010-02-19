@@ -26,6 +26,7 @@
 // This file contains the implementation of the KmzCheckLinks() function.
 
 #include "kml/convenience/kmz_check_links.h"
+#include <string>
 #include <vector>
 #include "kml/engine/get_links.h"
 #include "kml/engine/href.h"
@@ -37,8 +38,8 @@ using std::vector;
 
 namespace kmlconvenience {
 
-bool KmzCheckLinks(const KmzFile& kmzfile, vector<string>* missing_links) {
-  string kml;
+bool KmzCheckLinks(const KmzFile& kmzfile, vector<std::string>* missing_links) {
+  std::string kml;
   if (!kmzfile.ReadKml(&kml)) {
     return false;
   }
@@ -52,7 +53,7 @@ bool KmzCheckLinks(const KmzFile& kmzfile, vector<string>* missing_links) {
   for (size_t i = 0; i < href_vector.size(); ++i) {
     Href href(href_vector[i]);
     if (href.IsRelative()) {
-      string content;
+      std::string content;
       if (!kmzfile.ReadFile(href.get_path().c_str(), &content)) {
         if (missing_links) {
           missing_links->push_back(href_vector[i]);

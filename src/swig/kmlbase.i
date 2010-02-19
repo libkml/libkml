@@ -30,13 +30,16 @@
 
 // Include the headers needed to build kmlengine_wrap.cc.
 %{
-#include "kml/base/attributes.h"
 #include "kml/base/color32.h"
-#include "kml/base/date_time.h"
-#include "kml/base/vec3.h"
-#include "kml/base/version.h"
-#include "kml/base/xml_file.h"
 %}
+
+// Tell SWIG about boost::intrusive_ptr and the inheritance hierarchy
+// of objects using intrusive_ptr.
+#ifdef SWIGPYTHON
+%include "python/boost_intrusive_ptr.i"
+#elif SWIGJAVA
+%include "java/boost_intrusive_ptr.i"
+#endif
 
 // Tell SWIG about C99 integer types.
 %include "inttypes.i"
@@ -44,25 +47,10 @@
 // Tell SWIG about C++ Standard Library std::string.
 %include "std_string.i"
 
-%include "typemaps.i"
-// NOTE: these typemaps are not fully supported in current SWIG. See this doc:
-// http://www.swig.org/Doc1.3/Library.html#Library_nn14 (1.3.39)
-// It happens to work in Python, but Java is stymied. Ideally SWIG evolves to
-// have a std_string.i that can wrap writing to a pointer.
-%apply std::string* OUTPUT { std::string* output_value };
-%apply std::string* OUTPUT { std::string* output_key };
-
-typedef long time_t;
+// Tell SWIG about the KML DOM intrusive_ptr typedefs.
+%include "kml/dom/kml_ptr.h"
 
 namespace kmlbase {
-
-class Attributes {
- public:
-  bool FindValue(const std::string& key, std::string* output_value) const;
-  bool FindKey(const std::string& value, std::string* output_key) const;
-  size_t GetSize() const;
-  void SetString(const std::string& attr_name, const std::string& attr_val);
-};
 
 class Color32 {
  public:
@@ -89,39 +77,6 @@ class Color32 {
   void set_color_argb(uint32_t color_argb);
   bool operator==(const Color32& color) const;
   // TODO: other operator overrides.
-};
-
-%nodefaultctor DateTime;
-class DateTime {
- public:
-  static DateTime* Create(const std::string& str);
-  static time_t ToTimeT(const std::string& str);
-  time_t GetTimeT();
-  std::string GetXsdTime() const;
-  std::string GetXsdDate() const;
-  std::string GetXsdDateTime() const;
-};
-
-class Vec3 {
- public:
-  Vec3(double longitude, double latitude);
-  Vec3(double longitude, double latitude, double altitude);
-  double get_longitude() const;
-  double get_latitude() const;
-  bool has_altitude() const;
-  double get_altitude() const;
-};
-
-%nodefaultctor Version;
-class Version {
- public:
-  static std::string GetString();
-};
-
-%nodefaultctor XmlFile;
-class XmlFile {
- public:
-  const std::string& get_url() const;
 };
 
 }  // end namespace kmlbase

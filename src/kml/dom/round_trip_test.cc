@@ -29,11 +29,6 @@
 #include "kml/base/file.h"
 #include "gtest/gtest.h"
 
-// The following define is a convenience for testing inside Google.
-#ifdef GOOGLE_INTERNAL
-#include "kml/base/google_internal_test.h"
-#endif
-
 #ifndef DATADIR
 #error *** DATADIR must be defined! ***
 #endif
@@ -51,22 +46,17 @@ static struct {
 } kTestCases[] = {
   { "kml", "all-unknown-input.kml", "all-unknown-golden.kml" },
   { "kml", "all-unknown-attrs-input.kml", "all-unknown-attrs-golden.kml" },
-  { "kml", "all-itemicon-states-input.kml", "all-itemicon-states-golden.kml" },
-  { "kml", "all-arrays.kml", "all-arrays-golden.kml" },
-  { "kml", "all-altitudemodes.kml", "all-altitudemodes-golden.kml" },
-  { "kml", "badcoords.kml", "badcoords-golden.kml" },
-  { "gx", "all-gx-altitudemodes.kml", "all-gx-altitudemodes-golden.kml" },
-  { "gx", "all-gx.kml", "all-gx-golden.kml" }
+  { "kml", "all-itemicon-states-input.kml", "all-itemicon-states-golden.kml" }
 };
 
-static string ReadTestCase(const char *subdir, const char* filename) {
-  string content;
+static std::string ReadTestCase(const char *subdir, const char* filename) {
+  std::string content;
   File::ReadFileToString(
       File::JoinPaths(DATADIR, File::JoinPaths(subdir, filename)), &content);
   return content;
 }
 
-static string ParseSerialize(const string& kml) {
+static std::string ParseSerialize(const std::string& kml) {
   return kmldom::SerializePretty(kmldom::Parse(kml, NULL));
 }
 
@@ -76,10 +66,8 @@ TEST(RoundTripTest, RunTestCases) {
     const char* subdir = kTestCases[i].subdir;
     const char* input_kml = kTestCases[i].input_kml;
     const char* golden_kml = kTestCases[i].golden_kml;
-    string actual_kml = ParseSerialize(ReadTestCase(subdir, input_kml));
-    EXPECT_FALSE(actual_kml.empty()) << input_kml;
-    string expected_kml = ReadTestCase(subdir, golden_kml);
-    EXPECT_FALSE(expected_kml.empty()) << golden_kml;
+    std::string actual_kml = ParseSerialize(ReadTestCase(subdir, input_kml));
+    std::string expected_kml = ReadTestCase(subdir, golden_kml);
     EXPECT_EQ(expected_kml, actual_kml);
   }
 }

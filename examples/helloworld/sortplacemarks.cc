@@ -104,7 +104,7 @@ static FeaturePtr GetKmlFileRootFeature(const char* kmlfile) {
   }
 
   // Get the root
-  return kmlengine::GetRootFeature(kml_file->get_root());
+  return kmlengine::GetRootFeature(kml_file->root());
 }
 
 // This function object is used by STL sort() to alphabetize Placemarks

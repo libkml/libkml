@@ -3,7 +3,7 @@ dnl Process this file with autoconf to produce a configure script.
 dnl Make sure we're interpreted by some minimal autoconf.
 AC_PREREQ(2.57)
 
-AC_INIT(libkml, 1.2.0, http://code.google.com/p/libkml/issues)
+AC_INIT(libkml, 0.6.0, http://code.google.com/p/libkml/issues)
 AC_CONFIG_SRCDIR(README)
 AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE(-Wall -Werror)
@@ -12,6 +12,10 @@ AC_PROG_CPP
 AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
+
+AC_CHECK_HEADERS([expat.h])
+AC_CHECK_HEADERS([float.h limits.h stdlib.h string.h])
+AC_CHECK_FUNCS([floor memset strstr])
 
 AC_C_CONST
 AC_C_INLINE
@@ -40,14 +44,6 @@ esac
 AC_SUBST(PLATFORM)
 AC_SUBST(SHLIBSUFFIX)
 
-dnl Where can we find the Expat headers and library?
-AC_ARG_WITH(expat-include-dir,
-	    [--with-expat-include-dir=DIR look in DIR for expat headers],
-	    [CFLAGS="$CFLAGS -I$withval" CPPFLAGS="$CPPFLAGS -I$withval"])
-AC_ARG_WITH(expat-lib-dir,
-	    [--with-expat-lib-dir=DIR look in DIR for expat libraries],
-	    [LDFLAGS="$LDFLAGS -L$withval"])
-
 dnl Where can we find the Java headers and libs?
 AC_ARG_WITH(java-include-dir,
 	    [--with-java-include-dir=DIR look in DIR for Java headers],
@@ -68,18 +64,6 @@ AC_ARG_WITH(python-lib-dir,
 	    [PYTHON_LIB_DIR=$withval],)
 AC_SUBST(PYTHON_LIB_DIR)
 
-
-AC_CHECK_HEADERS(expat.h, [expat_h_found="yes"], [expat_h_found="no"])
-if test $expat_h_found = "no"
-then
-	AC_MSG_ERROR("Unable to locate expat.h. Use configure --help to see how to specify the search path")
-fi
-AC_CHECK_LIB(expat, XML_ParserCreate, [],
-	AC_MSG_ERROR("Expat library not found. Use configure --help to see how to specify the search path"))
-
-AC_CHECK_HEADERS([float.h limits.h stdlib.h string.h])
-AC_CHECK_FUNCS([floor memset strstr])
-
 dnl If SWIG is available we will try to generate bindings.
 AC_ARG_ENABLE(swig,
 	[AS_HELP_STRING([--disable-swig],
@@ -88,8 +72,8 @@ if test "x$enable_swig" != xno; then
 	AC_CHECK_PROG(SWIG, swig, swig)
 	if test "x$SWIG" != x; then
 		SWIG_VERSION=`swig -version 2>&1|grep Version|cut -d" " -f3`
-		if test ${SWIG_VERSION:4} -lt 35; then
-			AC_MSG_WARN([You have SWIG $SWIG_VERSION installed, but libkml requires at least SWIG 1.3.35. The bindings will not be built.])
+		if test $SWIG_VERSION != 1.3.35; then
+			AC_MSG_WARN([You have SWIG $SWIG_VERSION installed, but libkml requires SWIG 1.3.35. The bindings will not be built.])
 			SWIG=
 		fi
 	fi
@@ -112,18 +96,7 @@ if test "x$SWIG" != x; then
 		      [AS_HELP_STRING([--disable-java],
 				      [do not generate Java SWIG bindings])])
 	if test "x$enable_java" != xno; then
-		AC_CHECK_PROG(JAVA, java, java, nojava)
-		if test "$JAVA" = "nojava"; then
-		  AC_MSG_ERROR([no java binary in PATH])
-		fi
-		AC_CHECK_PROG(JAVAC, javac, javac, nojavac)
-		if test "$JAVAC" = "nojavac"; then
-		  AC_MSG_ERROR([no javac binary in PATH, bindings will not be built])
-		fi
-		AC_CHECK_PROG(JAR, jar, jar, nojar)
-		if test "$JAR" = "nojar"; then
-		  AC_MSG_ERROR([no jar binary in PATH, bindings will not be built])
-		fi
+		AC_CHECK_PROG(JAVA, javac, javac)
 		if test "x$JAVA" != x; then
 			current_CPPFLAGS="$CPPFLAGS"
 			if test "$CPPFLAGS" != ""; then
@@ -197,7 +170,6 @@ AC_CONFIG_FILES([
 	examples/domviewer/Makefile
 	examples/engine/Makefile
 	examples/gpx/Makefile
-	examples/gx/Makefile
 	examples/hellonet/Makefile
 	examples/helloworld/Makefile
 	examples/java/Makefile
@@ -226,14 +198,9 @@ AC_CONFIG_FILES([
 	testdata/balloon/Makefile
 	testdata/csv/Makefile
 	testdata/deprecated/Makefile
-	testdata/gdata/Makefile
-	testdata/gmaps/Makefile
 	testdata/gpx/Makefile
-	testdata/gx/Makefile
 	testdata/kml/Makefile
 	testdata/kmz/Makefile
-        testdata/kmz/files/Makefile
-        testdata/kmz/kmzfiles/Makefile
 	testdata/kmz/rumsey/Makefile
 	testdata/kmz/rumsey/kml/Makefile
 	testdata/kmz/rumsey/imagery/Makefile

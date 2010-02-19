@@ -107,8 +107,8 @@
 				AdditionalIncludeDirectories="..\third_party\expat.win32;..\third_party\boost_1_34_1;..\src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
-				PrecompiledHeaderThrough=""
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="stdafx.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
@@ -200,14 +200,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\kml\dom\gx_timeprimitive.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\dom\gx_tour.cc"
-				>
-			</File>
-			<File
 				RelativePath="..\src\kml\dom\hotspot.cc"
 				>
 			</File>
@@ -217,10 +209,6 @@
 			</File>
 			<File
 				RelativePath="..\src\kml\dom\kml.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\dom\kml22.cc"
 				>
 			</File>
 			<File
@@ -340,14 +328,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\kml\dom\visitor.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\dom\visitor_driver.cc"
-				>
-			</File>
-			<File
 				RelativePath="..\src\kml\dom\xal.cc"
 				>
 			</File>
@@ -415,14 +395,6 @@
 			</File>
 			<File
 				RelativePath="..\src\kml\dom\geometry.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\dom\gx_timeprimitive.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\dom\gx_tour.h"
 				>
 			</File>
 			<File
@@ -506,14 +478,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\kml\dom\parser.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\dom\parser_observer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\kml\dom\placemark.h"
 				>
 			</File>
@@ -571,14 +535,6 @@
 			</File>
 			<File
 				RelativePath="..\src\kml\dom\vec2.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\dom\visitor.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\dom\visitor_driver.h"
 				>
 			</File>
 			<File

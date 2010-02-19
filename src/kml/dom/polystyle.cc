@@ -41,9 +41,6 @@ PolyStyle::~PolyStyle() {
 }
 
 void PolyStyle::AddElement(const ElementPtr& element) {
-  if (!element) {
-    return;
-  }
   switch (element->Type()) {
     case Type_fill:
       has_fill_ = element->SetBool(&fill_);
@@ -66,10 +63,6 @@ void PolyStyle::Serialize(Serializer& serializer) const {
   if (has_outline()) {
     serializer.SaveFieldById(Type_outline, get_outline());
   }
-}
-
-void PolyStyle::Accept(Visitor* visitor) {
-  visitor->VisitPolyStyle(PolyStylePtr(this));
 }
 
 }  // end namespace kmldom

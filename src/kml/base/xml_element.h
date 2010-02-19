@@ -31,7 +31,6 @@
 #include "boost/intrusive_ptr.hpp"
 #include "kml/base/referent.h"
 #include "kml/base/util.h"
-#include "kml/base/xml_namespaces.h"
 
 namespace kmlbase {
 
@@ -57,10 +56,6 @@ class XmlElement : public Referent {
     return xml_file_;
   }
 
-  XmlnsId get_xmlns() const {
-    return xmlns_id_;
-  }
-
   // This returns true if the passed element is in the same XmlFile or if both
   // this XmlElement and the passed element are in no XmlFile.  Passing a NULL
   // pointer always causes a false return value.
@@ -82,11 +77,7 @@ class XmlElement : public Referent {
 
  protected:
   // This is an abstract base class and is never created directly.
-  XmlElement() : xmlns_id_(XMLNS_NONE), parent_(NULL), xml_file_(NULL) {}
-
-  void set_xmlns(XmlnsId xmlns_id) {
-    xmlns_id_ = xmlns_id;
-  }
+  XmlElement() : parent_(NULL), xml_file_(NULL) {}
 
   // Only a derived class can set its parent.  This returns false if this
   // XmlElement already has a parent or if this XmlElement is in a different
@@ -100,7 +91,6 @@ class XmlElement : public Referent {
   }
 
  private:
-  XmlnsId xmlns_id_;
   const XmlElement* parent_;  // Can't ref count due to circularity.
   const XmlFile* xml_file_;
   LIBKML_DISALLOW_EVIL_CONSTRUCTORS(XmlElement);

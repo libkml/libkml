@@ -25,10 +25,8 @@
 
 // This file defines the id of each element.
 
-// The element names exactly match the OGC KML 2.2 Standard:
-// http://www.opengeospatial.org/standards/kml
-// See also Google's reference especially for the "gx" elements:
-// http://code.google.com/apis/kml/documentation/kmlreference.html
+// The element names exactly match the KML 2.2 Reference:
+// http://code.google.com/apis/kml/documentation/kml_tags_beta1.html
 // Type_${element_name}
 
 #ifndef KML_DOM_KML22_H__
@@ -206,21 +204,10 @@ typedef enum {
   Type_z,
 
   Type_AtomAuthor,
-  Type_AtomCategory,
-  Type_AtomContent,
-  Type_AtomEntry,
-  Type_AtomFeed,
   Type_AtomLink,
 
   Type_atomEmail,
-  Type_atomId,
-  Type_atomLabel,
   Type_atomName,
-  Type_atomScheme,
-  Type_atomSummary,
-  Type_atomTerm,
-  Type_atomTitle,
-  Type_atomUpdated,
   Type_atomUri,
 
   Type_XalAddressDetails,
@@ -238,25 +225,6 @@ typedef enum {
   Type_xalSubAdministrativeAreaName,
   Type_xalThoroughfareName,
   Type_xalThoroughfareNumber,
-
-  Type_GxTourPrimitive,
-
-  Type_GxAnimatedUpdate,
-  Type_GxFlyTo,
-  Type_GxLatLonQuad,
-  Type_GxPlaylist,
-  Type_GxSoundCue,
-  Type_GxTimeSpan,
-  Type_GxTimeStamp,
-  Type_GxTour,
-  Type_GxTourControl,
-  Type_GxWait,
-
-  Type_GxAltitudeMode,
-  Type_GxBalloonVisibility,
-  Type_GxDuration,
-  Type_GxFlyToMode,
-  Type_GxPlayMode,
 
   Type_Invalid
 } KmlDomType;
@@ -348,20 +316,6 @@ typedef enum {
   VIEWREFRESHMODE_ONSTOP,
   VIEWREFRESHMODE_ONREGION
 } ViewRefreshModeEnum;
-
-typedef enum {
-  GX_ALTITUDEMODE_CLAMPTOSEAFLOOR = 0,
-  GX_ALTITUDEMODE_RELATIVETOSEAFLOOR
-} GxAltitudeModeEnum;
-
-typedef enum {
-  GX_FLYTOMODE_BOUNCE = 0,
-  GX_FLYTOMODE_SMOOTH
-} GxFlyToModeEnum;
-
-typedef enum {
-  GX_PLAYMODE_PAUSE = 0
-} GxPlayModeEnum;
 
 }  // end namespace kmldom
 

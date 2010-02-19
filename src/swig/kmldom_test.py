@@ -57,7 +57,6 @@ class SimpleFactoryTestCase(unittest.TestCase):
 
   def runTest(self):
     factory = kmldom.KmlFactory_GetFactory()
-    assert factory.CreateElementById(kmldom.Type_Placemark)
     assert factory.CreateAlias()
     assert factory.CreateAtomAuthor()
     assert factory.CreateAtomLink()
@@ -121,94 +120,7 @@ class SimpleFactoryTestCase(unittest.TestCase):
     assert factory.CreateRotationXY()
     assert factory.CreateScreenXY()
     assert factory.CreateSize()
-    assert factory.CreateGxAnimatedUpdate()
-    assert factory.CreateGxFlyTo()
-    assert factory.CreateGxLatLonQuad()
-    assert factory.CreateGxPlaylist()
-    assert factory.CreateGxSoundCue()
-    assert factory.CreateGxTimeSpan()
-    assert factory.CreateGxTimeStamp()
-    assert factory.CreateGxTour()
-    assert factory.CreateGxTourControl()
-    assert factory.CreateGxWait()
 
-class FactoryCreateElementByIdTestCase(unittest.TestCase):
-  def runTest(self):
-    factory = kmldom.KmlFactory_GetFactory()
-    assert factory.CreateElementById(kmldom.Type_Alias)
-    assert factory.CreateElementById(kmldom.Type_AtomAuthor)
-    assert factory.CreateElementById(kmldom.Type_AtomLink)
-    assert factory.CreateElementById(kmldom.Type_BalloonStyle)
-    assert factory.CreateElementById(kmldom.Type_Camera)
-    assert factory.CreateElementById(kmldom.Type_Change)
-    assert factory.CreateElementById(kmldom.Type_coordinates)
-    assert factory.CreateElementById(kmldom.Type_Create)
-    assert factory.CreateElementById(kmldom.Type_Data)
-    assert factory.CreateElementById(kmldom.Type_Delete)
-    assert factory.CreateElementById(kmldom.Type_Document)
-    assert factory.CreateElementById(kmldom.Type_ExtendedData)
-    assert factory.CreateElementById(kmldom.Type_Folder)
-    assert factory.CreateElementById(kmldom.Type_GroundOverlay)
-    assert factory.CreateElementById(kmldom.Type_Icon)
-    assert factory.CreateElementById(kmldom.Type_IconStyle)
-    assert factory.CreateElementById(kmldom.Type_ImagePyramid)
-    assert factory.CreateElementById(kmldom.Type_ItemIcon)
-    assert factory.CreateElementById(kmldom.Type_LabelStyle)
-    assert factory.CreateElementById(kmldom.Type_LatLonAltBox)
-    assert factory.CreateElementById(kmldom.Type_LatLonBox)
-    assert factory.CreateElementById(kmldom.Type_LineString)
-    assert factory.CreateElementById(kmldom.Type_LineStyle)
-    assert factory.CreateElementById(kmldom.Type_LinearRing)
-    assert factory.CreateElementById(kmldom.Type_Link)
-    assert factory.CreateElementById(kmldom.Type_ListStyle)
-    assert factory.CreateElementById(kmldom.Type_Location)
-    assert factory.CreateElementById(kmldom.Type_Lod)
-    assert factory.CreateElementById(kmldom.Type_LookAt)
-    assert factory.CreateElementById(kmldom.Type_Model)
-    assert factory.CreateElementById(kmldom.Type_MultiGeometry)
-    assert factory.CreateElementById(kmldom.Type_NetworkLink)
-    assert factory.CreateElementById(kmldom.Type_NetworkLinkControl)
-    assert factory.CreateElementById(kmldom.Type_Orientation)
-    assert factory.CreateElementById(kmldom.Type_Pair)
-    assert factory.CreateElementById(kmldom.Type_PhotoOverlay)
-    assert factory.CreateElementById(kmldom.Type_Placemark)
-    assert factory.CreateElementById(kmldom.Type_Point)
-    assert factory.CreateElementById(kmldom.Type_PolyStyle)
-    assert factory.CreateElementById(kmldom.Type_Polygon)
-    assert factory.CreateElementById(kmldom.Type_Region)
-    assert factory.CreateElementById(kmldom.Type_ResourceMap)
-    assert factory.CreateElementById(kmldom.Type_Scale)
-    assert factory.CreateElementById(kmldom.Type_Schema)
-    assert factory.CreateElementById(kmldom.Type_SchemaData)
-    assert factory.CreateElementById(kmldom.Type_ScreenOverlay)
-    assert factory.CreateElementById(kmldom.Type_SimpleData)
-    assert factory.CreateElementById(kmldom.Type_SimpleField)
-    assert factory.CreateElementById(kmldom.Type_Snippet)
-    assert factory.CreateElementById(kmldom.Type_Style)
-    assert factory.CreateElementById(kmldom.Type_StyleMap)
-    assert factory.CreateElementById(kmldom.Type_TimeSpan)
-    assert factory.CreateElementById(kmldom.Type_TimeStamp)
-    assert factory.CreateElementById(kmldom.Type_Update)
-    assert factory.CreateElementById(kmldom.Type_ViewVolume)
-    assert factory.CreateElementById(kmldom.Type_hotSpot)
-    assert factory.CreateElementById(kmldom.Type_innerBoundaryIs)
-    assert factory.CreateElementById(kmldom.Type_kml)
-    assert factory.CreateElementById(kmldom.Type_linkSnippet)
-    assert factory.CreateElementById(kmldom.Type_outerBoundaryIs)
-    assert factory.CreateElementById(kmldom.Type_overlayXY)
-    assert factory.CreateElementById(kmldom.Type_rotationXY)
-    assert factory.CreateElementById(kmldom.Type_screenXY)
-    assert factory.CreateElementById(kmldom.Type_size)
-    assert factory.CreateElementById(kmldom.Type_GxAnimatedUpdate)
-    assert factory.CreateElementById(kmldom.Type_GxFlyTo)
-    assert factory.CreateElementById(kmldom.Type_GxLatLonQuad)
-    assert factory.CreateElementById(kmldom.Type_GxPlaylist)
-    assert factory.CreateElementById(kmldom.Type_GxSoundCue)
-    assert factory.CreateElementById(kmldom.Type_GxTimeSpan)
-    assert factory.CreateElementById(kmldom.Type_GxTimeStamp)
-    assert factory.CreateElementById(kmldom.Type_GxTour)
-    assert factory.CreateElementById(kmldom.Type_GxTourControl)
-    assert factory.CreateElementById(kmldom.Type_GxWait)
 
 class VerySimpleCastTestCase(unittest.TestCase):
   """ This verifies the existence of the bindings to a few of the casts """
@@ -225,16 +137,6 @@ class VerySimpleCastTestCase(unittest.TestCase):
     assert not kmldom.AsPlacemark(kmldom.ParseKml('<NetworkLink/>'))
     assert kmldom.AsPoint(kmldom.ParseKml('<Point/>'))
     assert not kmldom.AsPoint(kmldom.ParseKml('<LineString/>'))
-    assert kmldom.AsGxAnimatedUpdate(kmldom.ParseKml('<gx:AnimatedUpdate/>'))
-    assert kmldom.AsGxFlyTo(kmldom.ParseKml('<gx:FlyTo/>'))
-    assert kmldom.AsGxLatLonQuad(kmldom.ParseKml('<gx:LatLonQuad/>'))
-    assert kmldom.AsGxPlaylist(kmldom.ParseKml('<gx:Playlist/>'))
-    assert kmldom.AsGxSoundCue(kmldom.ParseKml('<gx:SoundCue/>'))
-    assert kmldom.AsGxTimeSpan(kmldom.ParseKml('<gx:TimeSpan/>'))
-    assert kmldom.AsGxTimeStamp(kmldom.ParseKml('<gx:TimeStamp/>'))
-    assert kmldom.AsGxTour(kmldom.ParseKml('<gx:Tour/>'))
-    assert kmldom.AsGxTourControl(kmldom.ParseKml('<gx:TourControl/>'))
-    assert kmldom.AsGxWait(kmldom.ParseKml('<gx:Wait/>'))
 
 
 class VerySimpleSimpleChildTestCase(unittest.TestCase):
@@ -518,31 +420,6 @@ class SimpleFeatureTestCase(unittest.TestCase):
 
     # Feature methods
     # TODO everything else
-
-    assert not folder.has_phonenumber()
-    phonenumber = '867-5309'
-    folder.set_phonenumber(phonenumber)
-    assert folder.has_phonenumber()
-    assert phonenumber == folder.get_phonenumber()
-
-    assert not folder.has_atomauthor()
-    atomauthor = factory.CreateAtomAuthor()
-    assert atomauthor
-    atom_name = 'D.F. Wallace'
-    atomauthor.set_name(atom_name)
-    folder.set_atomauthor(atomauthor)
-    got_atomauthor = folder.get_atomauthor()
-    assert atom_name == got_atomauthor.get_name()
-
-    assert not folder.has_atomlink()
-    atomlink = factory.CreateAtomLink()
-    assert atomlink
-    atom_href = 'http://infinitesummer.org'
-    atomlink.set_href(atom_href)
-    folder.set_atomlink(atomlink)
-    got_atomlink = folder.get_atomlink()
-    assert atom_href == got_atomlink.get_href()
-
     assert not folder.has_snippet()
     folder.set_snippet(factory.CreateSnippet())
     assert folder.has_snippet()
@@ -551,28 +428,6 @@ class SimpleFeatureTestCase(unittest.TestCase):
     assert not snippet.has_maxlines()
     folder.clear_snippet()
     assert not folder.has_snippet()
-
-  def testParseAtom(self):
-    kml = ('<Placemark>'
-           '<atom:author>'
-           '<atom:name>D.F. Wallace</atom:name>'
-           '</atom:author>'
-           '<atom:link href="http://infinitesummer.org"></atom:link>'
-           '</Placemark>')
-    root = kmldom.ParseKml(kml)
-    assert root
-    placemark = kmldom.AsPlacemark(root)
-    assert placemark
-    assert placemark.has_atomauthor()
-    author = kmldom.AsAtomAuthor(placemark.get_atomauthor())
-    assert author
-    assert author.has_name();
-    assert "D.F. Wallace" == author.get_name()
-    assert placemark.has_atomlink()
-    link = kmldom.AsAtomLink(placemark.get_atomlink())
-    assert link
-    assert link.has_href()
-    assert "http://infinitesummer.org" == link.get_href()
 
 
 class SimpleRegionTestCase(unittest.TestCase):
@@ -713,7 +568,7 @@ class SimpleExtendedDataTestCase(unittest.TestCase):
     assert 0 == self.extendeddata.get_data_array_size()
     assert 0 == self.extendeddata.get_schemadata_array_size()
 
-class DataTestCase(unittest.TestCase):
+class SimpleDataTestCase(unittest.TestCase):
   """ This tests the Data element """
 
   def setUp(self):
@@ -729,23 +584,8 @@ class DataTestCase(unittest.TestCase):
     assert not self.data.has_value()
     assert "" == self.data.get_value()
 
-class SimpleDataTestCase(unittest.TestCase):
-  """ This tests the SimpleData element """
-
-  def setUp(self):
-    self.factory = kmldom.KmlFactory_GetFactory()
-    self.simpledata = self.factory.CreateSimpleData()
-
-  def testDefault(self):
-    assert kmldom.AsSimpleData(self.simpledata)
-    assert not self.simpledata.has_name()
-    assert "" == self.simpledata.get_name()
-    assert not self.simpledata.has_text()
-    assert "" == self.simpledata.get_text()
-
 def TestColorStyle(colorstyle):
-  """ This tests the ColorStyle elements of the given ColorStyle-derived
-  element"""
+  """ This tests the ColorStyle elements of the given ColorStyle-derived element"""
   # ColorStyle fields
   # Verify default state of <color>
   assert not colorstyle.has_color()
@@ -946,13 +786,13 @@ class SimpleLatLonBoxTestCase(unittest.TestCase):
     assert kmldom.AsLatLonBox(self.latlonbox)
     assert not self.latlonbox.has_id()  # Object-ness
     assert not self.latlonbox.has_north()
-    assert 180.0 == self.latlonbox.get_north()
+    assert 0.0 == self.latlonbox.get_north()
     assert not self.latlonbox.has_south()
-    assert -180.0 == self.latlonbox.get_south()
+    assert 0.0 == self.latlonbox.get_south()
     assert not self.latlonbox.has_east()
-    assert 180.0 == self.latlonbox.get_east()
+    assert 0.0 == self.latlonbox.get_east()
     assert not self.latlonbox.has_west()
-    assert -180.0 == self.latlonbox.get_west()
+    assert 0.0 == self.latlonbox.get_west()
 
   def testSetClear(self):
     north = 42.42
@@ -1282,8 +1122,6 @@ class SimpleSchemaDataTestCase(unittest.TestCase):
   def testDefault(self):
     assert kmldom.AsObject(self.schemadata)
     assert kmldom.AsSchemaData(self.schemadata)
-    assert not self.schemadata.has_schemaurl()
-    assert "" == self.schemadata.get_schemaurl()
     assert not self.schemadata.has_id()
     assert 0 == self.schemadata.get_simpledata_array_size()
 
@@ -1346,242 +1184,12 @@ class SimpleIconStyleIconTestCase(unittest.TestCase):
     assert not self.iconstyleicon.has_href() # back in default state
     assert '' == self.iconstyleicon.get_href()
 
-class GxExtensionsTestCase(unittest.TestCase):
-  """ This tests the gx: elements extended by Google Earth 5.0
-      These are basic subsets of the full suite of tests in the main
-      C++ code and verify the basic operation of the API """
-
-  def setUp(self):
-    self.factory = kmldom.KmlFactory_GetFactory()
-
-  # Feature's gx:balloonVisibility.
-  def testGxBalloonVisibility(self):
-    placemark = self.factory.CreatePlacemark()
-    assert not placemark.has_gx_balloonvisibility()
-    assert False == placemark.get_gx_balloonvisibility()
-    placemark.set_gx_balloonvisibility(True)
-    assert placemark.has_gx_balloonvisibility()
-    assert True == placemark.get_gx_balloonvisibility()
-    expected = (
-        '<Placemark>\n'
-        '  <gx:balloonVisibility>1</gx:balloonVisibility>\n'
-        '</Placemark>\n')
-    assert expected == kmldom.SerializePretty(placemark)
-
-  # <gx:TimeStamp> and <gx:TimeSpan> in AbstractView.
-  def testGxTimePrimitives(self):
-    lookat = self.factory.CreateLookAt()
-    assert not lookat.has_gx_timeprimitive()
-    assert None == lookat.get_gx_timeprimitive()
-    timespan = self.factory.CreateGxTimeSpan()
-    lookat.set_gx_timeprimitive(timespan)
-    assert lookat.has_gx_timeprimitive()
-    expected_lookat = (
-        '<LookAt>\n'
-        '  <gx:TimeSpan/>\n'
-        '</LookAt>\n')
-    assert expected_lookat == kmldom.SerializePretty(lookat)
-
-    camera = self.factory.CreateCamera()
-    assert not camera.has_gx_timeprimitive()
-    assert None == camera.get_gx_timeprimitive()
-    timestamp = self.factory.CreateGxTimeStamp()
-    camera.set_gx_timeprimitive(timestamp)
-    assert camera.has_gx_timeprimitive()
-    expected_camera = (
-        '<Camera>\n'
-        '  <gx:TimeStamp/>\n'
-        '</Camera>\n')
-    assert expected_camera == kmldom.SerializePretty(camera)
-
-  # <gx:altitudeMode>clampToSeaFloor|relativeToSeaFloor.
-  def testGxAltitudeModes(self):
-    llab = self.factory.CreateLatLonAltBox()
-    assert not llab.has_gx_altitudemode()
-    assert kmldom.GX_ALTITUDEMODE_CLAMPTOSEAFLOOR == llab.get_gx_altitudemode()
-    altmode_rel = kmldom.GX_ALTITUDEMODE_RELATIVETOSEAFLOOR
-    llab.set_gx_altitudemode(altmode_rel)
-    assert llab.has_gx_altitudemode()
-    assert altmode_rel == llab.get_gx_altitudemode()
-    expected = (
-        '<LatLonAltBox>\n'
-        '  <gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>\n'
-        '</LatLonAltBox>\n')
-    assert expected == kmldom.SerializePretty(llab)
-    # TODO: Camera, GroundOverlay, LineString, LineStyle, LinearRing, LookAt,
-    #       Model, Point, Polygon.
-
-  # <gx:LatLonQuad>
-  def testGxLatLonQuad(self):
-    groundoverlay = self.factory.CreateGroundOverlay()
-    assert False == groundoverlay.has_gx_latlonquad()
-    assert None == groundoverlay.get_gx_latlonquad()
-    llq = self.factory.CreateGxLatLonQuad()
-    coords = self.factory.CreateCoordinates()
-    llq.set_coordinates(coords)
-    groundoverlay.set_gx_latlonquad(llq)
-    assert True == groundoverlay.has_gx_latlonquad()
-    expected = (
-        '<GroundOverlay>\n'
-        '  <gx:LatLonQuad>\n'
-        '    <coordinates/>\n'
-        '  </gx:LatLonQuad>\n'
-        '</GroundOverlay>\n')
-    assert expected == kmldom.SerializePretty(groundoverlay)
-
-  # <gx:Tour>
-  def testGxTour(self):
-    tour = self.factory.CreateGxTour()
-    assert not tour.has_gx_playlist()
-    assert None == tour.get_gx_playlist()
-    tour.set_gx_playlist(self.factory.CreateGxPlaylist())
-    assert tour.has_gx_playlist()
-
-  # <gx:Playlist>
-  def testGxPlaylist(self):
-    playlist = self.factory.CreateGxPlaylist()
-    assert 0 == playlist.get_gx_tourprimitive_array_size()
-    playlist.add_gx_tourprimitive(self.factory.CreateGxFlyTo())
-    assert 1 == playlist.get_gx_tourprimitive_array_size()
-
-  # <gx:AnimatedUpdate>
-  def testGxAnimatedUpdate(self):
-    animatedupdate = self.factory.CreateGxAnimatedUpdate()
-    assert False == animatedupdate.has_gx_duration()
-    assert 0.0 == animatedupdate.get_gx_duration()
-    animatedupdate.set_gx_duration(1.0)
-    assert animatedupdate.has_gx_duration()
-    assert 1.0 == animatedupdate.get_gx_duration()
-
-    assert False == animatedupdate.has_update()
-    assert None == animatedupdate.get_update()
-    animatedupdate.set_update(self.factory.CreateUpdate())
-    assert animatedupdate.has_update()
-
-  # <gx:FlyTo>
-  def testGxFlyTo(self):
-    flyto = self.factory.CreateGxFlyTo()
-    assert False == flyto.has_gx_duration()
-    assert 0.0 == flyto.get_gx_duration()
-    flyto.set_gx_duration(1.0)
-    assert flyto.has_gx_duration()
-    assert 1.0 == flyto.get_gx_duration()
-
-    assert False == flyto.has_gx_flytomode()
-    assert kmldom.GX_FLYTOMODE_BOUNCE == flyto.get_gx_flytomode()
-    flyto.set_gx_flytomode(kmldom.GX_FLYTOMODE_SMOOTH)
-    assert flyto.has_gx_flytomode()
-    assert kmldom.GX_FLYTOMODE_SMOOTH == flyto.get_gx_flytomode()
-
-  # <gx:Wait>
-  def testGxWait(self):
-    wait = self.factory.CreateGxWait()
-    assert False == wait.has_gx_duration()
-    assert 0.0 == wait.get_gx_duration()
-    wait.set_gx_duration(1.0)
-    assert wait.has_gx_duration()
-    assert 1.0 == wait.get_gx_duration()
-
-  # <gx:SoundCue>
-  def testGxSoundCue(self):
-    soundcue = self.factory.CreateGxSoundCue()
-    assert False == soundcue.has_href()
-    assert '' == soundcue.get_href()
-    href = 'some href'
-    soundcue.set_href(href)
-    assert soundcue.has_href()
-    assert href == soundcue.get_href()
-
-  # <gx:TourControl>
-  def testGxTourControl(self):
-    tourcontrol = self.factory.CreateGxTourControl()
-    assert False == tourcontrol.has_gx_playmode()
-    assert kmldom.GX_PLAYMODE_PAUSE == tourcontrol.get_gx_playmode()
-    tourcontrol.set_gx_playmode(kmldom.GX_PLAYMODE_PAUSE)
-    assert tourcontrol.has_gx_playmode()
-    assert kmldom.GX_PLAYMODE_PAUSE == tourcontrol.get_gx_playmode()
-
-  # Parse and serialization of gx:Tour and friends.
-  def testGxTourParseSerialize(self):
-    kml = (
-        '<gx:Tour>'
-        '<gx:Playlist>'
-        '<gx:SoundCue><href>x</href></gx:SoundCue>'
-        '<gx:FlyTo>'
-        '<gx:duration>1.0</gx:duration>'
-        '</gx:FlyTo>'
-        '<gx:AnimatedUpdate>'
-        '<gx:duration>2.0</gx:duration>'
-        '<Update/>'
-        '</gx:AnimatedUpdate>'
-        '<gx:TourControl><gx:playMode>pause</gx:playMode></gx:TourControl>'
-        '<gx:Wait><gx:duration>3.0</gx:duration></gx:Wait>'
-        '</gx:Playlist>'
-        '</gx:Tour>')
-    assert kmldom.ParseKml(kml)
-    assert kmldom.AsGxTour(kmldom.ParseKml(kml))
-    tour = kmldom.AsGxTour(kmldom.ParseKml(kml))
-    assert tour.has_gx_playlist()
-    playlist = tour.get_gx_playlist()
-    assert 5 == playlist.get_gx_tourprimitive_array_size()
-    soundcue = kmldom.AsGxSoundCue(playlist.get_gx_tourprimitive_array_at(0))
-    assert soundcue
-    assert soundcue.has_href()
-    assert 'x' == soundcue.get_href()
-    flyto = kmldom.AsGxFlyTo(playlist.get_gx_tourprimitive_array_at(1))
-    assert flyto
-    assert flyto.has_gx_duration()
-    assert 1.0 == flyto.get_gx_duration()
-    au = kmldom.AsGxAnimatedUpdate(playlist.get_gx_tourprimitive_array_at(2))
-    assert au
-    assert au.has_gx_duration()
-    assert 2.0 == au.get_gx_duration()
-    assert au.has_update()
-    assert kmldom.AsUpdate(au.get_update())
-    tc = kmldom.AsGxTourControl(playlist.get_gx_tourprimitive_array_at(3))
-    assert tc
-    assert tc.has_gx_playmode()
-    assert kmldom.GX_PLAYMODE_PAUSE == tc.get_gx_playmode()
-    wait = kmldom.AsGxWait(playlist.get_gx_tourprimitive_array_at(4))
-    assert wait
-    assert wait.has_gx_duration()
-    assert 3.0 == wait.get_gx_duration()
-
-class ItemIconTestCase(unittest.TestCase):
-  """ This verifies the behavior of ItemIcon and its children """
-
-  def setUp(self):
-    self.factory = kmldom.KmlFactory_GetFactory()
-    self.itemicon = self.factory.CreateItemIcon()
-
-  def testDefaults(self):
-    assert not self.itemicon.has_state()
-    assert 1 == self.itemicon.get_state_array_size()
-    assert kmldom.ITEMICONSTATE_OPEN == self.itemicon.get_state_array_at(0)
-    assert not self.itemicon.has_href()
-    assert "" == self.itemicon.get_href()
-
-  def testState(self):
-    state_open = kmldom.ITEMICONSTATE_OPEN
-    state_error = kmldom.ITEMICONSTATE_ERROR
-    state_fetching0 = kmldom.ITEMICONSTATE_FETCHING0
-
-    self.itemicon.clear_state()
-    assert 0 == self.itemicon.get_state_array_size()
-    self.itemicon.add_state(state_error)
-    assert 1 == self.itemicon.get_state_array_size()
-    assert state_error == self.itemicon.get_state_array_at(0)
-    self.itemicon.add_state(state_fetching0)
-    assert 2 == self.itemicon.get_state_array_size()
-    assert state_fetching0 == self.itemicon.get_state_array_at(1)
-
 
 def suite():
   suite = unittest.TestSuite()
   suite.addTest(VerySimpleParseTestCase())
   suite.addTest(VerySimpleSerializeTestCase())
   suite.addTest(SimpleFactoryTestCase())
-  suite.addTest(FactoryCreateElementByIdTestCase())
   suite.addTest(VerySimpleCastTestCase())
   suite.addTest(VerySimpleSimpleChildTestCase())
   suite.addTest(VerySimpleComplexChildTestCase())
@@ -1593,13 +1201,11 @@ def suite():
   suite.addTest(SimpleVec2TestCase())
   suite.addTest(SimpleObjectTestCase())
   suite.addTest(SimpleFeatureTestCase())
-  suite.addTest(SimpleFeatureTestCase('testParseAtom'))
   suite.addTest(SimpleRegionTestCase())
   suite.addTest(SimpleParseTestCase('testBasic'))
   suite.addTest(SimpleSerializePrettyTestCase('testBasic'))
   suite.addTest(SimpleSerializeRawTestCase('testBasic'))
   suite.addTest(SimpleExtendedDataTestCase('testDefault'))
-  suite.addTest(DataTestCase('testDefault'))
   suite.addTest(SimpleDataTestCase('testDefault'))
   suite.addTest(SimpleIconStyleTestCase('testDefault'))
   suite.addTest(SimpleKmlTestCase('testDefault'))
@@ -1634,20 +1240,6 @@ def suite():
   suite.addTest(SimpleUpdateTestCase('testDefault'))
   suite.addTest(SimpleUpdateTestCase('testTargetHref'))
   suite.addTest(SimpleIconStyleIconTestCase('testBasic'))
-  suite.addTest(GxExtensionsTestCase('testGxBalloonVisibility'))
-  suite.addTest(GxExtensionsTestCase('testGxTimePrimitives'))
-  suite.addTest(GxExtensionsTestCase('testGxAltitudeModes'))
-  suite.addTest(GxExtensionsTestCase('testGxLatLonQuad'))
-  suite.addTest(GxExtensionsTestCase('testGxTour'))
-  suite.addTest(GxExtensionsTestCase('testGxPlaylist'))
-  suite.addTest(GxExtensionsTestCase('testGxAnimatedUpdate'))
-  suite.addTest(GxExtensionsTestCase('testGxFlyTo'))
-  suite.addTest(GxExtensionsTestCase('testGxWait'))
-  suite.addTest(GxExtensionsTestCase('testGxSoundCue'))
-  suite.addTest(GxExtensionsTestCase('testGxTourControl'))
-  suite.addTest(GxExtensionsTestCase('testGxTourParseSerialize'))
-  suite.addTest(ItemIconTestCase('testDefaults'))
-  suite.addTest(ItemIconTestCase('testState'))
   return suite
 
 

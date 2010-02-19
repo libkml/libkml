@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="libkmlbase_file_test"
-	ProjectGUID="{FDC010D5-4343-4075-8EDD-0E04426C175C}"
+	ProjectGUID="{30A2D480-75D8-4D4F-B662-D95F5846212D}"
 	RootNamespace="libkmlbase_file_test"
 	Keyword="Win32Proj"
 	>
@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\src;..\..\third_party\boost_1_34_1;..\..\third_party\uriparser-0.7.5\include;..\..\third_party\googletest-r108;..\..\third_party\googletest-r108\include"
+				AdditionalIncludeDirectories="..\..\src;..\..\third_party\boost_1_34_1;..\..\third_party\uriparser-0.7.1\include;..\..\third_party\googletest-r108;..\..\third_party\googletest-r108\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;DATADIR=\&quot;..\\..\\testdata\&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -121,7 +121,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\src;..\..\third_party\boost_1_34_1;..\..\third_party\uriparser-0.7.5\include;..\..\third_party\googletest-r108;..\..\third_party\googletest-r108\include"
+				AdditionalIncludeDirectories="..\..\src;..\..\third_party\boost_1_34_1;..\..\third_party\uriparser-0.7.1\include;..\..\third_party\googletest-r108;..\..\third_party\googletest-r108\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;DATADIR=\&quot;..\\..\\testdata\&quot;"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"

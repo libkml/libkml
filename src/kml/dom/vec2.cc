@@ -54,9 +54,9 @@ static const char kYUnits[] = "yunits";
 
 // Look up the given attribute and convert it to an enum val of the given
 // enum type.  For example, attr_name="xunits" and enum_type=Type_units.
-static bool CutEnumAttr(Attributes* attributes, const string attr_name,
+static bool CutEnumAttr(Attributes* attributes, const std::string attr_name,
                             int enum_type, int* enum_val) {
-  string attr_val;
+  std::string attr_val;
   if (attributes->CutValue(attr_name, &attr_val)) {
     *enum_val = Xsd::GetSchema()->EnumId(enum_type, attr_val);
     return true;
@@ -95,10 +95,6 @@ void Vec2::SerializeAttributes(Attributes* attributes) const {
 
 void Vec2::Serialize(Serializer& serializer) const {
   ElementSerializer element_serializer(*this, serializer);
-}
-
-void Vec2::Accept(Visitor* visitor) {
-  visitor->VisitVec2(Vec2Ptr(this));
 }
 
 }  // end namespace kmldom

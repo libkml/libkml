@@ -26,6 +26,7 @@
 // This file contains the unit test for the NetworkLink element.
 
 #include "kml/dom/networklink.h"
+#include <string>
 #include "kml/dom/kml_funcs.h"
 #include "kml/dom/kml_cast.h"
 #include "kml/dom/kml_factory.h"
@@ -97,10 +98,10 @@ TEST_F(NetworkLinkTest, TestSetGetHasClear) {
 
 // NetworkLink accepts Url as Link.
 TEST_F(NetworkLinkTest, TestParseUrl) {
-  const string kHref("foo.kml");
-  const string kNetworkLinkUrl("<NetworkLink><Url><href>");
-  const string kUrlNetworkLink("</href></Url></NetworkLink>");
-  string errors;
+  const std::string kHref("foo.kml");
+  const std::string kNetworkLinkUrl("<NetworkLink><Url><href>");
+  const std::string kUrlNetworkLink("</href></Url></NetworkLink>");
+  std::string errors;
   ElementPtr root = Parse(kNetworkLinkUrl + kHref + kUrlNetworkLink, &errors);
   ASSERT_TRUE(errors.empty());
   const NetworkLinkPtr networklink = AsNetworkLink(root);
@@ -113,15 +114,15 @@ TEST_F(NetworkLinkTest, TestParseUrl) {
 }
 
 TEST_F(NetworkLinkTest, TestSerialize) {
-  const string expect_empty("<NetworkLink/>");
+  const std::string expect_empty("<NetworkLink/>");
   ASSERT_EQ(expect_empty, SerializeRaw(networklink_));
   KmlFactory* factory = KmlFactory::GetFactory();
   networklink_->set_link(factory->CreateLink());
-  const string expect_link("<NetworkLink><Link/></NetworkLink>");
+  const std::string expect_link("<NetworkLink><Link/></NetworkLink>");
   ASSERT_EQ(expect_link, SerializeRaw(networklink_));
   networklink_->set_refreshvisibility(false);
   networklink_->set_flytoview(false);
-  const string expect_all_false(
+  const std::string expect_all_false(
     "<NetworkLink>"
     "<refreshVisibility>0</refreshVisibility>"
     "<flyToView>0</flyToView>"
@@ -130,7 +131,7 @@ TEST_F(NetworkLinkTest, TestSerialize) {
   ASSERT_EQ(expect_all_false, SerializeRaw(networklink_));
   networklink_->set_refreshvisibility(true);
   networklink_->set_flytoview(true);
-  const string expect_all_true(
+  const std::string expect_all_true(
     "<NetworkLink>"
     "<refreshVisibility>1</refreshVisibility>"
     "<flyToView>1</flyToView>"
@@ -138,7 +139,7 @@ TEST_F(NetworkLinkTest, TestSerialize) {
     "</NetworkLink>");
   ASSERT_EQ(expect_all_true, SerializeRaw(networklink_));
   networklink_->set_name("networklink");
-  const string expect_feature(
+  const std::string expect_feature(
     "<NetworkLink>"
     "<name>networklink</name>"
     "<refreshVisibility>1</refreshVisibility>"
@@ -148,13 +149,13 @@ TEST_F(NetworkLinkTest, TestSerialize) {
 }
 
 TEST_F(NetworkLinkTest, TestSerializeWithId) {
-  const string kId("networklink-id");
+  const std::string kId("networklink-id");
   networklink_->set_id(kId);
-  ASSERT_EQ(string("<NetworkLink id=\"" + kId + "\"/>"),
+  ASSERT_EQ(std::string("<NetworkLink id=\"" + kId + "\"/>"),
             SerializeRaw(networklink_));
   networklink_->clear_id();
   networklink_->set_targetid(kId);
-  ASSERT_EQ(string("<NetworkLink targetId=\"" + kId + "\"/>"),
+  ASSERT_EQ(std::string("<NetworkLink targetId=\"" + kId + "\"/>"),
             SerializeRaw(networklink_));
 }
 

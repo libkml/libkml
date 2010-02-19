@@ -180,7 +180,7 @@ TEST_F(StyleTest, TestSerialize) {
   style_->set_balloonstyle(factory->CreateBalloonStyle());
   style_->set_liststyle(factory->CreateListStyle());
 
-  string expected =
+  std::string expected =
     "<Style id=\"styleid\">"
     "<IconStyle/>"
     "<LabelStyle/>"

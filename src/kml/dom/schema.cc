@@ -27,7 +27,6 @@
 
 #include "kml/dom/schema.h"
 #include "kml/base/attributes.h"
-#include "kml/base/xml_namespaces.h"
 #include "kml/dom/kml_cast.h"
 #include "kml/dom/serializer.h"
 
@@ -40,7 +39,6 @@ SimpleField::SimpleField()
   : has_type_(false),
     has_name_(false),
     has_displayname_(false) {
-  set_xmlns(kmlbase::XMLNS_KML22);
 }
 
 SimpleField::~SimpleField() {}
@@ -85,13 +83,9 @@ void SimpleField::Serialize(Serializer& serializer) const {
   }
 }
 
-void SimpleField::Accept(Visitor* visitor) {
-  visitor->VisitSimpleField(SimpleFieldPtr(this));
-}
-
 // <Schema>
 Schema::Schema()
-    : has_name_(false) {
+  : has_name_(false) {
 }
 
 Schema::~Schema() {}
@@ -126,16 +120,9 @@ void Schema::AddElement(const ElementPtr& element) {
 
 void Schema::Serialize(Serializer& serializer) const {
   ElementSerializer element_serializer(*this, serializer);
-  serializer.SaveElementArray(simplefield_array_);
-}
-
-void Schema::Accept(Visitor* visitor) {
-  visitor->VisitSchema(SchemaPtr(this));
-}
-
-void Schema::AcceptChildren(VisitorDriver* driver) {
-  Object::AcceptChildren(driver);
-  Element::AcceptRepeated<SimpleFieldPtr>(&simplefield_array_, driver);
+  for (size_t i = 0; i < simplefield_array_.size(); ++i) {
+    serializer.SaveElement(get_simplefield_array_at(i));
+  }
 }
 
 }  // end namespace kmldom

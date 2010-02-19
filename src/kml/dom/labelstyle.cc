@@ -41,9 +41,6 @@ LabelStyle::~LabelStyle() {
 }
 
 void LabelStyle::AddElement(const ElementPtr& element) {
-  if (!element) {
-    return;
-  }
   switch (element->Type()) {
     case Type_scale:
       has_scale_ = element->SetDouble(&scale_);
@@ -60,10 +57,6 @@ void LabelStyle::Serialize(Serializer& serializer) const {
   if (has_scale()) {
     serializer.SaveFieldById(Type_scale, get_scale());
   }
-}
-
-void LabelStyle::Accept(Visitor* visitor) {
-  visitor->VisitLabelStyle(LabelStylePtr(this));
 }
 
 }  // end namespace kmldom

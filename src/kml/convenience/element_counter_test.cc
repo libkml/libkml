@@ -31,11 +31,6 @@
 #include "kml/dom.h"
 #include "kml/dom/xsd.h"
 
-// The following define is a convenience for testing inside Google.
-#ifdef GOOGLE_INTERNAL
-#include "kml/base/google_internal_test.h"
-#endif
-
 #ifndef DATADIR
 #error *** DATADIR must be defined! ***
 #endif
@@ -73,7 +68,7 @@ TEST_F(ElementCounterTest, TestBasicParse) {
 }
 
 TEST_F(ElementCounterTest, TestMultipleElements) {
-  const string kKml("<Folder><Placemark/><Placemark/></Folder>");
+  const std::string kKml("<Folder><Placemark/><Placemark/></Folder>");
   ElementPtr root = parser_->Parse(kKml, NULL);
   ASSERT_TRUE(root);
   ASSERT_EQ(static_cast<size_t>(2), element_count_map_.size());
@@ -82,7 +77,7 @@ TEST_F(ElementCounterTest, TestMultipleElements) {
 }
 
 TEST_F(ElementCounterTest, TestRepeatedParse) {
-  const string kXml("<Placemark/>");
+  const std::string kXml("<Placemark/>");
   ElementPtr root = parser_->Parse(kXml, NULL);
   ASSERT_TRUE(root);
   ASSERT_EQ(static_cast<size_t>(1), element_count_map_.size());
@@ -102,7 +97,7 @@ TEST_F(ElementCounterTest, TestEachComplex) {
         type_id == kmldom::Type_Metadata) {
       continue;
     }
-    const string kXml(string("<") + xsd_->ElementName(i) + "/>");
+    const std::string kXml(std::string("<") + xsd_->ElementName(i) + "/>");
     ElementPtr root = parser_->Parse(kXml, NULL);
     ASSERT_TRUE(root);
     ASSERT_EQ(type_id, root->Type());

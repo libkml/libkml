@@ -44,10 +44,6 @@ class KmlFactory {
   // Factory functions to create all KML complex elements.
   Alias* CreateAlias() const;
   AtomAuthor* CreateAtomAuthor() const;
-  AtomCategory* CreateAtomCategory() const;
-  AtomContent* CreateAtomContent() const;
-  AtomEntry* CreateAtomEntry() const;
-  AtomFeed* CreateAtomFeed() const;
   AtomLink* CreateAtomLink() const;
   BalloonStyle* CreateBalloonStyle() const;
   Coordinates* CreateCoordinates() const;
@@ -120,18 +116,6 @@ class KmlFactory {
   XalPostalCode* CreateXalPostalCode() const;
   XalSubAdministrativeArea* CreateXalSubAdministrativeArea() const;
   XalThoroughfare* CreateXalThoroughfare() const;
-
-  // These methods create the elements in the Google extensions to KML 2.2.
-  GxAnimatedUpdate* CreateGxAnimatedUpdate() const;
-  GxFlyTo* CreateGxFlyTo() const;
-  GxLatLonQuad* CreateGxLatLonQuad() const;
-  GxPlaylist* CreateGxPlaylist() const;
-  GxSoundCue* CreateGxSoundCue() const;
-  GxTimeSpan* CreateGxTimeSpan() const;
-  GxTimeStamp* CreateGxTimeStamp() const;
-  GxTour* CreateGxTour() const;
-  GxTourControl* CreateGxTourControl() const;
-  GxWait* CreateGxWait() const;
 
  private:
   KmlFactory() {};  // Singleton class, use GetFactory().

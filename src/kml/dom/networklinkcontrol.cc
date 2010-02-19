@@ -28,7 +28,6 @@
 
 #include "kml/dom/networklinkcontrol.h"
 #include "kml/base/attributes.h"
-#include "kml/base/xml_namespaces.h"
 #include "kml/dom/abstractview.h"
 #include "kml/dom/kml_cast.h"
 #include "kml/dom/serializer.h"
@@ -42,14 +41,8 @@ UpdateOperation::UpdateOperation() {}
 
 UpdateOperation::~UpdateOperation() {}
 
-void UpdateOperation::Accept(Visitor* visitor) {
-  visitor->VisitUpdateOperation(UpdateOperationPtr(this));
-}
-
 // <Create>
-Create::Create() {
-  set_xmlns(kmlbase::XMLNS_KML22);
-}
+Create::Create() {}
 
 Create::~Create() {}
 
@@ -66,22 +59,13 @@ void Create::AddElement(const ElementPtr& element) {
 
 void Create::Serialize(Serializer& serializer) const {
   ElementSerializer element_serializer(*this, serializer);
-  serializer.SaveElementGroupArray(container_array_, Type_Container);
-}
-
-void Create::Accept(Visitor* visitor) {
-  visitor->VisitCreate(CreatePtr(this));
-}
-
-void Create::AcceptChildren(VisitorDriver* driver) {
-  UpdateOperation::AcceptChildren(driver);
-  Element::AcceptRepeated<ContainerPtr>(&container_array_, driver);
+  for (size_t i = 0; i < container_array_.size(); ++i) {
+    serializer.SaveElementGroup(get_container_array_at(i), Type_Container);
+  }
 }
 
 // <Delete>
-Delete::Delete() {
-  set_xmlns(kmlbase::XMLNS_KML22);
-}
+Delete::Delete() {}
 
 Delete::~Delete() {}
 
@@ -98,22 +82,13 @@ void Delete::AddElement(const ElementPtr& element) {
 
 void Delete::Serialize(Serializer& serializer) const {
   ElementSerializer element_serializer(*this, serializer);
-  serializer.SaveElementGroupArray(feature_array_, Type_Feature);
-}
-
-void Delete::Accept(Visitor* visitor) {
-  visitor->VisitDelete(DeletePtr(this));
-}
-
-void Delete::AcceptChildren(VisitorDriver* driver) {
-  UpdateOperation::AcceptChildren(driver);
-  Element::AcceptRepeated<FeaturePtr>(&feature_array_, driver);
+  for (size_t i = 0; i < feature_array_.size(); ++i) {
+    serializer.SaveElementGroup(get_feature_array_at(i), Type_Feature);
+  }
 }
 
 // <Change>
-Change::Change() {
-  set_xmlns(kmlbase::XMLNS_KML22);
-}
+Change::Change() {}
 
 Change::~Change() {}
 
@@ -130,22 +105,14 @@ void Change::AddElement(const ElementPtr& element) {
 
 void Change::Serialize(Serializer& serializer) const {
   ElementSerializer element_serializer(*this, serializer);
-  serializer.SaveElementGroupArray(object_array_, Type_Object);
-}
-
-void Change::Accept(Visitor* visitor) {
-  visitor->VisitChange(ChangePtr(this));
-}
-
-void Change::AcceptChildren(VisitorDriver* driver) {
-  UpdateOperation::AcceptChildren(driver);
-  Element::AcceptRepeated<ObjectPtr>(&object_array_, driver);
+  for (size_t i = 0; i < object_array_.size(); ++i) {
+    serializer.SaveElementGroup(get_object_array_at(i), Type_Object);
+  }
 }
 
 // <Update>
 Update::Update()
-    : has_targethref_(false) {
-  set_xmlns(kmlbase::XMLNS_KML22);
+  : has_targethref_(false) {
 }
 
 Update::~Update() {}
@@ -183,15 +150,6 @@ void Update::Serialize(Serializer& serializer) const {
   }
 }
 
-void Update::Accept(Visitor* visitor) {
-  visitor->VisitUpdate(UpdatePtr(this));
-}
-
-void Update::AcceptChildren(VisitorDriver* driver) {
-  Element::AcceptChildren(driver);
-  Element::AcceptRepeated<UpdateOperationPtr>(&updateoperation_array_, driver);
-}
-
 // <NetworkLinkControl>
 NetworkLinkControl::NetworkLinkControl()
   : minrefreshperiod_(0.0),
@@ -206,7 +164,6 @@ NetworkLinkControl::NetworkLinkControl()
     has_expires_(false),
     update_(NULL),
     abstractview_(NULL) {
-  set_xmlns(kmlbase::XMLNS_KML22);
 }
 
 NetworkLinkControl::~NetworkLinkControl() {}
@@ -284,23 +241,6 @@ void NetworkLinkControl::Serialize(Serializer& serializer) const {
   }
   if (abstractview_) {
     serializer.SaveElementGroup(get_abstractview(), Type_AbstractView);
-  }
-}
-
-void NetworkLinkControl::Accept(Visitor* visitor) {
-  visitor->VisitNetworkLinkControl(NetworkLinkControlPtr(this));
-}
-
-void NetworkLinkControl::AcceptChildren(VisitorDriver* driver) {
-  Element::AcceptChildren(driver);
-  if (has_linksnippet()) {
-    driver->Visit(get_linksnippet());
-  }
-  if (has_update()) {
-    driver->Visit(get_update());
-  }
-  if (has_abstractview()) {
-    driver->Visit(get_abstractview());
   }
 }
 

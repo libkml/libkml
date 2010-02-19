@@ -29,6 +29,7 @@
 #define KML_BASE_XMLNS_H__
 
 #include <map>
+#include <string>
 #include <vector>
 #include "boost/scoped_ptr.hpp"
 #include "kml/base/attributes.h"
@@ -68,15 +69,15 @@ class Xmlns {
   // empty if there is no default namespace.  A default namespace is the value
   // of an "xmlns" attribute (one with no : and prefix), for example the above
   // sample has this default namespace URI: "http://www.w3.org/2001/XMLSchema".
-  const string& get_default() const {
+  const std::string& get_default() const {
     return default_;
   }
 
   // This returns the URI of the namespace for the given prefix.  The returned
   // string is empty if no such prefix-namespace mapping exists.  In the sample
   // above a prefix of "kml" returns "http://www.opengis.net/kml/2.2".
-  const string GetNamespace(const string& prefix) const {
-    string name_space;
+  const std::string GetNamespace(const std::string& prefix) const {
+    std::string name_space;
     if (prefix_map_.get()) {
       prefix_map_->GetValue(prefix, &name_space);
     }
@@ -86,8 +87,8 @@ class Xmlns {
   // This returns the prefix for the given namespace.  The returned string is
   // empty if no such namespace has a prefix.  In the sample above a namespace
   // of "http://www.opengis.net/kml/2.2" returns "kml".
-  const string GetKey(const string& value) const {
-    string key;
+  const std::string GetKey(const std::string& value) const {
+    std::string key;
     if (prefix_map_.get()) {
       prefix_map_->FindKey(value, &key);
     }
@@ -98,7 +99,7 @@ class Xmlns {
   // sample above this returns "kml", "atom", "xal".  Order from the original
   // XML is not preserved (XML attributes in general have no order semantics
   // and must each be unique).
-  void GetPrefixes(std::vector<string>* prefix_vector) const {
+  void GetPrefixes(std::vector<std::string>* prefix_vector) const {
     if (prefix_map_.get()) {
       prefix_map_->GetAttrNames(prefix_vector);
     }
@@ -115,7 +116,7 @@ class Xmlns {
     // xmlns:prefx="ns" pairs.
     return !default_.empty() || prefix_map_.get();
   }
-  string default_;
+  std::string default_;
   boost::scoped_ptr<Attributes> prefix_map_;
 };
 

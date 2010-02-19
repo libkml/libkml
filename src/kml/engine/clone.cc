@@ -27,6 +27,7 @@
 
 #include "kml/engine/clone.h"
 #include <stack>
+#include <string>
 #include "kml/dom/element.h"
 #include "kml/dom/geometry.h"
 #include "kml/dom/kml_factory.h"
@@ -51,10 +52,6 @@ namespace kmlengine {
 // of the serializer to the input of the parser.
 class ElementReplicator : public kmldom::Serializer {
  public:
-  ElementReplicator()
-    : serializing_unknown_(false) {
-  }
-
   virtual ~ElementReplicator() {}
 
   // Serializer::BeginById() is called at the start of a complex element.
@@ -69,17 +66,10 @@ class ElementReplicator : public kmldom::Serializer {
   virtual void End() {
     // BeginById() always puts something on the stack so this is always safe.
     ElementPtr child = clone_stack_.top();
-    // This mimics the part of KmlHandler::EndElement() which special cases
-    // those complex elements which have character data.
-    // TODO: refactor the special-casing in KmlHandler::EndElement() such that
-    // it can be used from here.  Using child->AddElement(child) is dangerous.
+    // This mimics the behavior of KmlHandler::EndElement().
     if (!char_data_.empty()) {
       child->set_char_data(char_data_);
       char_data_.clear();
-      // NOTE: This very much expects this to mean "parse yourself".  If
-      // this falls through to Element::AddChild() this will make the element
-      // a child of itself by putting itself in the misplaced elements array.
-      // TODO: see above TODO
       child->AddElement(child);
     }
     // Two or more items on the stack implies the top is a child to be added
@@ -93,54 +83,24 @@ class ElementReplicator : public kmldom::Serializer {
   }
 
   // Serializer::SaveStringFieldById() is called for each field.
-  virtual void SaveStringFieldById(int type_id, string value) {
+  virtual void SaveStringFieldById(int type_id, std::string value) {
     KmlDomType id = static_cast<KmlDomType>(type_id);
     ElementPtr clone = KmlFactory::GetFactory()->CreateFieldById(id);
     clone->set_char_data(value);
     clone_stack_.top()->AddElement(clone);
   }
 
-  // Detects if we're serializing the unknown elements array.  We don't use
-  // element_count here and instead rely on EndElementArray() to indicate the
-  // end of the array.  Begin/End are always paired and never nested.
-  virtual void BeginElementArray(int type_id, size_t element_count) {
-    if (type_id == kmldom::Type_Unknown) {
-      serializing_unknown_ = true;
-    }
-  }
-
-  // This is called after the last element of the given array.  This brackets
-  // the BeginElementArray() above.
-  virtual void EndElementArray(int type_id) {
-    if (type_id == kmldom::Type_Unknown) {
-      serializing_unknown_ = false;
-    }
-  }
-
   // Serializer::SaveContent() is called for arbitrary character data.
-  virtual void SaveContent(const string& content, bool maybe_quote) {
-    // If this is an item in the unknown elements array do _not_ add it to
-    // this element's raw char_data, add it correctly to the unknown element
-    // array directly.
-    if (serializing_unknown_) {
-      if (clone_stack_.size() > 0) {
-        clone_stack_.top()->AddUnknownElement(content);
-      }
-    } else {
-      char_data_.append(content);
-    }
+  virtual void SaveContent(const std::string& content, bool maybe_quote) {
+    char_data_.append(content);
   }
 
-  // Serializer::SaveVec3() is called to save each <coordinates> tuple.
-  virtual void SaveVec3(const kmlbase::Vec3& vec3) {
+  // Serializer::SaveLonLatAlt() is called to save each <coordinates> tuples.
+  virtual void SaveLonLatAlt(double longitude, double latitude,
+                             double altitude) {
     if (CoordinatesPtr coordinates = AsCoordinates(clone_stack_.top())) {
-      coordinates->add_vec3(vec3);
+      coordinates->add_latlngalt(latitude, longitude, altitude);
     }  // else something is very wrong.
-  }
-
-  // Serializer::SaveColor() is called to save all Color32 values.
-  virtual void SaveColor(int type_id, const kmlbase::Color32& color) {
-    SaveFieldById(type_id, color.to_string_abgr());
   }
 
   // Return the top of the stack which holds the root element.
@@ -154,10 +114,7 @@ class ElementReplicator : public kmldom::Serializer {
  private:
   // This stack operates akin to the stack in the parser.
   std::stack<ElementPtr> clone_stack_;
-  string char_data_;
-  // This flag indicates that we're serializing an array of unknown elements.
-  // See BeginElementArray(), EndElementArray(), and SaveContent() above.
-  bool serializing_unknown_;
+  std::string char_data_;
 };
 
 // Clone operates by "Serializing" the given element.  The ElementReplicator

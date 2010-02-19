@@ -26,26 +26,27 @@
 // This file contains unit tests for unknown element handling.
 
 #include "kml/dom/kml_cast.h"
-#include "kml/dom/kml_factory.h"
 #include "kml/dom/kml_funcs.h"
 #include "kml/dom/kml_ptr.h"
-#include "kml/dom/xsd.h"
 #include "gtest/gtest.h"
 
 namespace kmldom {
 
+class UnknownTest : public testing::Test {
+};
+
 // Verify that parsing bad data is well behaved: no crash, NULL return,
 // error message.
-TEST(UnknownTest, TestNotXml) {
-  string errors;
+TEST_F(UnknownTest, TestNotXml) {
+  std::string errors;
   ElementPtr root = Parse("this is not even xml", &errors);
   ASSERT_TRUE(NULL == root);
   ASSERT_FALSE(errors.empty());
 }
 
 // Verify that a fully unknown element round-trips fine.
-TEST(UnknownTest, TestUnknownElement) {
-  string errors;
+TEST_F(UnknownTest, TestUnknownElement) {
+  std::string errors;
   // <unknown> is not known to be KML element, but its content is preserved.
   ElementPtr root = Parse(
     "<Placemark>"
@@ -67,7 +68,7 @@ TEST(UnknownTest, TestUnknownElement) {
   // is preserved including child elements, character data, and attributes.
   // The relative order of unknown elements is preserved and all appear
   // after the known and valid elements and after the misplaced elements.
-  string expected =
+  std::string expected =
     "<Placemark>"
       "<name>placemark</name>"
       "<visibility>0</visibility>"
@@ -81,8 +82,8 @@ TEST(UnknownTest, TestUnknownElement) {
 }
 
 // Verify that a misplaced element round-trips fine.
-TEST(UnknownTest, TestMisplaced) {
-  string errors;
+TEST_F(UnknownTest, TestMisplaced) {
+  std::string errors;
   // <Folder> is a known KML element, but not a valid child of <Placemark>.
   ElementPtr root = Parse(
     "<Placemark>"
@@ -93,11 +94,11 @@ TEST(UnknownTest, TestMisplaced) {
   ASSERT_TRUE(root);
   ASSERT_TRUE(errors.empty());
   const PlacemarkPtr placemark = AsPlacemark(root);
-  ASSERT_EQ(string("placemark"), placemark->get_name());
+  ASSERT_EQ(std::string("placemark"), placemark->get_name());
   // TODO: add test to find Folder via the unknown element api
 
   // Serialized output puts unknown/misplaced elements after known elements.
-  string expected =
+  std::string expected =
     "<Placemark>"
       "<name>placemark</name>"
       "<Folder><name>folder</name></Folder>"
@@ -106,8 +107,8 @@ TEST(UnknownTest, TestMisplaced) {
 }
 
 // Verify that unknown attributes on known elements round trip fine.
-TEST(UnknownTest, TestUnknownAttribute) {
-  string errors;
+TEST_F(UnknownTest, TestUnknownAttribute) {
+  std::string errors;
   ElementPtr root = Parse(
     "<GroundOverlay unknown=\"who knows\" abc=\"zzz\" >"
       "<name>groundoverlay</name>"
@@ -119,55 +120,13 @@ TEST(UnknownTest, TestUnknownAttribute) {
   // The root is a GroundOverlay.
   const GroundOverlayPtr groundoverlay = AsGroundOverlay(root);
   // Unknown attributes don't interefere with known children.
-  ASSERT_EQ(string("groundoverlay"), groundoverlay->get_name());
+  ASSERT_EQ(std::string("groundoverlay"), groundoverlay->get_name());
   // Serializer perserves unknown attributes, but not their order.
-  string expected =
+  std::string expected =
     "<GroundOverlay abc=\"zzz\" unknown=\"who knows\">"
       "<name>groundoverlay</name>"
     "</GroundOverlay>";
   ASSERT_EQ(expected, SerializeRaw(groundoverlay));
-}
-
-// Every complex element preserves unknown children.
-TEST(UnknownTest, TestSaveUnknown) {
-  Xsd* xsd_ = Xsd::GetSchema();
-  int complex_count = 0;
-  int element_type_id = static_cast<int>(Type_Unknown) + 1;
-  const int end_id = static_cast<int>(Type_Invalid);
-  KmlFactory* kml_factory = KmlFactory::GetFactory();
-  // This presumes "<unknown>" is a fully unknown element within libkml.
-  const string kUnknownSimple("<unknown>unknown content</unknown>\n");
-  // This presumes "<Unknown>" is a fully unknown element within libkml.
-  const string kUnknownComplex("<Unknown>a<b><c>d</c>z</b></Unknown>\n");
-  // This presumse "<kml>" is never the child of any other element.
-  for (; element_type_id != end_id; ++element_type_id) {
-    // Only complex elements return non-NULL.
-    if (ElementPtr element = kml_factory->CreateElementById(
-        static_cast<KmlDomType>(element_type_id))) {
-      // Except these which aren't really complex.
-      if (element->Type() == Type_coordinates ||
-          element->Type() == Type_Snippet ||
-          element->Type() == Type_linkSnippet) {
-        continue;
-      }
-      const string kTagName(xsd_->ElementName(element_type_id));
-      element = ParseKml(string("<") + kTagName + ">" +
-                         kUnknownSimple + "<kml/>" +
-                         kUnknownComplex + "<kml/>" +
-                         "</" + kTagName + ">");
-      ASSERT_TRUE(element) << kTagName;
-      ASSERT_EQ(static_cast<size_t>(2),
-                element->get_unknown_elements_array_size());
-      ASSERT_EQ(kUnknownSimple, element->get_unknown_elements_array_at(0));
-      ASSERT_EQ(kUnknownComplex, element->get_unknown_elements_array_at(1));
-      ASSERT_EQ(static_cast<size_t>(2),
-                element->get_misplaced_elements_array_size()) << kTagName;
-      ASSERT_EQ(Type_kml, element->get_misplaced_elements_array_at(0)->Type());
-      ASSERT_EQ(Type_kml, element->get_misplaced_elements_array_at(1)->Type());
-      ++complex_count;
-    }
-  }
-  ASSERT_EQ(85, complex_count);  // Yes, must exactly match kml22.h
 }
 
 }  // end namespace kmldom

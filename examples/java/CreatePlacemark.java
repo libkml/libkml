@@ -28,28 +28,18 @@
 // use of the factory, setting complex child elements, setting
 // simple elements, and serializing out to XML.
 
-import com.googlecode.libkml.Coordinates;
-import com.googlecode.libkml.Kml;
-import com.googlecode.libkml.KmlFactory;
-import com.googlecode.libkml.Placemark;
-import com.googlecode.libkml.Point;
-import com.googlecode.libkml.kmldom;
-
 public class CreatePlacemark {
 
   static {
     try {
-      System.loadLibrary("kmldom_swig_java");
+      System.loadLibrary("kmldom");
     } catch (UnsatisfiedLinkError e) {
       System.err.println("Failed to load kmldom. " + e);
-      System.err.println("Make sure you have your classpath set correctly " +
-                         "and that LD_LIBRARY_PATH can see " +
-                         "libkmldom_swig_java and friends");
       System.exit(1);
     }
   }
 
-  public static void main(String[] args) {
+  public static void main(String argv[]) {
     // NOTE: KmlFactory does _not_ use kmldom.
     KmlFactory factory = KmlFactory.GetFactory();
 

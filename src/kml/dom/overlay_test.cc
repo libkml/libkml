@@ -159,41 +159,6 @@ TEST_F(LatLonBoxTest, TestSetGetHasClear) {
   // Verify now in default state.
 }
 
-// This tests the LatLonQuad class.
-class GxLatLonQuadTest : public testing::Test {
- protected:
-  virtual void SetUp() {
-    gx_latlonquad_ = KmlFactory::GetFactory()->CreateGxLatLonQuad();
-  }
-
-  GxLatLonQuadPtr gx_latlonquad_;
-};
-
-// This tests the Type() and IsA() methods.
-TEST_F(GxLatLonQuadTest, TestType) {
-  ASSERT_EQ(Type_GxLatLonQuad, gx_latlonquad_->Type());
-  ASSERT_TRUE(gx_latlonquad_->IsA(Type_GxLatLonQuad));
-  ASSERT_TRUE(gx_latlonquad_->IsA(Type_Object));
-}
-
-// This tests the default values of all fields.
-TEST_F(GxLatLonQuadTest, TestDefaults) {
-  ASSERT_FALSE(gx_latlonquad_->has_coordinates());
-}
-
-TEST_F(GxLatLonQuadTest, TestSetGetHasClear) {
-  // TODO
-}
-
-TEST_F(GxLatLonQuadTest, TestParse) {
-  // TODO
-}
-
-TEST_F(GxLatLonQuadTest, TestSerialize) {
-  // TODO
-}
-
-
 // This tests the GroundOverlay class.
 class GroundOverlayTest : public testing::Test {
  protected:
@@ -226,28 +191,19 @@ TEST_F(GroundOverlayTest, TestDefaults) {
   ASSERT_FALSE(groundoverlay_->has_altitudemode());
   ASSERT_EQ(static_cast<int>(ALTITUDEMODE_CLAMPTOGROUND),
                        groundoverlay_->get_altitudemode());
-  ASSERT_FALSE(groundoverlay_->has_gx_altitudemode());
-  ASSERT_EQ(static_cast<int>(GX_ALTITUDEMODE_CLAMPTOSEAFLOOR),
-                       groundoverlay_->get_gx_altitudemode());
   ASSERT_FALSE(groundoverlay_->has_latlonbox());
   ASSERT_TRUE(NULL == groundoverlay_->get_latlonbox());
-  ASSERT_FALSE(groundoverlay_->has_gx_latlonquad());
-  ASSERT_TRUE(NULL == groundoverlay_->get_gx_latlonquad());
 }
 
 // This tests that has_xxx() is true even if the value is set to the default.
 TEST_F(GroundOverlayTest, TestSetToDefaultValues) {
   groundoverlay_->set_altitude(0.0);
   groundoverlay_->set_altitudemode(ALTITUDEMODE_CLAMPTOGROUND);
-  groundoverlay_->set_gx_altitudemode(GX_ALTITUDEMODE_CLAMPTOSEAFLOOR);
   groundoverlay_->set_latlonbox(NULL);
   ASSERT_TRUE(groundoverlay_->has_altitude());
   ASSERT_TRUE(groundoverlay_->has_altitudemode());
-  ASSERT_TRUE(groundoverlay_->has_gx_altitudemode());
   ASSERT_FALSE(groundoverlay_->has_latlonbox());
   ASSERT_TRUE(NULL == groundoverlay_->get_latlonbox());
-  ASSERT_FALSE(groundoverlay_->has_gx_latlonquad());
-  ASSERT_TRUE(NULL == groundoverlay_->get_gx_latlonquad());
 }
 
 // This tests the set_xxx(), xxx() (getter), has_xxx(), and clear_xxx() methods.
@@ -257,44 +213,33 @@ TEST_F(GroundOverlayTest, TestSetGetHasClear) {
   const int kNonDefaultDrawOrder = -1234;
   const double kAltitude = 314.56;
   const int kAltitudeMode = ALTITUDEMODE_ABSOLUTE;
-  const int kGxAltitudeMode = GX_ALTITUDEMODE_RELATIVETOSEAFLOOR;
   LatLonBoxPtr latlonbox = KmlFactory::GetFactory()->CreateLatLonBox();
-  GxLatLonQuadPtr gx_latlonquad =
-      KmlFactory::GetFactory()->CreateGxLatLonQuad();
 
   // Set all fields.
   groundoverlay_->set_color(kNonDefaultColor);
   groundoverlay_->set_draworder(kNonDefaultDrawOrder);
   groundoverlay_->set_altitude(kAltitude);
   groundoverlay_->set_altitudemode(kAltitudeMode);
-  groundoverlay_->set_gx_altitudemode(kGxAltitudeMode);
   groundoverlay_->set_latlonbox(latlonbox);
-  groundoverlay_->set_gx_latlonquad(gx_latlonquad);
 
   // Verify getter and has_xxx().
   ASSERT_TRUE(groundoverlay_->has_altitude());
   ASSERT_EQ(kAltitude, groundoverlay_->get_altitude());
   ASSERT_TRUE(groundoverlay_->has_altitudemode());
   ASSERT_EQ(kAltitudeMode, groundoverlay_->get_altitudemode());
-  ASSERT_TRUE(groundoverlay_->has_gx_altitudemode());
-  ASSERT_EQ(kGxAltitudeMode, groundoverlay_->get_gx_altitudemode());
   ASSERT_TRUE(groundoverlay_->has_color());
   ASSERT_TRUE(kNonDefaultColor == groundoverlay_->get_color());
   ASSERT_TRUE(groundoverlay_->has_draworder());
   ASSERT_EQ(kNonDefaultDrawOrder, groundoverlay_->get_draworder());
   ASSERT_TRUE(groundoverlay_->has_latlonbox());
   ASSERT_TRUE(latlonbox == groundoverlay_->get_latlonbox());
-  ASSERT_TRUE(groundoverlay_->has_gx_latlonquad());
-  ASSERT_TRUE(gx_latlonquad == groundoverlay_->get_gx_latlonquad());
 
   // Clear all fields.
   groundoverlay_->clear_color();
   groundoverlay_->clear_draworder();
   groundoverlay_->clear_altitude();
   groundoverlay_->clear_altitudemode();
-  groundoverlay_->clear_gx_altitudemode();
   groundoverlay_->clear_latlonbox();
-  groundoverlay_->clear_gx_latlonquad();
 
   // Verify now in default state.
 }
@@ -305,40 +250,11 @@ TEST_F(GroundOverlayTest, TestSerialize) {
   groundoverlay_->set_altitudemode(ALTITUDEMODE_ABSOLUTE);
   groundoverlay_->set_latlonbox(KmlFactory::GetFactory()->CreateLatLonBox()) ;
 
-  const string expected =
+  std::string expected =
       "<GroundOverlay>"
       "<altitude>123.456</altitude>"
       "<altitudeMode>absolute</altitudeMode>"
       "<LatLonBox/>"
-      "</GroundOverlay>";
-  ASSERT_EQ(expected, SerializeRaw(groundoverlay_));
-}
-
-TEST_F(GroundOverlayTest, TestSerializeGxAltitudeMode) {
-  groundoverlay_->set_altitude(123.456);
-  groundoverlay_->set_gx_altitudemode(GX_ALTITUDEMODE_RELATIVETOSEAFLOOR);
-  groundoverlay_->set_latlonbox(KmlFactory::GetFactory()->CreateLatLonBox()) ;
-
-  const string expected =
-      "<GroundOverlay>"
-      "<altitude>123.456</altitude>"
-      "<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>"
-      "<LatLonBox/>"
-      "</GroundOverlay>";
-  ASSERT_EQ(expected, SerializeRaw(groundoverlay_));
-}
-
-// This tests the Serialize method on gx:LatLonQuad.
-TEST_F(GroundOverlayTest, TestSerializeGxLatLonQuad) {
-  groundoverlay_->set_altitude(123.456);
-  groundoverlay_->set_altitudemode(ALTITUDEMODE_ABSOLUTE);
-  groundoverlay_->set_gx_latlonquad(KmlFactory::GetFactory()->CreateGxLatLonQuad());
-
-  const string expected =
-      "<GroundOverlay>"
-      "<altitude>123.456</altitude>"
-      "<altitudeMode>absolute</altitudeMode>"
-      "<gx:LatLonQuad/>"
       "</GroundOverlay>";
   ASSERT_EQ(expected, SerializeRaw(groundoverlay_));
 }
@@ -360,7 +276,7 @@ TEST_F(OverlayXYTest, TestType) {
 }
 
 TEST_F(OverlayXYTest, TestParse) {
-  string errors;
+  std::string errors;
   ElementPtr root = Parse(
     "<overlayXY x=\"0.5\" y=\"123\" xunits=\"fraction\" yunits=\"pixels\"/>",
     &errors);
@@ -379,7 +295,7 @@ TEST_F(OverlayXYTest, TestSerialize) {
   overlayxy_->set_y(256);
   overlayxy_->set_xunits(UNITS_FRACTION);
   overlayxy_->set_yunits(UNITS_PIXELS);
-  string expected =
+  std::string expected =
     "<overlayXY x=\"0.66\" xunits=\"fraction\" y=\"256\" yunits=\"pixels\"/>";
   ASSERT_EQ(expected, SerializeRaw(overlayxy_));
 }
@@ -401,7 +317,7 @@ TEST_F(ScreenXYTest, TestType) {
 }
 
 TEST_F(ScreenXYTest, TestParse) {
-  string errors;
+  std::string errors;
   ElementPtr root = Parse(
     "<screenXY x=\"0.5\" y=\"123\" xunits=\"fraction\" "
       "yunits=\"insetPixels\"/>",
@@ -423,7 +339,7 @@ TEST_F(ScreenXYTest, TestSerialize) {
   screenxy_->set_y(256);
   screenxy_->set_xunits(UNITS_FRACTION);
   screenxy_->set_yunits(UNITS_INSETPIXELS);
-  string expected =
+  std::string expected =
     "<screenXY x=\"0.66\" xunits=\"fraction\" y=\"256\" "
       "yunits=\"insetPixels\"/>";
   ASSERT_EQ(expected, SerializeRaw(screenxy_));
@@ -446,7 +362,7 @@ TEST_F(RotationXYTest, TestType) {
 }
 
 TEST_F(RotationXYTest, TestParse) {
-  string errors;
+  std::string errors;
   ElementPtr root = Parse(
     "<rotationXY x=\"512\" y=\"0.7\" xunits=\"pixels\" yunits=\"fraction\"/>",
     &errors);
@@ -467,7 +383,7 @@ TEST_F(RotationXYTest, TestSerialize) {
   rotationxy_->set_y(.77);
   rotationxy_->set_xunits(UNITS_FRACTION);
   rotationxy_->set_yunits(UNITS_FRACTION);
-  string expected =
+  std::string expected =
     "<rotationXY x=\"0.66\" xunits=\"fraction\" y=\"0.77\" "
     "yunits=\"fraction\"/>";
   ASSERT_EQ(expected, SerializeRaw(rotationxy_));
@@ -490,7 +406,7 @@ TEST_F(SizeTest, TestType) {
 }
 
 TEST_F(SizeTest, TestParse) {
-  string errors;
+  std::string errors;
   ElementPtr root = Parse(
     "<size x=\"512\" y=\"0.7\" xunits=\"pixels\" yunits=\"fraction\"/>",
     &errors);
@@ -509,7 +425,7 @@ TEST_F(SizeTest, TestSerialize) {
   size_->set_y(.5);
   size_->set_xunits(UNITS_PIXELS);
   size_->set_yunits(UNITS_FRACTION);
-  string expected =
+  std::string expected =
     "<size x=\"66\" xunits=\"pixels\" y=\"0.5\" yunits=\"fraction\"/>";
   ASSERT_EQ(expected, SerializeRaw(size_));
 }
@@ -844,7 +760,7 @@ TEST_F(PhotoOverlayTest, TestSetGetHasClear) {
 }
 
 TEST_F(PhotoOverlayTest, TestParseSerialize) {
-  const string kPhotoOverlay(
+  const std::string kPhotoOverlay(
       "<PhotoOverlay>"
       "<name>hi</name>"
       "<Icon><href>pretty.jpg</href></Icon>"

@@ -30,9 +30,20 @@
 # Feature's <name> and <visibility> and Object's id= as in <Placemark>.
 
 import sys
-import kmlbase
 import kmldom
-import kmlengine
+
+# A convenience function to return the root feature of a KML DOM element.
+def GetRootFeature(element):
+  kml = kmldom.AsKml(element)
+  if kml:
+    if kml.has_feature():
+      return kml.get_feature()
+    else:
+      return None
+  feature = kmldom.AsFeature(element)
+  if feature:
+    return feature
+  return None
 
 # Program main: Parse a simple Point Placemark and print the coordinates.
 def main():
@@ -46,7 +57,7 @@ def main():
   print 'parsing kml'
 
   # Use the convenience function to return the root feature of the parsed KML.
-  root_feature = kmlengine.GetRootFeature(kmldom.ParseKml(kml))
+  root_feature = GetRootFeature(kmldom.ParseKml(kml))
 
   # We know the root feature is a Placemark.
   placemark = kmldom.AsPlacemark(root_feature)

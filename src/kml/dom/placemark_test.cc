@@ -33,8 +33,6 @@
 #include "kml/dom/serializer.h"
 #include "gtest/gtest.h"
 
-using kmlbase::Vec3;
-
 namespace kmldom {
 
 class PlacemarkTest : public testing::Test {
@@ -90,15 +88,15 @@ TEST_F(PlacemarkTest, TestSetGetHasClear) {
 }
 
 TEST_F(PlacemarkTest, TestParse) {
-  string kName = "My Favorite Place";
-  string kSnippet = "Left panel stuff about my favorite place...";
-  string kPlacemark =
+  std::string kName = "My Favorite Place";
+  std::string kSnippet = "Left panel stuff about my favorite place...";
+  std::string kPlacemark =
     "<Placemark>"
     "<name>" + kName + "</name>"
     "<Snippet>" + kSnippet + "</Snippet>"
     "<Point><coordinates>1.1,2.2,3.3</coordinates></Point>"
     "</Placemark>";
-  string errors;
+  std::string errors;
   ElementPtr root = Parse(kPlacemark, &errors);
   ASSERT_TRUE(root);
   ASSERT_TRUE(errors.empty());
@@ -136,7 +134,7 @@ TEST_F(PlacemarkTest, TestSerialize) {
   placemark_->set_region(KmlFactory::GetFactory()->CreateRegion());
   placemark_->set_geometry(KmlFactory::GetFactory()->CreatePoint());
 
-  string expected(
+  std::string expected(
     "<Placemark>"
     "<name>name</name>"
     "<visibility>1</visibility>"

@@ -40,9 +40,6 @@ LineStyle::~LineStyle() {
 }
 
 void LineStyle::AddElement(const ElementPtr& element) {
-  if (!element) {
-    return;
-  }
   switch (element->Type()) {
     case Type_width:
       has_width_ = element->SetDouble(&width_);
@@ -59,10 +56,6 @@ void LineStyle::Serialize(Serializer& serializer) const {
   if (has_width()) {
     serializer.SaveFieldById(Type_width, get_width());
   }
-}
-
-void LineStyle::Accept(Visitor* visitor) {
-  visitor->VisitLineStyle(LineStylePtr(this));
 }
 
 }  // end namespace kmldom

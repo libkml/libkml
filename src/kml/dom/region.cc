@@ -39,17 +39,12 @@ namespace kmldom {
 LatLonAltBox::LatLonAltBox()
   : minaltitude_(0.0), has_minaltitude_(false),
     maxaltitude_(0.0), has_maxaltitude_(false),
-    altitudemode_(ALTITUDEMODE_CLAMPTOGROUND), has_altitudemode_(false),
-    gx_altitudemode_(GX_ALTITUDEMODE_CLAMPTOSEAFLOOR),
-    has_gx_altitudemode_(false)
+    altitudemode_(ALTITUDEMODE_CLAMPTOGROUND), has_altitudemode_(false)
 {}
 
 LatLonAltBox::~LatLonAltBox() {}
 
 void LatLonAltBox::AddElement(const ElementPtr& element) {
-  if (!element) {
-    return;
-  }
   switch (element->Type()) {
     case Type_minAltitude:
       has_minaltitude_ = element->SetDouble(&minaltitude_);
@@ -59,9 +54,6 @@ void LatLonAltBox::AddElement(const ElementPtr& element) {
       break;
     case Type_altitudeMode:
       has_altitudemode_ = element->SetEnum(&altitudemode_);
-      break;
-    case Type_GxAltitudeMode:
-      has_gx_altitudemode_ = element->SetEnum(&gx_altitudemode_);
       break;
     default:
       AbstractLatLonBox::AddElement(element);
@@ -81,13 +73,6 @@ void LatLonAltBox::Serialize(Serializer& serializer) const {
   if (has_altitudemode()) {
     serializer.SaveEnum(Type_altitudeMode, get_altitudemode());
   }
-  if (has_gx_altitudemode()) {
-    serializer.SaveEnum(Type_GxAltitudeMode, get_gx_altitudemode());
-  }
-}
-
-void LatLonAltBox::Accept(Visitor* visitor) {
-  visitor->VisitLatLonAltBox(LatLonAltBoxPtr(this));
 }
 
 Lod::Lod()
@@ -100,9 +85,6 @@ Lod::Lod()
 Lod::~Lod() {}
 
 void Lod::AddElement(const ElementPtr& element) {
-  if (!element) {
-    return;
-  }
   switch (element->Type()) {
     case Type_minLodPixels:
       has_minlodpixels_ = element->SetDouble(&minlodpixels_);
@@ -139,10 +121,6 @@ void Lod::Serialize(Serializer& serializer) const {
   }
 }
 
-void Lod::Accept(Visitor* visitor) {
-  visitor->VisitLod(LodPtr(this));
-}
-
 Region::Region() {
 }
 
@@ -150,9 +128,6 @@ Region::~Region() {
 }
 
 void Region::AddElement(const ElementPtr& element) {
-  if (!element) {
-    return;
-  }
   switch (element->Type()) {
     case Type_LatLonAltBox:
       set_latlonaltbox(AsLatLonAltBox(element));
@@ -173,20 +148,6 @@ void Region::Serialize(Serializer& serializer) const {
   }
   if (has_lod()) {
     serializer.SaveElement(get_lod());
-  }
-}
-
-void Region::Accept(Visitor* visitor) {
-  visitor->VisitRegion(RegionPtr(this));
-}
-
-void Region::AcceptChildren(VisitorDriver* driver) {
-  Object::AcceptChildren(driver);
-  if (has_latlonaltbox()) {
-    driver->Visit(get_latlonaltbox());
-  }
-  if (has_lod()) {
-    driver->Visit(get_lod());
   }
 }
 

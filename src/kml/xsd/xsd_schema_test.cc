@@ -60,9 +60,9 @@ TEST_F(XsdSchemaTest, TestCreate) {
   // Send down the attributes from:
   //   <schema xmlns:mcn="my:cool:namespace"
   //           targetNamespace="my:cool:namespace"/>
-  const string kNamespace("my:cool:namespace");
-  const string kPrefix("mcn");
-  attributes_.SetString(string("xmlns:") + kPrefix, kNamespace);
+  const std::string kNamespace("my:cool:namespace");
+  const std::string kPrefix("mcn");
+  attributes_.SetString(std::string("xmlns:") + kPrefix, kNamespace);
   attributes_.SetString(kTargetNamespace, kNamespace);
   xsd_schema_ = XsdSchema::Create(attributes_);
   ASSERT_TRUE(xsd_schema_);
@@ -72,10 +72,10 @@ TEST_F(XsdSchemaTest, TestCreate) {
 
 // Verify SplitNsName().
 TEST_F(XsdSchemaTest, TestSplitNsName) {
-  const string kPrefix("myml");
+  const std::string kPrefix("myml");
   xsd_schema_ = CreateXsdSchema(kPrefix, "who:cares");
-  const string kMyElement("MyElement");
-  string ncname;
+  const std::string kMyElement("MyElement");
+  std::string ncname;
   ASSERT_TRUE(xsd_schema_->SplitNsName(kPrefix + ":" + kMyElement, &ncname));
   ASSERT_EQ(kMyElement, ncname);
 }

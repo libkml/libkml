@@ -93,12 +93,6 @@ class LinkSnippet : public SnippetCommon {
 
 %nodefaultctor AbstractView;
 class AbstractView : public Object {
- public:
-  // gx:TimeStamp and gx:TimeSpan.
-  const TimePrimitivePtr get_gx_timeprimitive();
-  bool has_gx_timeprimitive();
-  void set_gx_timeprimitive(const TimePrimitivePtr& gx_timeprimitive);
-  void clear_gx_timeprimitive();
 };
 
 %nodefaultctor TimePrimitive;
@@ -157,12 +151,6 @@ public:
   void set_altitudemode(int altitudemode);
   bool has_altitudemode();
   void clear_altitudemode();
-
-  // <gx:altitudeMode>
-  int get_gx_altitudemode();
-  bool has_gx_altitudemode();
-  void set_gx_altitudemode(int gx_altitudemode);
-  void clear_gx_altitudemode();
 };
 
 %nodefaultctor Lod;
@@ -243,18 +231,6 @@ public:
   bool has_open();
   void clear_open();
 
-  // <atom:author>
-  const AtomAuthorPtr get_atomauthor();
-  bool has_atomauthor();
-  void set_atomauthor(AtomAuthorPtr atomauthor);
-  void clear_atomauthor();
-
-  // <atom:link>
-  const AtomLinkPtr get_atomlink();
-  bool has_atomlink();
-  void set_atomlink(AtomLinkPtr atomlink);
-  void clear_atomlink();
-
   // <address>
   const std::string& get_address();
   void set_address(const std::string& address);
@@ -314,12 +290,6 @@ public:
   void set_extendeddata(ExtendedDataPtr extendeddata);
   bool has_extendeddata();
   void clear_extendeddata();
-
-  // <gx:balloonVisibility>
-  bool get_gx_balloonvisibility();
-  void set_gx_balloonvisibility(bool balloonvisibility);
-  bool has_gx_balloonvisibility();
-  void clear_gx_balloonvisibility();
 };
 
 %nodefaultctor Container;
@@ -495,12 +465,6 @@ public:
   void set_altitudemode(int altitudemode);
   bool has_altitudemode();
   void clear_altitudemode();
-
-  // <gx:altitudeMode>
-  int get_gx_altitudemode();
-  bool has_gx_altitudemode();
-  void set_gx_altitudemode(int gx_altitudemode);
-  void clear_gx_altitudemode();
 };
 
 %nodefaultctor UpdateOperation;
@@ -621,16 +585,6 @@ public:
   void clear_rotation();
 };
 
-%nodefaultctor GxLatLonQuad;
-class GxLatLonQuad : public Object {
-public:
-  // <coordinates>
-  const CoordinatesPtr get_coordinates();
-  bool has_coordinates();
-  void set_coordinates(const CoordinatesPtr& coordinates);
-  void clear_coordinates();
-};
-
 %nodefaultctor GroundOverlay;
 class GroundOverlay : public Overlay {
 public:
@@ -646,23 +600,11 @@ public:
   bool has_altitudemode();
   void clear_altitudemode();
 
-  // <gx:altitudeMode>
-  int get_gx_altitudemode();
-  bool has_gx_altitudemode();
-  void set_gx_altitudemode(int gx_altitudemode);
-  void clear_gx_altitudemode();
-
   // <LatLonBox>
   const LatLonBoxPtr get_latlonbox();
   void set_latlonbox(LatLonBoxPtr latlonbox);
   bool has_latlonbox();
   void clear_latlonbox();
-
-  // <gx:LatLonQuad>
-  const GxLatLonQuadPtr get_gx_latlonquad();
-  bool has_gx_latlonquad();
-  void set_gx_latlonquad(GxLatLonQuadPtr gx_latlonquad);
-  void clear_gx_latlonquad();
 };
 
 %nodefaultctor HotSpot;
@@ -728,18 +670,18 @@ public:
 %nodefaultctor ItemIcon;
 class ItemIcon : public Object {
 public:
-  // <state>
-  int get_state_array_at(unsigned int index);
-  const size_t get_state_array_size();
-  bool has_state();
-  void add_state(int state);
-  void clear_state();
+  // TODO: <state>
+  //itemIconStatePtr get_state();
+  //void set_state(itemIconStatePtr state);
+  //bool has_state();
+  //void clear_state();
 
   // <href>
   const std::string& get_href();
   void set_href(const std::string& href);
   bool has_href();
   void clear_href();
+
 };
 
 %nodefaultctor LabelStyle;
@@ -772,12 +714,6 @@ public:
   void set_altitudemode(int altitudemode);
   bool has_altitudemode();
   void clear_altitudemode();
-
-  // <gx:altitudeMode>
-  int get_gx_altitudemode();
-  bool has_gx_altitudemode();
-  void set_gx_altitudemode(int gx_altitudemode);
-  void clear_gx_altitudemode();
 
   // <coordinates>
   const CoordinatesPtr get_coordinates();
@@ -816,12 +752,6 @@ public:
   void set_altitudemode(int altitudemode);
   bool has_altitudemode();
   void clear_altitudemode();
-
-  // <gx:altitudeMode>
-  int get_gx_altitudemode();
-  bool has_gx_altitudemode();
-  void set_gx_altitudemode(int gx_altitudemode);
-  void clear_gx_altitudemode();
 
   // <coordinates>
   const CoordinatesPtr get_coordinates();
@@ -963,12 +893,6 @@ public:
   void set_altitudemode(int altitudemode);
   bool has_altitudemode();
   void clear_altitudemode();
-
-  // <gx:altitudeMode>
-  int get_gx_altitudemode();
-  bool has_gx_altitudemode();
-  void set_gx_altitudemode(int gx_altitudemode);
-  void clear_gx_altitudemode();
 };
 
 %nodefaultctor Orientation;
@@ -1048,12 +972,6 @@ public:
   void set_altitudemode(int altitudemode);
   bool has_altitudemode();
   void clear_altitudemode();
-
-  // <gx:altitudeMode>
-  int get_gx_altitudemode();
-  bool has_gx_altitudemode();
-  void set_gx_altitudemode(int gx_altitudemode);
-  void clear_gx_altitudemode();
 
   // <Location>
   const LocationPtr get_location();
@@ -1267,12 +1185,6 @@ public:
   bool has_altitudemode();
   void clear_altitudemode();
 
-  // <gx:altitudeMode>
-  int get_gx_altitudemode();
-  bool has_gx_altitudemode();
-  void set_gx_altitudemode(int gx_altitudemode);
-  void clear_gx_altitudemode();
-
   // <coordinates>
   const CoordinatesPtr get_coordinates();
   void set_coordinates(CoordinatesPtr coordinates);
@@ -1381,12 +1293,6 @@ public:
   bool has_altitudemode();
   void clear_altitudemode();
 
-  // <gx:altitudeMode>
-  int get_gx_altitudemode();
-  bool has_gx_altitudemode();
-  void set_gx_altitudemode(int gx_altitudemode);
-  void clear_gx_altitudemode();
-
   // <outerBoundaryIs>
   const OuterBoundaryIsPtr get_outerboundaryis();
   void set_outerboundaryis(OuterBoundaryIsPtr outerboundaryis);
@@ -1401,28 +1307,11 @@ public:
 
 %nodefaultctor SimpleData;
 class SimpleData : public Element {
-public:
-  // name=
-  const std::string& get_name();
-  bool has_name();
-  void set_name(const std::string& value);
-  void clear_name();
-
-  // char data
-  const std::string& get_text();
-  bool has_text();
-  void set_text(const std::string& value);
-  void clear_text();
 };
 
 %nodefaultctor SchemaData;
 class SchemaData : public Object {
 public:
-  // schemaUrl=
-  const std::string& get_schemaurl();
-  bool has_schemaurl();
-  void set_schemaurl(const std::string& value);
-  void clear_schemaurl();
   // <SimpleData>...
   void add_simpledata(SimpleDataPtr simpledata);
   const size_t get_simpledata_array_size();
@@ -1544,10 +1433,6 @@ public:
   void clear_end();
 };
 
-%nodefaultctor GxTimeSpan;
-class GxTimeSpan : public TimeSpan {
-};
-
 %nodefaultctor TimeStamp;
 class TimeStamp : public TimePrimitive {
 public:
@@ -1556,10 +1441,6 @@ public:
   void set_when(const std::string& when);
   bool has_when();
   void clear_when();
-};
-
-%nodefaultctor GxTimeStamp;
-class GxTimeStamp : public TimeStamp {
 };
 
 %nodefaultctor Kml;
@@ -1647,104 +1528,3 @@ public:
   void set_length(int value);
   void clear_length();
 };
-
-// GxTourPrimitive is an abstract base type.  This corresponds to
-// gx:AbstractGxTourPrimitiveType/Group in KML 2.2 gx.
-%nodefaultctor GxTourPrimitive;
-class GxTourPrimitive : public Object {
-};
-
-// <gx:Playlist>
-%nodefaultctor GxPlaylist;
-class GxPlaylist : public Object {
-  // GxTourPrimitive...
- public:
-  void add_gx_tourprimitive(GxTourPrimitivePtr tourprimitive);
-  const size_t get_gx_tourprimitive_array_size();
-  const GxTourPrimitivePtr get_gx_tourprimitive_array_at(unsigned int index);
-};
-
-// <gx:Tour>
-%nodefaultctor GxTour;
-class GxTour : public Feature {
- public:
-  // <gx:Playlist>
-  const GxPlaylistPtr get_gx_playlist();
-  bool has_gx_playlist();
-  void set_gx_playlist(GxPlaylistPtr gx_playlist);
-  void clear_gx_playlist();
-};
-
-// <gx:AnimatedUpdate>
-%nodefaultctor GxAnimatedUpdate;
-class GxAnimatedUpdate : public GxTourPrimitive {
-public:
-  //  <gx:duration>
-  double get_gx_duration();
-  bool has_gx_duration();
-  void set_gx_duration(double gx_duration);
-  void clear_gx_duration();
-
-  // <Update>
-  const UpdatePtr get_update();
-  bool has_update();
-  void set_update(UpdatePtr update);
-  void clear_update();
-};
-
-// <gx:FlyTo>
-%nodefaultctor GxFlyTo;
-class GxFlyTo : public GxTourPrimitive {
- public:
-  //  <gx:duration>
-  double get_gx_duration();
-  bool has_gx_duration();
-  void set_gx_duration(double gx_duration);
-  void clear_gx_duration();
-
-  // <gx:flyToMode>.
-  int get_gx_flytomode();
-  bool has_gx_flytomode();
-  void set_gx_flytomode(int value);
-  void clear_gx_flytomode();
-
-  // AbstractView
-  const AbstractViewPtr get_abstractview();
-  bool has_abstractview();
-  void set_abstractview(AbstractViewPtr abstractview);
-  void clear_abstractview();
-};
-
-// <gx:Wait>
-%nodefaultctor GxWait;
-class GxWait : public GxTourPrimitive {
-public:
-  //  <gx:duration>
-  double get_gx_duration();
-  bool has_gx_duration();
-  void set_gx_duration(double gx_duration);
-  void clear_gx_duration();
-};
-
-// <gx:SoundCue>
-%nodefaultctor GxSoundCue;
-class GxSoundCue : public GxTourPrimitive {
-public:
-  // <href>
-  const std::string& get_href();
-  bool has_href();
-  void set_href(const std::string& href);
-  void clear_href();
-};
-
-// <gx:TourControl>
-%nodefaultctor GxTourControl;
-class GxTourControl : public GxTourPrimitive {
-public:
-  // <gx:playMode>
-  int get_gx_playmode();
-  bool has_gx_playmode();
-  void set_gx_playmode(int value);
-  void clear_gx_playmode();
-};
-

@@ -38,28 +38,20 @@ class DateTimeTest : public testing::Test {
 
 TEST_F(DateTimeTest, TestCreate) {
   // Call the method under test.
-  const string kDateTime("2008-10-03T09:25:42Z");
+  const std::string kDateTime("2008-10-03T09:25:42Z");
   date_time_.reset(DateTime::Create(kDateTime));
   ASSERT_TRUE(date_time_.get());
   ASSERT_EQ(static_cast<time_t>(1223025942), date_time_->GetTimeT());
-  ASSERT_EQ(string("09:25:42"), date_time_->GetXsdTime());
-  ASSERT_EQ(string("2008-10-03"), date_time_->GetXsdDate());
+  ASSERT_EQ(std::string("09:25:42"), date_time_->GetXsdTime());
+  ASSERT_EQ(std::string("2008-10-03"), date_time_->GetXsdDate());
   ASSERT_EQ(kDateTime, date_time_->GetXsdDateTime());
 }
-
-// 2007-01-14T22:57:31.000Z
 
 // Verify expected behavior on invalid input.
 TEST_F(DateTimeTest, TestBad) {
   date_time_.reset(DateTime::Create("garbage"));
   ASSERT_FALSE(date_time_.get());
 }
-
-TEST_F(DateTimeTest, TestToTimeT) {
-  ASSERT_EQ(1223025942, DateTime::ToTimeT("2008-10-03T09:25:42Z"));
-  ASSERT_EQ(0, DateTime::ToTimeT("complete invalid input"));
-}
-
 
 }  // end namespace kmlbase
 

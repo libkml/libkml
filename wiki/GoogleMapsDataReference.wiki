@@ -162,3 +162,4 @@ other Google Data API classes:
   * [http://code.google.com/p/libkml/source/browse/trunk/examples/hellonet/uploadgmapcsv.cc uploadgmapcsv.cc] - create a new map from CSV
   * [http://code.google.com/p/libkml/source/browse/trunk/examples/hellonet/uploadgmapkml.cc uploadgmapkml.cc] - create a new map from KML
   * [http://code.google.com/p/libkml/source/browse/trunk/examples/hellonet/gsheet2gmap.cc gsheet2gmap.cc] - create a map from a Google Spreadsheet
+  * [http://code.google.com/p/libkml/source/browse/trunk/examples/hellonet/searchgmap.cc searchgmap.cc] - spatial search over a map

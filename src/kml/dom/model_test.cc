@@ -27,6 +27,7 @@
 // ResourceMap and Alias.
 // TODO: Parse,Serialize tests
 
+#include <string>
 #include "gtest/gtest.h"
 #include "kml/dom/kml22.h"
 #include "kml/dom/kml_factory.h"
@@ -262,9 +263,9 @@ TEST_F(AliasTest, TestDefaults) {
   ASSERT_FALSE(alias_->has_id());
   ASSERT_FALSE(alias_->has_targetid());
   ASSERT_FALSE(alias_->has_targethref());
-  ASSERT_EQ(string(""), alias_->get_targethref());
+  ASSERT_EQ(std::string(""), alias_->get_targethref());
   ASSERT_FALSE(alias_->has_sourcehref());
-  ASSERT_EQ(string(""), alias_->get_sourcehref());
+  ASSERT_EQ(std::string(""), alias_->get_sourcehref());
 }
 
 // Verify setting default makes has_xxx() true:
@@ -281,9 +282,9 @@ TEST_F(AliasTest, TestSetToDefaultValues) {
 // Verify set, get, has, clear:
 TEST_F(AliasTest, TestSetGetHasClear) {
   // Non-default values:
-  const string targethref(
+  const std::string targethref(
       "../textures/CU-Macky-Center-StairsnoCulling.jpg");
-  const string sourcehref(
+  const std::string sourcehref(
       "../files/CU-Macky---Center-StairsnoCulling.jpg");
 
   // Set all fields:
@@ -303,7 +304,7 @@ TEST_F(AliasTest, TestSetGetHasClear) {
 
 // Verify Serialize.
 TEST_F(AliasTest, TestSerialize) {
-  ASSERT_EQ(string("<Alias/>"), SerializeRaw(alias_));
+  ASSERT_EQ(std::string("<Alias/>"), SerializeRaw(alias_));
 }
 
 // This tests the ResourceMap class:
@@ -334,8 +335,8 @@ TEST_F(ResourceMapTest, TestAddAliases) {
 
   // Create an Alias:
   AliasPtr alias = KmlFactory::GetFactory()->CreateAlias();
-  const string targethref0("target0.jpg");
-  const string sourcehref0("source0.jpg");
+  const std::string targethref0("target0.jpg");
+  const std::string sourcehref0("source0.jpg");
   alias->set_targethref(targethref0);
   alias->set_sourcehref(sourcehref0);
 
@@ -353,8 +354,8 @@ TEST_F(ResourceMapTest, TestAddAliases) {
 
   // Create another Alias and add to ResourceMap
   alias = KmlFactory::GetFactory()->CreateAlias();
-  const string targethref1("target1.jpg");
-  const string sourcehref1("source1.jpg");
+  const std::string targethref1("target1.jpg");
+  const std::string sourcehref1("source1.jpg");
   alias->set_targethref(targethref1);
   alias->set_sourcehref(sourcehref1);
   resourcemap_->add_alias(alias);

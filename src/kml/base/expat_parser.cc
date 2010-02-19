@@ -33,47 +33,28 @@
 namespace kmlbase {
 
 static void XMLCALL
-startElement(void *userData, const XML_Char *name, const XML_Char **atts) {
-  string flatname = xml_char_to_string(name);
-  // TODO: kmlbase::Attributes would be a more appropriate type here.
-  StringVector flatatts;
-  xml_char_to_string_vec(atts, &flatatts);
-  static_cast<ExpatHandler*>(userData)->StartElement(flatname, flatatts);
+startElement(void *userData, const char *name, const char **atts) {
+  ((ExpatHandler*)userData)->StartElement(name, atts);
 }
 
 static void XMLCALL
-endElement(void *userData, const XML_Char *name) {
-  string flatname = xml_char_to_string(name);
-  static_cast<ExpatHandler*>(userData)->EndElement(flatname);
+endElement(void *userData, const char *name) {
+  ((ExpatHandler*)userData)->EndElement(name);
 }
 
 static void XMLCALL
-charData(void *userData, const XML_Char *s, int length) {
-  string flatdata = xml_char_to_string_n(s, length);;
-  static_cast<ExpatHandler*>(userData)->CharData(flatdata);
+charData(void *userData, const XML_Char *s, int len) {
+  ((ExpatHandler*)userData)->CharData(s, len);
 }
 
 static void XMLCALL
 startNamespace(void *userData, const XML_Char *prefix, const XML_Char *uri) {
-  string flatprefix = xml_char_to_string(prefix);
-  string flaturi = xml_char_to_string(uri);
-  static_cast<ExpatHandler*>(userData)->StartNamespace(flatprefix, flaturi);
+  ((ExpatHandler*)userData)->StartNamespace(prefix, uri);
 }
 
 static void XMLCALL
 endNamespace(void *userData, const XML_Char *prefix) {
-  string flatprefix = xml_char_to_string(prefix);
-  static_cast<ExpatHandler*>(userData)->EndNamespace(flatprefix);
-}
-
-static void XMLCALL
-entityDeclHandler(void *userData, const XML_Char *entityName,
-                  int is_parameter_entity, const XML_Char *value,
-                  int value_length, const XML_Char *base,
-                  const XML_Char *systemId, const XML_Char *publicId,
-                  const XML_Char *notationName) {
-  XML_Parser parser = static_cast<ExpatHandler*>(userData)->get_parser();
-  XML_StopParser(parser, XML_FALSE);
+  ((ExpatHandler*)userData)->EndNamespace(prefix);
 }
 
 ExpatParser::ExpatParser(ExpatHandler* handler, bool namespace_aware)
@@ -85,7 +66,6 @@ ExpatParser::ExpatParser(ExpatHandler* handler, bool namespace_aware)
   XML_SetUserData(parser, expat_handler_);
   XML_SetElementHandler(parser, startElement, endElement);
   XML_SetCharacterDataHandler(parser, charData);
-  XML_SetEntityDeclHandler(parser, entityDeclHandler);
   if (namespace_aware) {
     XML_SetNamespaceDeclHandler(parser, startNamespace, endNamespace);
   }
@@ -97,17 +77,17 @@ ExpatParser::~ExpatParser() {
 }
 
 // Static.
-bool ExpatParser::ParseString(const string& xml, ExpatHandler* handler,
-                              string* errors, bool namespace_aware) {
+bool ExpatParser::ParseString(const std::string& xml, ExpatHandler* handler,
+                              std::string* errors, bool namespace_aware) {
   ExpatParser parser(handler, namespace_aware);
   return parser._ParseString(xml, errors);
 }
 
 void* ExpatParser::GetInternalBuffer(size_t len) {
-  return static_cast<void*>(XML_GetBuffer(parser_, static_cast<int>(len)));
+  return static_cast<void*>(XML_GetBuffer(parser_, len));
 }
 
-bool ExpatParser::ParseBuffer(const string& input, string* errors,
+bool ExpatParser::ParseBuffer(const std::string& input, std::string* errors,
                               bool is_final) {
   void* buf = GetInternalBuffer(input.size());
   if (!buf) {
@@ -120,9 +100,9 @@ bool ExpatParser::ParseBuffer(const string& input, string* errors,
   return ParseInternalBuffer(input.size(), errors, is_final);
 }
 
-bool ExpatParser::ParseInternalBuffer(size_t len, string* errors,
+bool ExpatParser::ParseInternalBuffer(size_t len, std::string* errors,
                                       bool is_final) {
-  XML_Status status = XML_ParseBuffer(parser_, static_cast<int>(len), is_final);
+  XML_Status status = XML_ParseBuffer(parser_, len, is_final);
   // If we have just parsed the final buffer, we need to check if Expat
   // has stopped parsing. Failure here indicates invalid (badly formed)
   // XML content.
@@ -141,7 +121,7 @@ bool ExpatParser::ParseInternalBuffer(size_t len, string* errors,
 }
 
 // Private.
-bool ExpatParser::_ParseString(const string& xml, string* errors) {
+bool ExpatParser::_ParseString(const std::string& xml, std::string* errors) {
   int xml_size = static_cast<int>(xml.size());
   XML_Status status = XML_Parse(parser_, xml.c_str(), xml_size, xml_size);
   if (status != XML_STATUS_OK && errors) {
@@ -157,7 +137,7 @@ bool ExpatParser::_ParseString(const string& xml, string* errors) {
 }
 
 // Private.
-void ExpatParser::ReportError(XML_Parser parser, string* errors) {
+void ExpatParser::ReportError(XML_Parser parser, std::string* errors) {
   if (!errors) {
     return;
   }

@@ -83,7 +83,7 @@ TEST_F(ContainerTest, TestAddGetFeatures) {
 TEST_F(ContainerTest, TestDeleteFeatureByIdOne) {
   KmlFactory* factory = KmlFactory::GetFactory();
   PlacemarkPtr placemark = factory->CreatePlacemark();
-  const string id("placemark123");
+  const std::string id("placemark123");
   placemark->set_id(id);
   container_->add_feature(placemark);
   ASSERT_EQ(static_cast<size_t>(1), container_->get_feature_array_size());
@@ -95,8 +95,8 @@ TEST_F(ContainerTest, TestDeleteFeatureByIdOne) {
 }
 
 // A proper XML id cannot be simply a number.
-static string CreateId(size_t i) {
-  return string("i") + kmlbase::ToString(i);
+static std::string CreateId(int i) {
+  return std::string("i") + kmlbase::ToString(i);
 }
 
 static const kmldom::KmlDomType kFeatures[] = {
@@ -106,7 +106,7 @@ static const kmldom::KmlDomType kFeatures[] = {
 };
 
 // Create a Feature and give it an id based on i.
-static FeaturePtr CreateFeature(size_t i) {
+static FeaturePtr CreateFeature(int i) {
   int num_features = sizeof(kFeatures)/sizeof(kFeatures[0]);
   KmlFactory* kml_factory = KmlFactory::GetFactory();
   FeaturePtr feature =

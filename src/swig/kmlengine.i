@@ -28,21 +28,25 @@
 
 %module kmlengine
 
-%import "kmldom.i"
-
 // Include the headers needed to build kmlengine_wrap.cc.
 %{
 #include "kml/dom.h"
 #include "kml/engine.h"
 %}
 
+// Tell SWIG about boost::intrusive_ptr and the inheritance hierarchy
+// of objects using intrusive_ptr.
+#ifdef SWIGPYTHON
+%include "python/boost_intrusive_ptr.i"
+#elif SWIGJAVA
+%include "java/boost_intrusive_ptr.i"
+#endif
+
 // Tell SWIG about C++ Standard Library std::string.
 %include "std_string.i"
 
 // Tell SWIG about the KML DOM intrusive_ptr typedefs.
 %include "kml/dom/kml_ptr.h"
-
-%include "typemaps.i"
 
 namespace kmlengine {
 
@@ -51,19 +55,11 @@ class Bbox {
   Bbox();
   Bbox(double north, double south, double east, double west);
   bool Contains(double latitude, double longitude) const;
-  void ExpandFromBbox(const Bbox& bbox);
   void ExpandLatitude(double latitude);
   void ExpandLongitude(double longitude);
-  void ExpandLatLon(double latitude, double longitude);
-  double get_north() const;
-  double get_south() const;
-  double get_east() const;
-  double get_west() const;
 };
 
 kmldom::ElementPtr Clone(const kmldom::ElementPtr& element);
-
-bool GetFeatureBounds(const kmldom::FeaturePtr& feature, Bbox* bbox);
 
 %apply double* OUTPUT { double* lat };
 %apply double* OUTPUT { double* lon };
@@ -74,26 +70,14 @@ const kmldom::FeaturePtr GetRootFeature(const kmldom::ElementPtr& root);
 
 %nodefaultctor KmlFile;
 %apply std::string* OUTPUT { std::string* errors };
-%apply std::string* OUTPUT { std::string* xml_output };
 class KmlFile {
  public:
   static KmlFile* CreateFromParse(const std::string& kml_data,
                                   std::string* errors);
   static KmlFile* CreateFromImport(const kmldom::ElementPtr& root);
   const kmldom::ElementPtr get_root() const;
-  bool SerializeToString(std::string* xml_output) const;
   kmldom::ObjectPtr GetObjectById(const std::string& id) const;
   kmldom::StyleSelectorPtr GetSharedStyleById(const std::string& id) const;
-};
-
-%nodefaultctor KmzFile;
-%apply std::string* OUTPUT { std::string* output };
-class KmzFile {
- public:
-  static KmzFile* OpenFromFile(const char* kmz_filepath);
-  static KmzFile* CreateFromString(const std::string& kmz_data);
-  bool ReadKml(std::string* output) const;
-  bool ReadFile(const char* subfile, std::string* output) const;
 };
 
 %apply std::string* OUTPUT { std::string* kmz_url };
@@ -110,18 +94,5 @@ bool KmzSplit(const std::string& kml_url, std::string* kmz_url,
 bool SplitUri(const std::string& uri, std::string* scheme, std::string* host,
               std::string* port, std::string* path, std::string* query,
               std::string* fragment);
-
-// TODO:
-// void ProcessUpdate(const kmldom::UpdatePtr& update, KmlFile* kml_file);
-
-// TODO:
-// std::string CreateBalloonText(const KmlFilePtr& kml_file,
-//                              const kmldom::FeaturePtr& feature);
-
-// TODO:
-// kmldom::StylePtr CreateResolvedStyle(const kmldom::FeaturePtr& feature,
-//                                     const KmlFilePtr& kml_file,
-//                                     kmldom::StyleStateEnum style_state);
-
 
 }  // end namespace kmlengine

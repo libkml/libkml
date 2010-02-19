@@ -25,7 +25,6 @@
 
 #include "kml/dom/kml.h"
 #include "kml/base/attributes.h"
-#include "kml/base/xml_namespaces.h"
 #include "kml/dom/kml_cast.h"
 #include "kml/dom/serializer.h"
 
@@ -33,10 +32,7 @@ using kmlbase::Attributes;
 
 namespace kmldom {
 
-Kml::Kml()
-  : has_hint_(false) {
-  set_xmlns(kmlbase::XMLNS_KML22);
-}
+Kml::Kml() : has_hint_(false) {}
 
 Kml::~Kml() {}
 
@@ -58,9 +54,6 @@ void Kml::SerializeAttributes(Attributes* attributes) const {
 }
 
 void Kml::AddElement(const ElementPtr& element) {
-  if (!element) {
-    return;
-  }
   if (element->IsA(Type_Feature)) {
     set_feature(AsFeature(element));
   } else if (element->Type() == Type_NetworkLinkControl) {
@@ -77,20 +70,6 @@ void Kml::Serialize(Serializer& serializer) const {
   }
   if (has_feature()) {
     serializer.SaveElementGroup(get_feature(), Type_Feature);
-  }
-}
-
-void Kml::Accept(Visitor* visitor) {
-  visitor->VisitKml(KmlPtr(this));
-}
-
-void Kml::AcceptChildren(VisitorDriver* driver) {
-  Element::AcceptChildren(driver);
-  if (has_networklinkcontrol()) {
-    driver->Visit(get_networklinkcontrol());
-  }
-  if (has_feature()) {
-    driver->Visit(get_feature());
   }
 }
 

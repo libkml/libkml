@@ -1,9 +1,9 @@
 // Copyright 2009, Google Inc. All rights reserved.
 //
-// Redistribution and use in source and binary forms, with or without
+// Redistribution and use in source and binary forms, with or without 
 // modification, are permitted provided that the following conditions are met:
 //
-//  1. Redistributions of source code must retain the above copyright notice,
+//  1. Redistributions of source code must retain the above copyright notice, 
 //     this list of conditions and the following disclaimer.
 //  2. Redistributions in binary form must reproduce the above copyright notice,
 //     this list of conditions and the following disclaimer in the documentation
@@ -13,14 +13,14 @@
 //     specific prior written permission.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
-// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
 // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
 // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
 // PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
 // OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // This file contains the implementation of the <gx:Tour> and related elements.
@@ -44,9 +44,6 @@ GxTour::GxTour() {
 GxTour::~GxTour() {}
 
 void GxTour::AddElement(const ElementPtr& element) {
-  if (!element) {
-    return;
-  }
   if (element->Type() == Type_GxPlaylist) {
     set_gx_playlist(AsGxPlaylist(element));
   } else {
@@ -59,17 +56,6 @@ void GxTour::Serialize(Serializer& serializer) const {
   Feature::Serialize(serializer);
   if (has_gx_playlist()) {
     serializer.SaveElement(get_gx_playlist());
-  }
-}
-
-void GxTour::Accept(Visitor* visitor) {
-  visitor->VisitGxTour(GxTourPtr(this));
-}
-
-void GxTour::AcceptChildren(VisitorDriver* driver) {
-  Feature::AcceptChildren(driver);
-  if (has_gx_playlist()) {
-    driver->Visit(get_gx_playlist());
   }
 }
 
@@ -86,7 +72,7 @@ void GxPlaylist::add_gx_tourprimitive(
   gx_tourprimitive_array_.push_back(gx_tourprimitive);
 }
 
-size_t GxPlaylist::get_gx_tourprimitive_array_size() const {
+const size_t GxPlaylist::get_gx_tourprimitive_array_size() const {
   return gx_tourprimitive_array_.size();
 }
 
@@ -109,15 +95,6 @@ void GxPlaylist::Serialize(Serializer& serializer) const {
     serializer.SaveElementGroup(get_gx_tourprimitive_array_at(i),
                                 Type_GxTourPrimitive);
   }
-}
-
-void GxPlaylist::Accept(Visitor* visitor) {
-  visitor->VisitGxPlaylist(GxPlaylistPtr(this));
-}
-
-void GxPlaylist::AcceptChildren(VisitorDriver* driver) {
-  Object::AcceptChildren(driver);
-  Element::AcceptRepeated<GxTourPrimitivePtr>(&gx_tourprimitive_array_, driver);
 }
 
 // TourPrimitiveCommon
@@ -150,9 +127,9 @@ GxAnimatedUpdate::~GxAnimatedUpdate() {}
 void GxAnimatedUpdate::AddElement(const ElementPtr& element) {
   if (UpdatePtr update = AsUpdate(element)) {
     set_update(update);
-    return;
+  } else {
+    Element::AddElement(element);
   }
-  GxTourPrimitiveCommon::AddElement(element);
 }
 
 void GxAnimatedUpdate::Serialize(Serializer& serializer) const {
@@ -160,17 +137,6 @@ void GxAnimatedUpdate::Serialize(Serializer& serializer) const {
   GxTourPrimitiveCommon::Serialize(serializer);
   if (has_update()) {
     serializer.SaveElement(get_update());
-  }
-}
-
-void GxAnimatedUpdate::Accept(Visitor* visitor) {
-  visitor->VisitGxAnimatedUpdate(GxAnimatedUpdatePtr(this));
-}
-
-void GxAnimatedUpdate::AcceptChildren(VisitorDriver* driver) {
-  GxTourPrimitiveCommon::AcceptChildren(driver);
-  if (has_update()) {
-    driver->Visit(get_update());
   }
 }
 
@@ -209,17 +175,6 @@ void GxFlyTo::Serialize(Serializer& serializer) const {
   }
 }
 
-void GxFlyTo::Accept(Visitor* visitor) {
-  visitor->VisitGxFlyTo(GxFlyToPtr(this));
-}
-
-void GxFlyTo::AcceptChildren(VisitorDriver* driver) {
-  GxTourPrimitiveCommon::AcceptChildren(driver);
-  if (has_abstractview()) {
-    driver->Visit(get_abstractview());
-  }
-}
-
 // <gx:Wait>
 
 GxWait::GxWait() {
@@ -231,10 +186,6 @@ GxWait::~GxWait() {}
 void GxWait::Serialize(Serializer& serializer) const {
   ElementSerializer element_serializer(*this, serializer);
   GxTourPrimitiveCommon::Serialize(serializer);
-}
-
-void GxWait::Accept(Visitor* visitor) {
-  visitor->VisitGxWait(GxWaitPtr(this));
 }
 
 // <gx:SoundCue>
@@ -265,10 +216,6 @@ void GxSoundCue::Serialize(Serializer& serializer) const {
   }
 }
 
-void GxSoundCue::Accept(Visitor* visitor) {
-  visitor->VisitGxSoundCue(GxSoundCuePtr(this));
-}
-
 // <gx:TourControl>
 
 GxTourControl::GxTourControl()
@@ -295,10 +242,6 @@ void GxTourControl::Serialize(Serializer& serializer) const {
   if (has_gx_playmode()) {
     serializer.SaveEnum(Type_GxPlayMode, get_gx_playmode());
   }
-}
-
-void GxTourControl::Accept(Visitor* visitor) {
-  visitor->VisitGxTourControl(GxTourControlPtr(this));
 }
 
 }  // end namespace kmldom

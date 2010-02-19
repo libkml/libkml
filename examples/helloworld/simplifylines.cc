@@ -42,7 +42,6 @@
 
 #include <iostream>
 #include <vector>
-#include "kml/base/file.h"
 #include "kml/base/math_util.h"
 #include "kml/convenience/convenience.h"
 #include "kml/dom.h"
@@ -113,8 +112,8 @@ static LineStringPtr CreateSimplifiedLineString(const KmlFilePtr& kmlfile,
   CoordinatesPtr concatenated_coordinates = factory->CreateCoordinates();
 
   LineStringVisitor linestring_visitor(kmlfile, concatenated_coordinates);
-  kmlengine::VisitFeatureHierarchy(
-      kmlengine::GetRootFeature(kmlfile->get_root()), linestring_visitor);
+  kmlengine::VisitFeatureHierarchy(kmlengine::GetRootFeature(kmlfile->root()),
+                                   linestring_visitor);
 
   LineStringPtr linestring = factory->CreateLineString();
   linestring->set_altitudemode(linestring_visitor.get_altitudemode());

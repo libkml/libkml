@@ -139,6 +139,7 @@ const StylePtr AsStyle(const ElementPtr element);
 const StyleMapPtr AsStyleMap(const ElementPtr element);
 const TimeSpanPtr AsTimeSpan(const ElementPtr element);
 const TimeStampPtr AsTimeStamp(const ElementPtr element);
+const TimePrimitivePtr AsTimePrimitive(const ElementPtr element);
 inline const UpdatePtr AsUpdate(const ElementPtr& element) {
   return ElementCast<Update>(element);
 }
@@ -147,18 +148,6 @@ const ViewVolumePtr AsViewVolume(const ElementPtr element);
 // Atom
 inline const AtomAuthorPtr AsAtomAuthor(const ElementPtr& element) {
   return ElementCast<AtomAuthor>(element);
-}
-inline const AtomCategoryPtr AsAtomCategory(const ElementPtr& element) {
-  return ElementCast<AtomCategory>(element);
-}
-inline const AtomContentPtr AsAtomContent(const ElementPtr& element) {
-  return ElementCast<AtomContent>(element);
-}
-inline const AtomEntryPtr AsAtomEntry(const ElementPtr& element) {
-  return ElementCast<AtomEntry>(element);
-}
-inline const AtomFeedPtr AsAtomFeed(const ElementPtr& element) {
-  return ElementCast<AtomFeed>(element);
 }
 inline const AtomLinkPtr AsAtomLink(const ElementPtr& element) {
   return ElementCast<AtomLink>(element);

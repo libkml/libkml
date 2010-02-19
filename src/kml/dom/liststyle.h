@@ -1,9 +1,9 @@
 // Copyright 2008, Google Inc. All rights reserved.
 //
-// Redistribution and use in source and binary forms, with or without
+// Redistribution and use in source and binary forms, with or without 
 // modification, are permitted provided that the following conditions are met:
 //
-//  1. Redistributions of source code must retain the above copyright notice,
+//  1. Redistributions of source code must retain the above copyright notice, 
 //     this list of conditions and the following disclaimer.
 //  2. Redistributions in binary form must reproduce the above copyright notice,
 //     this list of conditions and the following disclaimer in the documentation
@@ -13,14 +13,14 @@
 //     specific prior written permission.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
-// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
 // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
 // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
 // PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
 // OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // This file contains the declaration of the ItemIcon and ListStyle elements.
@@ -37,9 +37,6 @@
 #include "kml/base/util.h"
 
 namespace kmldom {
-
-class Visitor;
-class VisitorDriver;
 
 // <ItemIcon>
 class ItemIcon : public Object {
@@ -64,10 +61,10 @@ class ItemIcon : public Object {
   //
   // State enumerations must be space-delimited. New lines, tabs, etc. are not
   // supported. This is consistent with the use of xsd:list in the KML schema.
-  int get_state_array_at(size_t index) const {
+  const int get_state_array_at(size_t index) const {
     return state_array_[index];
   }
-  size_t get_state_array_size() const {
+  const size_t get_state_array_size() const {
     return state_array_.size();
   }
   bool has_state() const {
@@ -85,13 +82,13 @@ class ItemIcon : public Object {
   }
 
   // <href>
-  const string& get_href() const {
+  std::string get_href() const {
     return href_;
   }
   bool has_href() const {
     return has_href_;
   }
-  void set_href(const string& href) {
+  void set_href(const std::string& href) {
     href_ = href;
     has_href_ = true;
   }
@@ -99,9 +96,6 @@ class ItemIcon : public Object {
     href_.clear();
     has_href_ = false;
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
 
  private:
   friend class KmlFactory;
@@ -112,7 +106,7 @@ class ItemIcon : public Object {
   virtual void Serialize(Serializer& serialize) const;
   std::vector<int> state_array_;
   bool has_state_;
-  string href_;
+  std::string href_;
   bool has_href_;
   LIBKML_DISALLOW_EVIL_CONSTRUCTORS(ItemIcon);
 };
@@ -163,7 +157,7 @@ class ListStyle : public SubStyle {
     AddComplexChild(itemicon, &itemicon_array_);
   }
 
-  size_t get_itemicon_array_size() const {
+  const size_t get_itemicon_array_size() const {
     return itemicon_array_.size();
   }
 
@@ -186,10 +180,6 @@ class ListStyle : public SubStyle {
     maxsnippetlines_ = 2;
     has_maxsnippetlines_ = false;
   }
-
-  // Visitor API methods, see visitor.h.
-  virtual void Accept(Visitor* visitor);
-  virtual void AcceptChildren(VisitorDriver* driver);
 
  private:
   friend class KmlFactory;

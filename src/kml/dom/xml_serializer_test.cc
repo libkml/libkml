@@ -27,6 +27,7 @@
 // the SerializePretty and SerializeRaw public API functions.
 
 #include "kml/dom/xml_serializer.h"
+#include <string>
 #include "kml/dom/kml22.h"
 #include "kml/dom/kml_factory.h"
 #include "kml/dom/kml_funcs.h"
@@ -57,25 +58,25 @@ class XmlSerializerTest : public testing::Test {
 TEST_F(XmlSerializerTest, TestToString) {
   double pi = 3.14159;
   unsigned int dna = 42;
-  ASSERT_EQ(string("3.14159"), ToString(pi));
+  ASSERT_EQ(std::string("3.14159"), ToString(pi));
   ASSERT_EQ("42", ToString(dna));
 }
 
 TEST_F(XmlSerializerTest, TestWriteString) {
   // Write string clears ptr before writing, does not append.
-  string output("foo");
+  std::string output("foo");
   xml_serializer_->WriteString(&output);
-  const string expected_result("");
+  const std::string expected_result("");
   ASSERT_EQ(expected_result, output);
 }
 
 TEST_F(XmlSerializerTest, TestSaveEmptyStringFieldById) {
   // Assert that the <name/> field serializes as expected.
   const int type_id = Type_name;
-  const string expected_result("<name/>");
-  const string empty;
+  const std::string expected_result("<name/>");
+  const std::string empty;
   xml_serializer_->SaveFieldById(type_id, empty);
-  string output;
+  std::string output;
   xml_serializer_->WriteString(&output);
   ASSERT_EQ(expected_result, output);
 }
@@ -83,42 +84,36 @@ TEST_F(XmlSerializerTest, TestSaveEmptyStringFieldById) {
 TEST_F(XmlSerializerTest, TestSaveStringFieldById) {
   // Assert that the <name> field serializes as expected.
   const int type_id = Type_name;
-  const string txt("some feature name");
-  const string expected_result("<name>some feature name</name>");
+  const std::string txt("some feature name");
+  const std::string expected_result("<name>some feature name</name>");
   xml_serializer_->SaveFieldById(type_id, txt);
-  string output;
+  std::string output;
   xml_serializer_->WriteString(&output);
   ASSERT_EQ(expected_result, output);
 }
 
 TEST_F(XmlSerializerTest, TestCdataHandling) {
-  // The underlying parser itself won't pass CDATA sections through to
-  // element char data, but it is possible that raw CDATA will be passed
-  // through directly by feature->set_name() or similar. If the serializer
-  // sees this, we entity-escape the entire string to prevent the output
-  // of invalid XML. Otherwise, if we see any invalid characters in the string,
-  // we wrap them with CDATA.
+  // If the parser sees <![CDATA ... ]]> around the character data of an
+  // element, it will preserve it. MaybeQuoteString() contains logic to
+  // determine if we should wrap XML-invalid field characters.
   struct TestStruct {
-    const string chardata;
-    const string expected;
+    const std::string chardata;
+    const std::string expected;
   } testdata[] = {
     {"simple text", "<name>simple text</name>\n"},
-    {"<![CDATA[...]]>", "<name>&lt;![CDATA[...]]&gt;</name>\n"},
+    {"<![CDATA[...]]>", "<name><![CDATA[...]]></name>\n"},
     {"invalid & char", "<name><![CDATA[invalid & char]]></name>\n"},
     {"invalid ' char", "<name><![CDATA[invalid ' char]]></name>\n"},
     {"invalid < char", "<name><![CDATA[invalid < char]]></name>\n"},
     {"invalid > char", "<name><![CDATA[invalid > char]]></name>\n"},
-    {"invalid \" char", "<name><![CDATA[invalid \" char]]></name>\n"},
-    {"goo <![CDATA[goo]]> goo", "<name>goo &lt;![CDATA[goo]]&gt; goo</name>\n"},
-    {"<x><![CDATA[goo]]></x>",
-     "<name>&lt;x&gt;&lt;![CDATA[goo]]&gt;&lt;/x&gt;</name>\n"}
+    {"invalid \" char", "<name><![CDATA[invalid \" char]]></name>\n"}
   };
 
   const size_t size = sizeof(testdata) / sizeof(testdata[0]);
 
   for (size_t i = 0; i < size; ++i) {
     XmlSerializer s_("\n","");
-    string output;
+    std::string output;
     s_.SaveFieldById(Type_name, testdata[i].chardata);
     s_.WriteString(&output);
     ASSERT_EQ(testdata[i].expected, output);
@@ -128,29 +123,18 @@ TEST_F(XmlSerializerTest, TestCdataHandling) {
 TEST_F(XmlSerializerTest, TestCdataEscaping) {
   // Assert that data that should be escaped in a CDATA is so quoted.
   placemark_->set_name("<i>One</i> two");
-  string xml = SerializePretty(placemark_);
-  string expected("<Placemark>\n  "
-                  "<name><![CDATA[<i>One</i> two]]></name>\n"
-                  "</Placemark>\n");
-  ASSERT_EQ(expected, xml);
-}
-
-TEST_F(XmlSerializerTest, TestCdataPassedBySetter) {
-  string crazy_name("foo <b> goo <![CDATA[xxx<i>yyy</i>xxx]]> </b> goo");
-  placemark_->set_name(crazy_name);
-  string xml = SerializePretty(placemark_);
-  string expected("<Placemark>\n"
-                  "  <name>foo &lt;b&gt; goo &lt;![CDATA["
-                  "xxx&lt;i&gt;yyy&lt;/i&gt;xxx]]&gt; &lt;/b&gt; goo</name>\n"
-                  "</Placemark>\n");
+  std::string xml = SerializePretty(placemark_);
+  std::string expected("<Placemark>\n  "
+                       "<name><![CDATA[<i>One</i> two]]></name>\n"
+                       "</Placemark>\n");
   ASSERT_EQ(expected, xml);
 }
 
 TEST_F(XmlSerializerTest, TestSaveBoolFieldByIdAsBool) {
   // Assert that <open> is serialized correctly.
   const bool bool_state = true;
-  string expected_result("<open>1</open>");
-  string output;
+  std::string expected_result("<open>1</open>");
+  std::string output;
   // A parsed bool is serialized as an int:
   xml_serializer_->SaveFieldById(Type_open, bool_state);
   xml_serializer_->WriteString(&output);
@@ -160,8 +144,8 @@ TEST_F(XmlSerializerTest, TestSaveBoolFieldByIdAsBool) {
 TEST_F(XmlSerializerTest, TestSaveBoolFieldByIdAsInt) {
   // Assert that <open> is serialized correctly.
   const unsigned int int_state = 1;
-  string expected_result("<open>1</open>");
-  string output;
+  std::string expected_result("<open>1</open>");
+  std::string output;
   // A parsed int is serialized as an int:
   xml_serializer_->SaveFieldById(Type_open, int_state);
   xml_serializer_->WriteString(&output);
@@ -170,24 +154,24 @@ TEST_F(XmlSerializerTest, TestSaveBoolFieldByIdAsInt) {
 
 TEST_F(XmlSerializerTest, TestSaveContent) {
   // Ensure a simple string is serialized exactly.
-  const string s("tom, dick");
+  const std::string s("tom, dick");
   xml_serializer_->SaveContent(s, false);
-  string output;
+  std::string output;
   xml_serializer_->WriteString(&output);
   ASSERT_EQ(s, output);
   // SaveContent will append continued calls.
-  string t(" and harry");
+  std::string t(" and harry");
   xml_serializer_->SaveContent(t, false);
-  string expected_result(s + t);
+  std::string expected_result(s + t);
   xml_serializer_->WriteString(&output);
   ASSERT_EQ(expected_result, output);
 }
 
 TEST_F(XmlSerializerTest, TestSaveColor) {
   const kmlbase::Color32 kRed(0xff0000ff);
-  const string kExpected("<color>ff0000ff</color>");
+  const std::string kExpected("<color>ff0000ff</color>");
   xml_serializer_->SaveColor(Type_color, kRed);
-  string output;
+  std::string output;
   xml_serializer_->WriteString(&output);
   ASSERT_EQ(kExpected, output);
 }
@@ -195,7 +179,7 @@ TEST_F(XmlSerializerTest, TestSaveColor) {
 TEST_F(XmlSerializerTest, TestPrecision) {
   double a = 1.0;
   // Will round down to int:
-  string expected = "1";
+  std::string expected = "1";
   ASSERT_EQ(expected, ToString(a));
   double b = 1.1;
   // Will preserve at current level of precision:
@@ -210,14 +194,14 @@ TEST_F(XmlSerializerTest, TestPrecision) {
 // Tests the internal Indent() method.
 TEST_F(XmlSerializerTest, TestSerializePretty) {
   placemark_->set_name("hello");
-  string xml = SerializePretty(placemark_);
-  string expected("<Placemark>\n  <name>hello</name>\n</Placemark>\n");
+  std::string xml = SerializePretty(placemark_);
+  std::string expected("<Placemark>\n  <name>hello</name>\n</Placemark>\n");
   ASSERT_EQ(expected, xml);
 }
 
 // This tests the pretty serialization of an element with no content.
 TEST_F(XmlSerializerTest, TestSerializePrettyNil) {
-  ASSERT_EQ(string("<Placemark/>\n"),
+  ASSERT_EQ(std::string("<Placemark/>\n"),
                        SerializePretty(placemark_));
 }
 
@@ -225,21 +209,21 @@ TEST_F(XmlSerializerTest, TestSerializePrettyNil) {
 // no content.
 TEST_F(XmlSerializerTest, TestSerializePrettyNilWithAttrs) {
   placemark_->set_id("hi");  // Adds the id= attribute.
-  ASSERT_EQ(string("<Placemark id=\"hi\"/>\n"),
+  ASSERT_EQ(std::string("<Placemark id=\"hi\"/>\n"),
                        SerializePretty(placemark_));
 }
 
 // This tests the raw serialization of an element a child element.
 TEST_F(XmlSerializerTest, TestSerializeRaw) {
   placemark_->set_name("hello");
-  string xml = SerializeRaw(placemark_);
-  string expected("<Placemark><name>hello</name></Placemark>");
+  std::string xml = SerializeRaw(placemark_);
+  std::string expected("<Placemark><name>hello</name></Placemark>");
   ASSERT_EQ(expected, xml);
 }
 
 // This tests the raw serialization of an element with no content.
 TEST_F(XmlSerializerTest, TestSerializeRawNil) {
-  ASSERT_EQ(string("<Placemark/>"),
+  ASSERT_EQ(std::string("<Placemark/>"),
                        SerializeRaw(placemark_));
 }
 
@@ -247,28 +231,22 @@ TEST_F(XmlSerializerTest, TestSerializeRawNil) {
 // no content.
 TEST_F(XmlSerializerTest, TestSerializeRawNilWithAttrs) {
   placemark_->set_id("hi");  // Adds the id= attribute.
-  ASSERT_EQ(string("<Placemark id=\"hi\"/>"),
+  ASSERT_EQ(std::string("<Placemark id=\"hi\"/>"),
                        SerializeRaw(placemark_));
 }
 
 TEST_F(XmlSerializerTest, TestSerializeUnknowns) {
   // Unrecognised elements:
-  const string unknown1("<unknown>zzz<Foo/></unknown>");
-  const string unknown2("<unknownBar/>");
+  const std::string unknown1("<unknown>zzz<Foo/></unknown>");
+  const std::string unknown2("<unknownBar/>");
   placemark_->AddUnknownElement(unknown1);
   placemark_->AddUnknownElement(unknown2);
   ASSERT_EQ(static_cast<size_t>(2),
                        placemark_->get_unknown_elements_array_size());
   ASSERT_EQ(unknown1, placemark_->get_unknown_elements_array_at(0));
   ASSERT_EQ(unknown2, placemark_->get_unknown_elements_array_at(1));
-  ASSERT_EQ(string("<Placemark>") + unknown1 + unknown2 + "</Placemark>",
+  ASSERT_EQ(std::string("<Placemark>") + unknown1 + unknown2 + "</Placemark>",
             SerializeRaw(placemark_));
-}
-
-TEST_F(XmlSerializerTest, TestSerializeNull) {
-  const string empty;
-  ASSERT_EQ(empty, SerializePretty(NULL));
-  ASSERT_EQ(empty, SerializeRaw(NULL));
 }
 
 }  // end namespace kmldom

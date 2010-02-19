@@ -26,6 +26,7 @@
 // This file contains the unit tests for the abstract Serializer base class.
 
 #include "kml/dom/serializer.h"
+#include <string>
 #include "kml/base/attributes.h"
 #include "kml/dom/kml_funcs.h"
 #include "kml/dom/kml_factory.h"
@@ -74,15 +75,16 @@ class MaximalSerializer : public Serializer {
   virtual void End() {}
   virtual void SaveElement(const ElementPtr& element) {}
   virtual void SaveElementGroup(const ElementPtr& element, int group_id) {}
-  virtual void SaveStringFieldById(int type_id, string value) {}
-  virtual void SaveContent(const string& content, bool maybe_quote) {}
-  virtual void SaveVec3(const kmlbase::Vec3& vec3) {}
+  virtual void SaveStringFieldById(int type_id, std::string value) {}
+  virtual void SaveContent(const std::string& content, bool maybe_quote) {}
+  virtual void SaveLonLatAlt(double longitude, double latitude,
+                             double altitude) {}
   virtual void Indent() {}
   virtual void SaveColor(int type_id, const kmlbase::Color32& color) {}
   virtual void BeginElementArray(int type_id, size_t element_count) {}
-  virtual void EndElementArray(int type_id) {}
+  virtual void EndElementArray(int type_id, size_t element_count) {}
   virtual void BeginElementGroupArray(int group_id, size_t element_count) {}
-  virtual void EndElementGroupArray(int group_id) {}
+  virtual void EndElementGroupArray(int group_id, size_t element_count) {}
 };
 
 typedef std::vector<KmlDomType> TypeIdVector;
@@ -142,12 +144,6 @@ static void CallSerializer(const ElementPtr& element, Serializer* serializer) {
   ASSERT_TRUE(element);  // This is basically an internal check.
   ASSERT_TRUE(serializer);  // This is basically an internal check.
   element->Serialize(*serializer);
-}
-
-// Assert the basic SaveElement is well-behaved when passed a NULL element.
-TEST_F(SerializerTest, TestSerializeOfNullElement) {
-  Serializer serializer;
-  serializer.SaveElement(NULL);
 }
 
 // Verify that the default Serializer properly does nothing.
@@ -288,7 +284,7 @@ class ArraySerializer : public Serializer {
   // is the type of each element.
   virtual void BeginElementArray(int type_id, size_t element_count) {
     int_vector_->push_back(type_id);
-    int_vector_->push_back(static_cast<int>(element_count));
+    int_vector_->push_back(element_count);
   }
 
   // Called after saving each element in an array.  Every element was of
@@ -303,7 +299,7 @@ class ArraySerializer : public Serializer {
   // in KML include Type_Feature, Type_Object, and Type_StyleSelector.
   virtual void BeginElementGroupArray(int group_id, size_t element_count) {
     int_vector_->push_back(group_id);
-    int_vector_->push_back(static_cast<int>(element_count));
+    int_vector_->push_back(element_count);
   }
 
   // Called after saving each group element in an array.  Every element was of

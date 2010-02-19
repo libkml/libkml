@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\third_party\expat.win32;..\third_party\boost_1_34_1;..\src;..\third_party\zlib-1.2.3;..\third_party\zlib-1.2.3\contrib;..\third_party\uriparser-0.7.5\include"
+				AdditionalIncludeDirectories="..\third_party\expat.win32;..\third_party\boost_1_34_1;..\src;..\third_party\zlib-1.2.3;..\third_party\zlib-1.2.3\contrib;..\third_party\uriparser-0.7.1\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -104,11 +104,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\third_party\expat.win32;..\third_party\boost_1_34_1;..\src;..\third_party\zlib-1.2.3;..\third_party\zlib-1.2.3\contrib;..\third_party\uriparser-0.7.5\include"
+				AdditionalIncludeDirectories="..\third_party\expat.win32;..\third_party\boost_1_34_1;..\src;..\third_party\zlib-1.2.3;..\third_party\zlib-1.2.3\contrib;..\third_party\uriparser-0.7.1\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
-				PrecompiledHeaderThrough=""
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="stdafx.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
@@ -164,19 +164,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\kml\engine\feature_view.cc"
-				>
-			</File>
-			<File
 				RelativePath="..\src\kml\engine\feature_visitor.cc"
 				>
 			</File>
 			<File
 				RelativePath="..\src\kml\engine\find.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\engine\find_xml_namespaces.cc"
 				>
 			</File>
 			<File
@@ -248,10 +240,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\src\kml\engine\style_inliner.cc"
-				>
-			</File>
-			<File
 				RelativePath="..\src\kml\engine\style_merger.cc"
 				>
 			</File>
@@ -260,15 +248,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\kml\engine\style_splitter.cc"
-				>
-			</File>
-			<File
 				RelativePath="..\src\kml\engine\update.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\engine\update_processor.cc"
 				>
 			</File>
 		</Filter>
@@ -286,10 +266,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\kml\engine\engine_constants.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\kml\engine\engine_types.h"
 				>
 			</File>
@@ -302,19 +278,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\kml\engine\feature_view.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\kml\engine\feature_visitor.h"
 				>
 			</File>
 			<File
 				RelativePath="..\src\kml\engine\find.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\engine\find_xml_namespaces.h"
 				>
 			</File>
 			<File
@@ -334,10 +302,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\kml\engine\id_mapper_internal.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\kml\engine\kml_cache.h"
 				>
 			</File>
@@ -351,10 +315,6 @@
 			</File>
 			<File
 				RelativePath="..\src\kml\engine\kml_uri.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\engine\kml_uri_internal.h"
 				>
 			</File>
 			<File
@@ -402,14 +362,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\kml\engine\style_inliner.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\engine\style_inliner_internal.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\kml\engine\style_merger.h"
 				>
 			</File>
@@ -418,19 +370,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\kml\engine\style_splitter.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\engine\style_splitter_internal.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\kml\engine\update.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\kml\engine\update_processor.h"
 				>
 			</File>
 		</Filter>

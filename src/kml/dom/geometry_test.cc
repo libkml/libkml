@@ -32,7 +32,6 @@
 #include "kml/dom/kml_factory.h"
 #include "kml/dom/kml_ptr.h"
 #include "kml/dom/kml_funcs.h"
-#include "kml/dom/serializer.h"
 #include "gtest/gtest.h"
 
 using kmlbase::Vec3;
@@ -69,7 +68,6 @@ TEST_F(CoordinatesTest, TestAddLatLng) {
   Vec3 vec3 = coordinates_->get_coordinates_array_at(0);
   ASSERT_DOUBLE_EQ(kLat, vec3.get_latitude());
   ASSERT_DOUBLE_EQ(kLon, vec3.get_longitude());
-  ASSERT_FALSE(vec3.has_altitude());
   ASSERT_DOUBLE_EQ(0.0, vec3.get_altitude());
 }
 
@@ -84,7 +82,6 @@ TEST_F(CoordinatesTest, TestAddLatLngAlt) {
   Vec3 vec3 = coordinates_->get_coordinates_array_at(0);
   ASSERT_DOUBLE_EQ(kLat, vec3.get_latitude());
   ASSERT_DOUBLE_EQ(kLon, vec3.get_longitude());
-  ASSERT_TRUE(vec3.has_altitude());
   ASSERT_DOUBLE_EQ(kAlt, vec3.get_altitude());
 }
 
@@ -100,7 +97,6 @@ TEST_F(CoordinatesTest, TestAddVec3) {
   Vec3 vec3_0 = coordinates_->get_coordinates_array_at(0);
   ASSERT_DOUBLE_EQ(kLat, vec3_0.get_latitude());
   ASSERT_DOUBLE_EQ(kLon, vec3_0.get_longitude());
-  ASSERT_TRUE(vec3_0.has_altitude());
   ASSERT_DOUBLE_EQ(kAlt, vec3_0.get_altitude());
 
   coordinates_->add_vec3(Vec3());
@@ -135,19 +131,17 @@ TEST_F(CoordinatesTest, TestAddLatLngAltMany) {
     Vec3 vec3 = coordinates_->get_coordinates_array_at(i);
     ASSERT_DOUBLE_EQ(static_cast<double>(i % 90), vec3.get_latitude());
     ASSERT_DOUBLE_EQ(static_cast<double>(i % 180), vec3.get_longitude());
-    ASSERT_TRUE(vec3.has_altitude());
     ASSERT_DOUBLE_EQ(static_cast<double>(i), vec3.get_altitude());
   }
 }
 
-TEST_F(CoordinatesTest, TestParseVec3WithAltitude) {
+TEST_F(CoordinatesTest, TestParseVec3) {
   const char* basic_3d_point = "1.123,-2.789,3000.5919";
   char *endp;
   Vec3 vec;
   ASSERT_TRUE(Coordinates::ParseVec3(basic_3d_point, &endp, &vec));
   ASSERT_DOUBLE_EQ(-2.789, vec.get_latitude());
   ASSERT_DOUBLE_EQ(1.123, vec.get_longitude());
-  ASSERT_TRUE(vec.has_altitude());
   ASSERT_DOUBLE_EQ(3000.5919, vec.get_altitude());
   ASSERT_EQ(basic_3d_point + strlen(basic_3d_point), endp);
 
@@ -156,37 +150,28 @@ TEST_F(CoordinatesTest, TestParseVec3WithAltitude) {
   ASSERT_TRUE(Coordinates::ParseVec3(basic_3d_line, &endp, &vec));
   ASSERT_DOUBLE_EQ(38.789, vec.get_latitude());
   ASSERT_DOUBLE_EQ(-122.123, vec.get_longitude());
-  ASSERT_TRUE(vec.has_altitude());
   ASSERT_DOUBLE_EQ(1050.0987, vec.get_altitude());
   ASSERT_TRUE(Coordinates::ParseVec3(endp, &endp, &vec));
   ASSERT_DOUBLE_EQ(39.789, vec.get_latitude());
   ASSERT_DOUBLE_EQ(-122.123, vec.get_longitude());
-  ASSERT_TRUE(vec.has_altitude());
   ASSERT_DOUBLE_EQ(1050.098, vec.get_altitude());
-}
 
-TEST_F(CoordinatesTest, TestParseVec3NoAltitude) {
   const char* basic_2d_point = "10.10,-20.20";
-  char *endp;
-  Vec3 vec;
   ASSERT_TRUE(Coordinates::ParseVec3(basic_2d_point, &endp, &vec));
   ASSERT_DOUBLE_EQ(-20.20, vec.get_latitude());
   ASSERT_DOUBLE_EQ(10.10, vec.get_longitude());
-  ASSERT_FALSE(vec.has_altitude());
   ASSERT_DOUBLE_EQ(0.0, vec.get_altitude());
 
   const char* point2d_with_1space = "15.10, -24.20";
   ASSERT_TRUE(Coordinates::ParseVec3(point2d_with_1space, &endp, &vec));
   ASSERT_DOUBLE_EQ(-24.20, vec.get_latitude());
   ASSERT_DOUBLE_EQ(15.10, vec.get_longitude());
-  ASSERT_FALSE(vec.has_altitude());
   ASSERT_DOUBLE_EQ(0.0, vec.get_altitude());
 
   const char* point2d_with_2spaces = "15.11 , -24.25";
   ASSERT_TRUE(Coordinates::ParseVec3(point2d_with_2spaces, &endp, &vec));
   ASSERT_DOUBLE_EQ(-24.25, vec.get_latitude());
   ASSERT_DOUBLE_EQ(15.11, vec.get_longitude());
-  ASSERT_FALSE(vec.has_altitude());
   ASSERT_DOUBLE_EQ(0.0, vec.get_altitude());
 
   const char* basic_2d_line = "122.123,-38.789 "
@@ -194,12 +179,10 @@ TEST_F(CoordinatesTest, TestParseVec3NoAltitude) {
   ASSERT_TRUE(Coordinates::ParseVec3(basic_2d_line, &endp, &vec));
   ASSERT_DOUBLE_EQ(-38.789, vec.get_latitude());
   ASSERT_DOUBLE_EQ(122.123, vec.get_longitude());
-  ASSERT_FALSE(vec.has_altitude());
   ASSERT_DOUBLE_EQ(0.0, vec.get_altitude());
   ASSERT_TRUE(Coordinates::ParseVec3(endp, &endp, &vec));
   ASSERT_DOUBLE_EQ(-39.789, vec.get_latitude());
   ASSERT_DOUBLE_EQ(122.123, vec.get_longitude());
-  ASSERT_FALSE(vec.has_altitude());
   ASSERT_DOUBLE_EQ(0.0, vec.get_altitude());
 
   // How our own serializer emits <coordinates>
@@ -214,7 +197,6 @@ TEST_F(CoordinatesTest, TestParseVec3NoAltitude) {
   ASSERT_TRUE(Coordinates::ParseVec3(exponential_2d_pt, &endp, &vec));
   ASSERT_DOUBLE_EQ(0.02, vec.get_latitude());
   ASSERT_DOUBLE_EQ(0.01, vec.get_longitude());
-  ASSERT_FALSE(vec.has_altitude());
   ASSERT_DOUBLE_EQ(0.0, vec.get_altitude());
 
   // Ensure junk data is handled gracefully.
@@ -225,14 +207,12 @@ TEST_F(CoordinatesTest, TestParseVec3NoAltitude) {
   ASSERT_TRUE(Coordinates::ParseVec3(junk_coords2, &endp, &vec));
   ASSERT_DOUBLE_EQ(0.0, vec.get_latitude());
   ASSERT_DOUBLE_EQ(0.0, vec.get_longitude());
-  ASSERT_FALSE(vec.has_altitude());
   ASSERT_DOUBLE_EQ(0.0, vec.get_altitude());
 
   const char* junk_coords3 = "bar,0";  // Will parse successfully.
   ASSERT_TRUE(Coordinates::ParseVec3(junk_coords3, &endp, &vec));
   ASSERT_DOUBLE_EQ(0.0, vec.get_latitude());
   ASSERT_DOUBLE_EQ(0.0, vec.get_longitude());
-  ASSERT_FALSE(vec.has_altitude());
   ASSERT_DOUBLE_EQ(0.0, vec.get_altitude());
 
   const char* junk_coords4 = "\n";  // Will fail parsing.
@@ -246,7 +226,6 @@ TEST_F(CoordinatesTest, TestParsePoint) {
   Vec3 vec = coordinates_->get_coordinates_array_at(0);
   ASSERT_DOUBLE_EQ(-2.2, vec.get_latitude());
   ASSERT_DOUBLE_EQ(1.1, vec.get_longitude());
-  ASSERT_TRUE(vec.has_altitude());
   ASSERT_DOUBLE_EQ(3.3, vec.get_altitude());
 }
 
@@ -258,7 +237,6 @@ TEST_F(CoordinatesTest, TestParseLine) {
                    coordinates_->get_coordinates_array_at(0).get_latitude());
   ASSERT_DOUBLE_EQ(1.1,
                    coordinates_->get_coordinates_array_at(0).get_longitude());
-  ASSERT_TRUE(coordinates_->get_coordinates_array_at(0).has_altitude());
   ASSERT_DOUBLE_EQ(3.3,
                    coordinates_->get_coordinates_array_at(0).get_altitude());
 }
@@ -273,138 +251,6 @@ TEST_F(CoordinatesTest, TestParseBadSeparator) {
                    coordinates_->get_coordinates_array_at(0).get_longitude());
   ASSERT_DOUBLE_EQ(0.0,
                    coordinates_->get_coordinates_array_at(0).get_altitude());
-}
-
-TEST_F(CoordinatesTest, TestClear) {
-  // Clearing nothing results in nothing.
-  coordinates_->Clear();
-  ASSERT_EQ(static_cast<size_t>(0), coordinates_->get_coordinates_array_size());
-  // Clearing one thing results in nothing.
-  coordinates_->add_latlng(1,2);
-  ASSERT_EQ(static_cast<size_t>(1), coordinates_->get_coordinates_array_size());
-  coordinates_->Clear();
-  ASSERT_EQ(static_cast<size_t>(0), coordinates_->get_coordinates_array_size());
-  // Clearing many things results in nothing.
-  const size_t kCount(1001);
-  for (size_t i = 0; i < kCount; ++i) {
-    coordinates_->add_latlngalt(i,i,i);
-  }
-  ASSERT_EQ(kCount, coordinates_->get_coordinates_array_size());
-  coordinates_->Clear();
-  ASSERT_EQ(static_cast<size_t>(0), coordinates_->get_coordinates_array_size());
-}
-
-// This typedef is a convenience for use with the CoordinatesSerializerStub.
-typedef std::vector<kmlbase::Vec3> Vec3Vector;
-
-// This class provides a mock Serializer specifically designed to capture
-// the output of the Coordinates::Serialize() method.  Serialization of
-// <coordinates> follows a pattern no other KML element follows (it's a
-// simple element as far as XML is concerned, but the content does follow a
-// structure with its repeated coordinates tuples.
-class MockCoordinatesSerializer : public Serializer {
- public:
-  // The MockCoordinatesSerializer appends each Vec3 emitted by the
-  // coordinates serialize method.  It is up to the caller to ensure that the
-  // vector is in the desired state before using this class (empty, for
-  // example).
-  MockCoordinatesSerializer(Vec3Vector* vec3_vector)
-    : vec3_vector_(vec3_vector),
-      element_count_(0) {
-  }
-  // Each tuple in the <coordinates> content is emitted as a kmlbase::Vec3.
-  virtual void SaveVec3(const kmlbase::Vec3& vec3) {
-    vec3_vector_->push_back(vec3);
-  }
-  // This is called once before the Vec3's are emitted.
-  virtual void BeginElementArray(int type_id, size_t element_count) {
-    element_count_ += static_cast<int>(element_count);
-  }
-  // This is called once after all Vec3's are emitted.
-  virtual void EndElementArray(int type_id) {}
-  int get_element_count() const {
-    return element_count_;
-  }
- private:
-  Vec3Vector* vec3_vector_;
-  int element_count_;
-};
-
-// Test serialization of <coordinates/>
-TEST_F(CoordinatesTest, TestSerializeNone) {
-  Vec3Vector vec3_vector;
-  MockCoordinatesSerializer mock(&vec3_vector);
-  // This calls Coordinates::Serialize().
-  mock.SaveElement(coordinates_);
-  ASSERT_TRUE(vec3_vector.empty());
-  ASSERT_EQ(0, mock.get_element_count());
-}
-
-// Test serialization of <coordinates>1.1,2.2,3.3</coordinates>.
-TEST_F(CoordinatesTest, TestSerializeOne) {
-  Vec3 vec3(1.1, 2.2, 3.3);
-  coordinates_->add_vec3(vec3);
-  Vec3Vector vec3_vector;
-  MockCoordinatesSerializer mock(&vec3_vector);
-  // This calls Coordinates::Serialize().
-  mock.SaveElement(coordinates_);
-  ASSERT_EQ(static_cast<size_t>(1), vec3_vector.size());
-  ASSERT_EQ(1, mock.get_element_count());
-  ASSERT_EQ(vec3.get_latitude(), vec3_vector[0].get_latitude());
-  ASSERT_EQ(vec3.get_longitude(), vec3_vector[0].get_longitude());
-  ASSERT_EQ(vec3.has_altitude(), vec3_vector[0].has_altitude());
-  ASSERT_EQ(vec3.get_altitude(), vec3_vector[0].get_altitude());
-}
-
-// Test serialization of:
-// <coordinates>0.2,0.1,0.3 1.2,1.1,1.3 2.2,2.1,2.3 ... </coordinates>/
-TEST_F(CoordinatesTest, TestSerializeMany) {
-  const size_t kNumTuples = 47;
-  const double kLatFrac = 0.1;
-  const double kLngFrac = 0.2;
-  const double kAltFrac = 0.3;
-  for (size_t i = 0; i < kNumTuples; ++i) {
-    coordinates_->add_latlngalt(i + kLatFrac, i + kLngFrac, i + kAltFrac);
-  }
-  Vec3Vector vec3_vector;
-  MockCoordinatesSerializer mock(&vec3_vector);
-  // This calls Coordinates::Serialize().
-  mock.SaveElement(coordinates_);
-  ASSERT_EQ(kNumTuples, vec3_vector.size());
-  ASSERT_EQ(static_cast<int>(kNumTuples), mock.get_element_count());
-  for (size_t i = 0; i < kNumTuples; ++i) {
-    ASSERT_EQ(i + kLatFrac, vec3_vector[i].get_latitude());
-    ASSERT_EQ(i + kLngFrac, vec3_vector[i].get_longitude());
-    ASSERT_TRUE(vec3_vector[i].has_altitude());
-    ASSERT_EQ(i + kAltFrac, vec3_vector[i].get_altitude());
-  }
-}
-
-// Coordinate tuples must be separated by a space. However, the world is
-// imperfect and thus we try to do the right thing with this:
-// <coordinates>1,2,3,4,5,6,7,8,9</coordinates>, where the "right thing" is
-// to take it as three lng,lat,alt tuples. This is Google Earth's behavior.
-TEST_F(CoordinatesTest, TestCommaSeparators) {
-  coordinates_->Parse("1,2,3,4,5,6,7,8,9");
-  ASSERT_EQ(static_cast<size_t>(3), coordinates_->get_coordinates_array_size());
-  ASSERT_DOUBLE_EQ(2.0,
-                   coordinates_->get_coordinates_array_at(0).get_latitude());
-  ASSERT_DOUBLE_EQ(1.0,
-                   coordinates_->get_coordinates_array_at(0).get_longitude());
-  ASSERT_DOUBLE_EQ(3.0,
-                   coordinates_->get_coordinates_array_at(0).get_altitude());
-  ASSERT_DOUBLE_EQ(5.0,
-                   coordinates_->get_coordinates_array_at(1).get_latitude());
-  ASSERT_DOUBLE_EQ(4.0,
-                   coordinates_->get_coordinates_array_at(1).get_longitude());
-  ASSERT_DOUBLE_EQ(6.0,
-                   coordinates_->get_coordinates_array_at(1).get_altitude());
-  ASSERT_DOUBLE_EQ(8.0,
-                   coordinates_->get_coordinates_array_at(2).get_latitude());
-  ASSERT_DOUBLE_EQ(7.0,
-                   coordinates_->get_coordinates_array_at(2).get_longitude());
-  ASSERT_DOUBLE_EQ(9.0,
-                   coordinates_->get_coordinates_array_at(2).get_altitude());
 }
 
 // Test Point.
@@ -496,7 +342,7 @@ TEST_F(PointTest, TestSerialize) {
   point_->set_id("point-id");
   point_->set_extrude(true);
   point_->set_coordinates(KmlFactory::GetFactory()->CreateCoordinates());
-  string expected(
+  std::string expected(
     "<Point id=\"point-id\">"
     "<extrude>1</extrude>"
     "<coordinates/>"
@@ -510,7 +356,7 @@ TEST_F(PointTest, TestSerializeParseAll) {
   point_->set_extrude(false);
   point_->set_gx_altitudemode(GX_ALTITUDEMODE_RELATIVETOSEAFLOOR);
   point_->set_coordinates(KmlFactory::GetFactory()->CreateCoordinates());
-  string expected(
+  std::string expected(
     "<Point id=\"point-id\">"
     "<extrude>0</extrude>"
     "<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>"
@@ -518,14 +364,14 @@ TEST_F(PointTest, TestSerializeParseAll) {
     "</Point>"
   );
   ASSERT_EQ(expected, SerializeRaw(point_));
-  string errors;
+  std::string errors;
   ElementPtr element = Parse(expected, &errors);
   ASSERT_TRUE(element);
   ASSERT_TRUE(errors.empty());
   PointPtr point = AsPoint(element);
   ASSERT_TRUE(point);
   ASSERT_TRUE(point->has_id());
-  ASSERT_EQ(string("point-id"), point->get_id());
+  ASSERT_EQ(std::string("point-id"), point->get_id());
   ASSERT_TRUE(point->has_extrude());
   ASSERT_EQ(0, point->get_extrude());
   ASSERT_FALSE(point->has_altitudemode());
@@ -620,7 +466,7 @@ TEST_F(LineStringTest, TestSerialize) {
   linestring_->set_id("linestring-id");
   linestring_->set_tessellate(true);
   linestring_->set_coordinates(KmlFactory::GetFactory()->CreateCoordinates());
-  string expected(
+  std::string expected(
     "<LineString id=\"linestring-id\">"
     "<tessellate>1</tessellate>"
     "<coordinates/>"
@@ -635,7 +481,7 @@ TEST_F(LineStringTest, TestSerializeParseAll) {
   linestring_->set_tessellate(true);
   linestring_->set_gx_altitudemode(GX_ALTITUDEMODE_RELATIVETOSEAFLOOR);
   linestring_->set_coordinates(KmlFactory::GetFactory()->CreateCoordinates());
-  string expected(
+  std::string expected(
     "<LineString id=\"linestring-id\">"
     "<extrude>1</extrude>"
     "<tessellate>1</tessellate>"
@@ -644,14 +490,14 @@ TEST_F(LineStringTest, TestSerializeParseAll) {
     "</LineString>"
   );
   ASSERT_EQ(expected, SerializeRaw(linestring_));
-  string errors;
+  std::string errors;
   ElementPtr element = Parse(expected, &errors);
   ASSERT_TRUE(element);
   ASSERT_TRUE(errors.empty());
   LineStringPtr linestring = AsLineString(element);
   ASSERT_TRUE(linestring);
   ASSERT_TRUE(linestring->has_id());
-  ASSERT_EQ(string("linestring-id"), linestring->get_id());
+  ASSERT_EQ(std::string("linestring-id"), linestring->get_id());
   ASSERT_TRUE(linestring->has_extrude());
   ASSERT_EQ(1, linestring->get_extrude());
   ASSERT_TRUE(linestring->has_tessellate());
@@ -749,7 +595,7 @@ TEST_F(LinearRingTest, TestSerialize) {
   linearring_->set_id("linearring-id");
   linearring_->set_tessellate(false);
   linearring_->set_coordinates(KmlFactory::GetFactory()->CreateCoordinates());
-  string expected(
+  std::string expected(
     "<LinearRing id=\"linearring-id\">"
     "<tessellate>0</tessellate>"
     "<coordinates/>"
@@ -764,7 +610,7 @@ TEST_F(LinearRingTest, TestSerializeParseAll) {
   linearring_->set_tessellate(false);
   linearring_->set_gx_altitudemode(GX_ALTITUDEMODE_CLAMPTOSEAFLOOR);
   linearring_->set_coordinates(KmlFactory::GetFactory()->CreateCoordinates());
-  string expected(
+  std::string expected(
     "<LinearRing id=\"linearring-id\">"
     "<extrude>0</extrude>"
     "<tessellate>0</tessellate>"
@@ -773,14 +619,14 @@ TEST_F(LinearRingTest, TestSerializeParseAll) {
     "</LinearRing>"
   );
   ASSERT_EQ(expected, SerializeRaw(linearring_));
-  string errors;
+  std::string errors;
   ElementPtr element = Parse(expected, &errors);
   ASSERT_TRUE(element);
   ASSERT_TRUE(errors.empty());
   LinearRingPtr linearring = AsLinearRing(element);
   ASSERT_TRUE(linearring);
   ASSERT_TRUE(linearring->has_id());
-  ASSERT_EQ(string("linearring-id"), linearring->get_id());
+  ASSERT_EQ(std::string("linearring-id"), linearring->get_id());
   ASSERT_TRUE(linearring->has_extrude());
   ASSERT_EQ(0, linearring->get_extrude());
   ASSERT_TRUE(linearring->has_tessellate());
@@ -941,7 +787,7 @@ TEST_F(PolygonTest, TestSerialize) {
   polygon_->set_altitudemode(ALTITUDEMODE_ABSOLUTE);
   polygon_->set_outerboundaryis(
       KmlFactory::GetFactory()->CreateOuterBoundaryIs());
-  string expected(
+  std::string expected(
     "<Polygon id=\"polygon-id\">"
     "<altitudeMode>absolute</altitudeMode>"
     "<outerBoundaryIs/>"
@@ -957,7 +803,7 @@ TEST_F(PolygonTest, TestSerializeParseAll) {
   polygon_->set_gx_altitudemode(GX_ALTITUDEMODE_RELATIVETOSEAFLOOR);
   polygon_->set_outerboundaryis(
       KmlFactory::GetFactory()->CreateOuterBoundaryIs());
-  string expected(
+  std::string expected(
     "<Polygon id=\"polygon-id\">"
     "<extrude>1</extrude>"
     "<tessellate>1</tessellate>"
@@ -966,14 +812,14 @@ TEST_F(PolygonTest, TestSerializeParseAll) {
     "</Polygon>"
   );
   ASSERT_EQ(expected, SerializeRaw(polygon_));
-  string errors;
+  std::string errors;
   ElementPtr element = Parse(expected, &errors);
   ASSERT_TRUE(element);
   ASSERT_TRUE(errors.empty());
   PolygonPtr polygon = AsPolygon(element);
   ASSERT_TRUE(polygon);
   ASSERT_TRUE(polygon->has_id());
-  ASSERT_EQ(string("polygon-id"), polygon->get_id());
+  ASSERT_EQ(std::string("polygon-id"), polygon->get_id());
   ASSERT_TRUE(polygon->has_extrude());
   ASSERT_EQ(1, polygon->get_extrude());
   ASSERT_TRUE(polygon->has_tessellate());
@@ -1009,7 +855,7 @@ TEST_F(MultiGeometryTest, TestDefaults) {
 }
 
 TEST_F(MultiGeometryTest, TestAddGetGeometries) {
-  // Create some Geometries and give them to the MultiGeometry.
+  // Create some Geometryies and give them to the MultiGeometry
   multigeometry_->add_geometry(KmlFactory::GetFactory()->CreatePoint());
   multigeometry_->add_geometry(KmlFactory::GetFactory()->CreateMultiGeometry());
   multigeometry_->add_geometry(KmlFactory::GetFactory()->CreatePolygon());
@@ -1036,7 +882,7 @@ TEST_F(MultiGeometryTest, TestSerialize) {
   multigeometry_->add_geometry(KmlFactory::GetFactory()->CreatePolygon());
   multigeometry_->add_geometry(KmlFactory::GetFactory()->CreateModel());
   multigeometry_->add_geometry(KmlFactory::GetFactory()->CreateMultiGeometry());
-  string expected(
+  std::string expected(
     "<MultiGeometry id=\"multigeometry-id\">"
     "<Point/>"
     "<LineString/>"

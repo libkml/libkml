@@ -30,6 +30,7 @@
 #include "kml/dom/kml_funcs.h"
 #include <cstring>
 #include <stack>
+#include <string>
 #include <sstream>
 #include "kml/base/attributes.h"
 #include "kml/dom/element.h"
@@ -43,13 +44,10 @@ namespace kmldom {
 
 // This function is in the public API for converting the given Element
 // hierarchy to "pretty" xml.
-string SerializePretty(const ElementPtr& root) {
-  if (!root) {
-    return string("");
-  }
+std::string SerializePretty(const ElementPtr& root) {
   XmlSerializer serializer("\n", "  ");
   root->Serialize(serializer);
-  string xml;
+  std::string xml;
   serializer.WriteString(&xml);
   return xml;
 }
@@ -57,13 +55,10 @@ string SerializePretty(const ElementPtr& root) {
 // This function is in the public API for converting the given Element
 // hierarchy to xml with no additional whitespace for newlines or
 // indentation.
-string SerializeRaw(const ElementPtr& root) {
-  if (!root) {
-    return string("");
-  }
+std::string SerializeRaw(const ElementPtr& root) {
   XmlSerializer serializer("", "");
   root->Serialize(serializer);
-  string xml;
+  std::string xml;
   serializer.WriteString(&xml);
   return xml;
 }
@@ -77,9 +72,9 @@ XmlSerializer::XmlSerializer(const char* newline, const char* indent)
 
 // This emits the begin tag of the given element: "<Placemark id="foo">.
 void XmlSerializer::BeginById(int type_id, const Attributes& attributes) {
-  const string& tag_name = xsd_.ElementName(type_id);
+  const std::string& tag_name = xsd_.ElementName(type_id);
   Indent();
-  string attrs;
+  std::string attrs;
   attributes.Serialize(&attrs);
   xml_.push_back("<" + tag_name + attrs + ">" + newline_);
   tag_stack_.push(tag_name);
@@ -89,18 +84,18 @@ void XmlSerializer::BeginById(int type_id, const Attributes& attributes) {
 // If there were no child elements nor any character data the begin tag
 // is replaced with a nil tag: "<Placemark>" -> "<Placemark/>".
 void XmlSerializer::End() {
-  string tag = tag_stack_.top();
+  std::string tag = tag_stack_.top();
   tag_stack_.pop();
-  string& last_xml = xml_[xml_.size()-1];
+  std::string& last_xml = xml_[xml_.size()-1];
   // Is the most recent item pushed out our begin tag?
-  string::size_type tag_size = tag.size() + 1;  // "<" + tag
+  std::string::size_type tag_size = tag.size() + 1;  // "<" + tag
   // If there were attributes this counts on a space after the tag,
   // else a ">".
   if ((last_xml.compare(0, tag_size, "<" + tag) == 0) &&
      ((last_xml[tag_size] == '>') || (last_xml[tag_size] == ' '))) {
     // Yes, rewrite it to end with "/>"
     // Chop off the ">" and any newline_ (newline_ is always non-NULL).
-    string::size_type length = last_xml.size() - 1 - strlen(newline_);
+    std::string::size_type length = last_xml.size() - 1 - strlen(newline_);
     // Re-assign with a "/>" + newline.
     last_xml.assign(last_xml.substr(0, length) + "/>" + newline_);
   } else {  // There's content after the begin tag so close as normal.
@@ -110,8 +105,8 @@ void XmlSerializer::End() {
 }
 
 // This emits a field.  All fields reduce to this method.
-void XmlSerializer::SaveStringFieldById(int type_id, string value) {
-  string tagName = Xsd::GetSchema()->ElementName(type_id);
+void XmlSerializer::SaveStringFieldById(int type_id, std::string value) {
+  std::string tagName = Xsd::GetSchema()->ElementName(type_id);
   Indent();
   if (value.empty()) {
     xml_.push_back("<" + tagName + "/>" + newline_);
@@ -123,7 +118,7 @@ void XmlSerializer::SaveStringFieldById(int type_id, string value) {
 
 // This is used to emit raw character data content.  Honor request to emit
 // content unescaped if maybe_quote requests.
-void XmlSerializer::SaveContent(const string& content, bool maybe_quote) {
+void XmlSerializer::SaveContent(const std::string& content, bool maybe_quote) {
   if (maybe_quote) {
     xml_.push_back(MaybeQuoteString(content));
   } else {
@@ -144,7 +139,7 @@ void XmlSerializer::Indent() {
 }
 
 // This emits the state of the serializer to the given string.
-void XmlSerializer::WriteString(string* output) {
+void XmlSerializer::WriteString(std::string* output) {
   if (output) {
     output->clear();
     for (size_t i = 0; i < xml_.size(); ++i) {

@@ -25,10 +25,8 @@
 
 // This file defines the id of each element.
 
-// The element names exactly match the OGC KML 2.2 Standard:
-// http://www.opengeospatial.org/standards/kml
-// See also Google's reference especially for the "gx" elements:
-// http://code.google.com/apis/kml/documentation/kmlreference.html
+// The element names exactly match the KML 2.2 Reference:
+// http://code.google.com/apis/kml/documentation/kml_tags_beta1.html
 // Type_${element_name}
 
 #ifndef KML_DOM_KML22_H__
@@ -206,21 +204,10 @@ typedef enum {
   Type_z,
 
   Type_AtomAuthor,
-  Type_AtomCategory,
-  Type_AtomContent,
-  Type_AtomEntry,
-  Type_AtomFeed,
   Type_AtomLink,
 
   Type_atomEmail,
-  Type_atomId,
-  Type_atomLabel,
   Type_atomName,
-  Type_atomScheme,
-  Type_atomSummary,
-  Type_atomTerm,
-  Type_atomTitle,
-  Type_atomUpdated,
   Type_atomUri,
 
   Type_XalAddressDetails,

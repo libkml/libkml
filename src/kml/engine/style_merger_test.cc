@@ -27,10 +27,9 @@
 
 #include "kml/engine/style_merger.h"
 #include "boost/scoped_ptr.hpp"
-#include "gtest/gtest.h"
 #include "kml/base/net_cache_test_util.h"
+#include "gtest/gtest.h"
 #include "kml/dom.h"
-#include "kml/engine/kml_cache.h"
 #include "kml/engine/kml_file.h"
 
 using kmldom::FeaturePtr;
@@ -50,12 +49,11 @@ class StyleMergerTest : public testing::Test {
   virtual void SetUp() {
     kml_file_net_cache_.reset(new KmlFileNetCache(&test_data_net_fetcher_,
                                                   kKmlNetCacheCacheSize));
-    kml_file_ = KmlFile::CreateFromString("<kml/>");
+    kml_file_ = KmlFile::Create();
     style_merger_normal_.reset(
-        StyleMerger::CreateFromKmlFile(*kml_file_, kmldom::STYLESTATE_NORMAL));
+        new StyleMerger(kml_file_, kmldom::STYLESTATE_NORMAL));
     style_merger_highlight_.reset(
-        StyleMerger::CreateFromKmlFile(*kml_file_,
-                                       kmldom::STYLESTATE_HIGHLIGHT));
+        new StyleMerger(kml_file_, kmldom::STYLESTATE_HIGHLIGHT));
     factory_ = KmlFactory::GetFactory();
     style_ = factory_->CreateStyle();
     stylemap_ = factory_->CreateStyleMap();
@@ -63,12 +61,12 @@ class StyleMergerTest : public testing::Test {
 
   PairPtr CreateStylePair(kmldom::StyleStateEnum style_state,
                           const StyleSelectorPtr& styleselector) const;
-  StylePtr CreateStyleLineStyle(const string& id,
-                                const string& color,
+  StylePtr CreateStyleLineStyle(const std::string& id,
+                                const std::string& color,
                                 double width) const;
   void VerifyEmptyStyle(const StylePtr& style) const;
-  void VerifyStyleLineStyle(const StylePtr& style, const string& id,
-                            const string& color, double width) const;
+  void VerifyStyleLineStyle(const StylePtr& style, const std::string& id,
+                            const std::string& color, double width) const;
   void VerifyStyleMergersEmpty() const;
   KmlFilePtr kml_file_;
   kmlbase::TestDataNetFetcher test_data_net_fetcher_;
@@ -104,8 +102,8 @@ void StyleMergerTest::VerifyStyleMergersEmpty() const {
 // Verify that the Style has the given id and LineStyle with the given color
 // and width.
 void StyleMergerTest::VerifyStyleLineStyle(const StylePtr& style,
-                                           const string& id,
-                                           const string& color,
+                                           const std::string& id,
+                                           const std::string& color,
                                            double width) const {
   ASSERT_EQ(id, style->get_id());
   ASSERT_TRUE(style->get_linestyle());
@@ -126,8 +124,8 @@ PairPtr StyleMergerTest::CreateStylePair(
 
 // This helper function creates Style with the given id and gives it a
 // LineStyle of the given color and width.
-StylePtr StyleMergerTest::CreateStyleLineStyle(const string& id,
-                                               const string& color,
+StylePtr StyleMergerTest::CreateStyleLineStyle(const std::string& id,
+                                               const std::string& color,
                                                double width) const {
   StylePtr style = factory_->CreateStyle();
   style->set_id(id);
@@ -141,26 +139,12 @@ StylePtr StyleMergerTest::CreateStyleLineStyle(const string& id,
 // Verify a freshly constructed StyleMerger's GetResolvedStyle() returns an
 // empty Style.
 TEST_F(StyleMergerTest, TestConstructor) {
-  // Test style_merger_normal_, style_merger_highlight_ created in SetUp()
-  // which uses CreateFromKmlFile().
-  VerifyStyleMergersEmpty();
-  // Test use of the StyleMerge ctor.
-  style_merger_normal_.reset(
-      new StyleMerger(kml_file_->get_shared_style_map(),
-                      kml_file_->get_kml_cache(),
-                      kml_file_->get_url(),
-                      kmldom::STYLESTATE_NORMAL));
-  style_merger_highlight_.reset(
-      new StyleMerger(kml_file_->get_shared_style_map(),
-                      kml_file_->get_kml_cache(),
-                      kml_file_->get_url(),
-                      kmldom::STYLESTATE_HIGHLIGHT));
   VerifyStyleMergersEmpty();
 }
 
 // Verify the MergeStyle() method on NULL, empty and bad arguments.
 TEST_F(StyleMergerTest, TestMergeStyleNullEmptyBad) {
-  string empty_styleurl;
+  std::string empty_styleurl;
 
   // Verify that an empty styleurl and NULL StyleSelector behaves fine.
   style_merger_normal_->MergeStyle(empty_styleurl, NULL);
@@ -172,13 +156,13 @@ TEST_F(StyleMergerTest, TestMergeStyleNullEmptyBad) {
   VerifyStyleMergersEmpty();
 
   // Verify that MergeStyle() is well behaved with a garbage styleUrl.
-  string garbage("not at all a URL");
+  std::string garbage("not at all a URL");
   style_merger_normal_->MergeStyle(empty_styleurl, NULL);
   VerifyStyleMergersEmpty();
 
   // Verify that MergeStyle() is well behaved with a validly formed styleurl
   // for an object that does not exist.
-  string valid_fragment("#no-such-object");
+  std::string valid_fragment("#no-such-object");
   style_merger_normal_->MergeStyle(valid_fragment, NULL);
   VerifyStyleMergersEmpty();
 }
@@ -280,11 +264,11 @@ TEST_F(StyleMergerTest, TestMergeStyleMapEmptyStyleMap) {
 // Verify basic usage of the MergeStyleMap() method with a simple StyleMap.
 TEST_F(StyleMergerTest, TestMergeStyleMapBasic) {
   // Create a StyleMap with different values for normal and highlight LineStyle.
-  const string kNormalId("normal-id");           
-  const string kNormalColor("1f331122");         
+  const std::string kNormalId("normal-id");           
+  const std::string kNormalColor("1f331122");         
   const double kNormalWidth(2.3);
-  const string kHighlightId("highlight-id");
-  const string kHighlightColor("7f112233");
+  const std::string kHighlightId("highlight-id");
+  const std::string kHighlightColor("7f112233");
   const double kHighlightWidth(4.4);
   stylemap_->add_pair(
       CreateStylePair(kmldom::STYLESTATE_NORMAL,
@@ -320,43 +304,6 @@ TEST_F(StyleMergerTest, TestMergeStyleSelector) {
   style_merger_normal_->MergeStyleSelector(stylemap_);
   style_merger_highlight_->MergeStyleSelector(stylemap_);
   VerifyStyleMergersEmpty();
-}
-
-// Verify the nesting depth detection.
-TEST_F(StyleMergerTest, TestNestingDepthDetection) {
-  SharedStyleMap shared_style_map;
-  // <Style><LineStyle>...
-  const string kStyleId("style0");
-  style_->set_linestyle(factory_->CreateLineStyle());
-  shared_style_map[kStyleId] = style_;
-  // <StyleMap><Pair><key>normal><Style><IconStyle>...
-  const string kStyleMapId("stylemap0");
-  PairPtr pair = factory_->CreatePair();
-  pair->set_key(kmldom::STYLESTATE_NORMAL);
-  StylePtr style = factory_->CreateStyle();
-  style->set_iconstyle(factory_->CreateIconStyle());
-  pair->set_styleselector(style);
-  stylemap_->add_pair(pair);
-  shared_style_map[kStyleMapId] = stylemap_;
-  style_merger_normal_.reset(new StyleMerger(shared_style_map, NULL, "",
-                                             kmldom::STYLESTATE_NORMAL,
-                                             1));
-  ASSERT_EQ(1, style_merger_normal_->get_nesting_depth());
-  // Resolve a styleUrl and the count decrements.
-  style_merger_normal_->MergeStyleUrl(string("#") + kStyleId);
-  ASSERT_EQ(0, style_merger_normal_->get_nesting_depth());
-  // The resolved style is the one with a <LineStyle>
-  StylePtr resolved_style = style_merger_normal_->GetResolvedStyle();
-  ASSERT_TRUE(resolved_style);
-  ASSERT_TRUE(resolved_style->has_linestyle());
-  ASSERT_FALSE(resolved_style->has_iconstyle());
-  // Now try to resolve against another styleUrl to another StyleSelector.
-  style_merger_normal_->MergeStyleUrl(string("#") + kStyleMapId);
-  ASSERT_EQ(-1, style_merger_normal_->get_nesting_depth());
-  // Verify that no further merging happened.
-  ASSERT_TRUE(resolved_style);
-  ASSERT_TRUE(resolved_style->has_linestyle());
-  ASSERT_FALSE(resolved_style->has_iconstyle());
 }
 
 }  // end namespace kmlengine

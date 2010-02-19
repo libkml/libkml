@@ -1,9 +1,9 @@
 // Copyright 2008, Google Inc. All rights reserved.
 //
-// Redistribution and use in source and binary forms, with or without
+// Redistribution and use in source and binary forms, with or without 
 // modification, are permitted provided that the following conditions are met:
 //
-//  1. Redistributions of source code must retain the above copyright notice,
+//  1. Redistributions of source code must retain the above copyright notice, 
 //     this list of conditions and the following disclaimer.
 //  2. Redistributions in binary form must reproduce the above copyright notice,
 //     this list of conditions and the following disclaimer in the documentation
@@ -13,14 +13,14 @@
 //     specific prior written permission.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
-// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
 // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
 // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
 // PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
 // OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // This file contains the implementations of the Element and Field classes.
@@ -38,8 +38,7 @@ using kmlbase::XmlElement;
 
 namespace kmldom {
 
-Element::Element()
- : type_id_(Type_Unknown) {
+Element::Element() {
 }
 
 Element::Element(KmlDomType type_id)
@@ -57,7 +56,7 @@ void Element::AddElement(const ElementPtr& element) {
 
 // Anything that reaches this level of the hierarchy is an unknown (non-KML)
 // element found during parse.
-void Element::AddUnknownElement(const string& s) {
+void Element::AddUnknownElement(const std::string& s) {
   unknown_elements_array_.push_back(s);
 }
 
@@ -70,17 +69,10 @@ void Element::SerializeUnknown(Serializer& serializer) const {
     unknown_legal_elements_array_[i]->Serialize(serializer);
   }
   // Now serialize unknown elements:
-  // Announce to the Serializer that the next N SaveContent() are each
-  // unparsed xml.
-  size_t unknown_size = unknown_elements_array_.size();
-  if (unknown_size > 0) {
-    serializer.BeginElementArray(Type_Unknown, unknown_size);
-    for (size_t i = 0; i < unknown_size; ++i) {
-      serializer.Indent();
-      // This is raw XML do not try to CDATA escape it.
-      serializer.SaveContent(unknown_elements_array_[i], false);
-    }
-    serializer.EndElementArray(Type_Unknown);
+  for (size_t i = 0; i < unknown_elements_array_.size(); ++i) {
+    serializer.Indent();
+    // This is raw XML do not try to CDATA escape it.
+    serializer.SaveContent(unknown_elements_array_[i], false);
   }
 }
 
@@ -98,7 +90,7 @@ void Element::AddUnknownAttributes(Attributes* attributes) {
       }
     }
     // Split out xmlns= itself.
-    string xmlns;
+    std::string xmlns;
     if (attributes->CutValue("xmlns", &xmlns)) {
       if (!xmlns_.get()) {
         xmlns_.reset(new Attributes);
@@ -131,8 +123,8 @@ void Element::SerializeAttributes(Attributes* attributes) const {
     if (xmlns_.get()) {
       kmlbase::StringMapIterator iter = xmlns_->CreateIterator();
       for (; !iter.AtEnd(); iter.Advance()) {
-        string key = iter.Data().first == "xmlns" ? iter.Data().first :
-                          string("xmlns:") + iter.Data().first;
+        std::string key = iter.Data().first == "xmlns" ? iter.Data().first :
+                          std::string("xmlns:") + iter.Data().first;
         attributes->SetValue(key, iter.Data().second);
       }
     }
@@ -143,10 +135,23 @@ ElementPtr Element::GetParent() const {
   return AsElement(const_cast<XmlElement*>(XmlElement::GetParent()));
 }
 
-void Element::MergeXmlns(const Attributes& xmlns) {
+// The default namespace for an element is the xmlns attribute.
+void Element::set_default_xmlns(const std::string& xmlns) {
   if (!xmlns_.get()) {
     xmlns_.reset(new Attributes);
   }
+  xmlns_->SetValue("xmlns", xmlns);
+}
+
+const std::string Element::get_default_xmlns() const {
+  std::string default_xmlns;
+  if (xmlns_.get()) {
+    xmlns_->GetValue("xmlns", &default_xmlns);
+  }
+  return default_xmlns;
+}
+
+void Element::MergeXmlns(const Attributes& xmlns) {
   xmlns_->MergeAttributes(xmlns);
 }
 
@@ -161,10 +166,6 @@ ElementSerializer::ElementSerializer(const Element& element,
 ElementSerializer::~ElementSerializer() {
   element_.SerializeUnknown(serializer_);
   serializer_.End();
-}
-
-void Element::Accept(Visitor* visitor) {
-  visitor->VisitElement(ElementPtr(this));
 }
 
 Field::Field(KmlDomType type_id)
@@ -214,7 +215,7 @@ bool Field::SetEnum(int* enum_val) {
   return ret;
 }
 
-bool Field::SetString(string* val) {
+bool Field::SetString(std::string* val) {
   bool ret = false;
   if (val) {
     *val = get_char_data();

@@ -28,7 +28,6 @@
 
 #include "kml/engine/style_merger.h"
 #include "kml/dom.h"
-#include "kml/engine/engine_constants.h"
 #include "kml/engine/kml_cache.h"
 #include "kml/engine/kml_file.h"
 #include "kml/engine/kml_uri.h"
@@ -44,48 +43,15 @@ using kmldom::StyleStateEnum;
 
 namespace kmlengine {
 
-// TODO: verify unsigned int to int init of nesting_depth_ ok on MSVC
-StyleMerger::StyleMerger(const SharedStyleMap& shared_style_map,
-                         KmlCache* kml_cache,
-                         const string& base_url,
+StyleMerger::StyleMerger(const KmlFilePtr& kml_file,
                          StyleStateEnum style_state)
-    : shared_style_map_(shared_style_map),
-      kml_cache_(kml_cache),
-      base_url_(base_url),
-      style_state_(style_state),
-      resolved_style_(KmlFactory::GetFactory()->CreateStyle()),
-      nesting_depth_(kDefaultMaxNestedStyleUrls) {
+    : kml_file_(kml_file), style_state_(style_state) {
+  resolved_style_ = KmlFactory::GetFactory()->CreateStyle();
 }
 
-// TODO: verify unsigned int to int init of nesting_depth_ ok on MSVC
-StyleMerger::StyleMerger(const SharedStyleMap& shared_style_map,
-                         KmlCache* kml_cache,
-                         const string& base_url,
-                         StyleStateEnum style_state,
-                         unsigned int nesting_depth)
-    : shared_style_map_(shared_style_map),
-      kml_cache_(kml_cache),
-      base_url_(base_url),
-      style_state_(style_state),
-      resolved_style_(KmlFactory::GetFactory()->CreateStyle()),
-      nesting_depth_(nesting_depth) {
-}
-
-// static
-StyleMerger* StyleMerger::CreateFromKmlFile(
-    const KmlFile& kml_file, kmldom::StyleStateEnum style_state) {
-  return new StyleMerger(kml_file.get_shared_style_map(),
-                         kml_file.get_kml_cache(),
-                         kml_file.get_url(),
-                         style_state);
-}
-
-void StyleMerger::MergeStyleUrl(const string& styleurl) {
-  if (--nesting_depth_ < 0) {
-    return;
-  }
-  string path;
-  string style_id;  // fragment
+void StyleMerger::MergeStyleUrl(const std::string& styleurl) {
+  std::string path;
+  std::string style_id;  // fragment
   if (styleurl.empty() ||
       !SplitUri(styleurl, NULL, NULL, NULL, &path, NULL, &style_id) ||
       style_id.empty()) {
@@ -93,22 +59,21 @@ void StyleMerger::MergeStyleUrl(const string& styleurl) {
   }
   // If there's no path this is a StyleSelector within this file.
   if (path.empty()) {
-    SharedStyleMap::const_iterator found = shared_style_map_.find(style_id);
-    if (found != shared_style_map_.end()) {
-      MergeStyleSelector(found->second);
-    }
+    MergeStyleSelector(kml_file_->GetSharedStyleById(style_id));
     return;
   }
 
   // No KmlCache provided for this KmlFile? Just return.
-  if (!kml_cache_) {
+  if (!kml_file_->get_kml_cache()) {
     return;
   }
 
   // This fetches the given style KML from/into the KmlCache.
   // Note that KmlCache::FetchKml() understands any KML URL including those to
   // and into a KMZ (style.kmz#styld_id, style.kmz/style.kml#style_id).
-  const KmlFilePtr kml_file = kml_cache_->FetchKmlRelative(base_url_, styleurl);
+  const KmlFilePtr kml_file =
+      kml_file_->get_kml_cache()->FetchKmlRelative(kml_file_->get_url(),
+                                                   styleurl);
   if (!kml_file) {
     return;  // Fetch (and parse) failures are quietly ignored.
   }
@@ -124,7 +89,7 @@ void StyleMerger::MergeStyleUrl(const string& styleurl) {
 }
 
 // Both Feature and Pair have a styleUrl and/or StyleSelector.
-void StyleMerger::MergeStyle(const string& styleurl,
+void StyleMerger::MergeStyle(const std::string& styleurl,
                              const StyleSelectorPtr& styleselector) {
   // If there's a styleUrl to a shared style merge that in first.
   MergeStyleUrl(styleurl);

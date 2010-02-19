@@ -49,9 +49,6 @@ BalloonStyle::~BalloonStyle() {
 }
 
 void BalloonStyle::AddElement(const ElementPtr& element) {
-  if (!element) {
-    return;
-  }
   switch (element->Type()) {
     case Type_bgColor:
       set_bgcolor(Color32(element->get_char_data()));
@@ -86,10 +83,6 @@ void BalloonStyle::Serialize(Serializer& serializer) const {
   if (has_displaymode()) {
     serializer.SaveEnum(Type_displayMode, get_displaymode());
   }
-}
-
-void BalloonStyle::Accept(Visitor* visitor) {
-  visitor->VisitBalloonStyle(BalloonStylePtr(this));
 }
 
 }  // end namespace kmldom

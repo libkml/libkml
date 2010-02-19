@@ -27,23 +27,13 @@
 
 namespace kmlbase {
 
+// TODO: how/if to handle http://earth.google.com/kml/2.[12]...
 const XmlNamespace XmlNamespaces[] = {
   { XMLNS_NONE, NULL, NULL },
-  { XMLNS_APP, "app", "http://www.w3.org/2007/app" },
   { XMLNS_ATOM, "atom", "http://www.w3.org/2005/Atom" },
-  { XMLNS_BATCH, "batch", "http://schemas.google.com/gdata/batch" },
-  { XMLNS_DOCS, "docs", "http://schemas.google.com/docs/2007" },
-  { XMLNS_EXIF, "exif", "http://schemas.google.com/photos/exif/2007" },
-  { XMLNS_GD, "gd", "http://schemas.google.com/g/2005" },
-  { XMLNS_GEORSS, "georss", "http://www.georss.org/georss" },
-  { XMLNS_GML, "gml", "http://www.opengis.net/gml" },
-  { XMLNS_GPHOTO, "gphoto", "http://schemas.google.com/photos/2007" },
   { XMLNS_GPX, "gpx", "http://www.topografix.com/GPX/1/0" },
   { XMLNS_GX22, "gx", "http://www.google.com/kml/ext/2.2" },
-  { XMLNS_GS, "gs", "http://schemas.google.com/spreadsheets/2006" },
   { XMLNS_KML22, "kml", "http://www.opengis.net/kml/2.2" },
-  { XMLNS_MEDIA, "media", "http://search.yahoo.com/mrss/" },
-  { XMLNS_OPENSEARCH, "openSearch", "http://a9.com/-/spec/opensearch/1.1/" },
   { XMLNS_XAL, "xal", "urn:oasis:names:tc:ciq:xsdschema:xAL:2.0" },
   { XMLNS_XML, "xml", "http://www.w3.org/XML/1998/namespace" },
   { XMLNS_XSD, "xsd", "http://www.w3.org/2001/XMLSchema" },
@@ -51,11 +41,8 @@ const XmlNamespace XmlNamespaces[] = {
 };
 
 bool FindXmlNamespaceAndPrefix(XmlnsId xmlns_id,
-                               string* prefix,
-                               string* xml_namespace) {
-  if (xmlns_id == XMLNS_NONE) {
-    return false;
-  }
+                               std::string* prefix,
+                               std::string* xml_namespace) {
   const size_t num_namespaces = sizeof(XmlNamespaces)/sizeof(XmlNamespaces[0]);
   for (size_t i = 0; i < num_namespaces; ++i) {
     if (XmlNamespaces[i].xmlns_id_ == xmlns_id) {

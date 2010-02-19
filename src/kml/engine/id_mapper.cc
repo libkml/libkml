@@ -26,11 +26,9 @@
 // This file contains the implementation of the MapIds function.
 
 #include "kml/engine/id_mapper.h"
-#include "kml/engine/id_mapper_internal.h"
 #include "kml/dom/serializer.h"
 #include "kml/engine/engine_types.h"
 
-using kmlbase::StringMap;
 using kmldom::ElementPtr;
 using kmldom::ObjectPtr;
 using kmldom::Serializer;
@@ -42,7 +40,7 @@ namespace kmlengine {
 void IdMapper::SaveElement(const ElementPtr& element) {
   if (ObjectPtr object = AsObject(element)) {
     if (object->has_id()) {
-      const string& id = object->get_id();
+      const std::string& id = object->get_id();
       ObjectIdMap::const_iterator iter = object_id_map_->find(id);
       if (iter != object_id_map_->end()) {
         // Save this as a dupe if a vector was supplied.
@@ -66,42 +64,6 @@ void MapIds(const ElementPtr& root, ObjectIdMap* object_id_map,
     IdMapper id_mapper(object_id_map, dup_id_vector);
     id_mapper.SaveElement(root);
   }
-}
-
-const ElementPtr& ClearIds(const ElementPtr& root) {
-  // Get all objects with an id.
-  ObjectIdMap object_id_map;
-  MapIds(root, &object_id_map, NULL);
-  // Iterate through them all and clear the id.
-  ObjectIdMap::const_iterator iter = object_id_map.begin();
-  for (; iter != object_id_map.end(); ++iter) {
-    iter->second->clear_id();
-  }
-  return root;
-}
-
-int RemapIds(const ObjectIdMap& input_object_id_map, const StringMap& id_map,
-             ObjectIdMap* output_object_id_map) {
-  int clear_count = 0;
-  ObjectIdMap::const_iterator iter = input_object_id_map.begin();
-  for (; iter != input_object_id_map.end(); ++iter) {
-    kmldom::ObjectPtr object = iter->second;
-    if (object->has_id()) {
-      kmlbase::StringMap::const_iterator find = id_map.find(object->get_id());
-      if (find == id_map.end()) {
-        // No mapping so clear the id.
-        object->clear_id();
-        ++clear_count;
-      } else {
-        // Change the id to the given mapping.
-        object->set_id(find->second);
-        if (output_object_id_map) {
-          (*output_object_id_map)[find->second] = object;
-        }
-      }
-    }
-  }
-  return clear_count;
 }
 
 }  // end namespace kmlengine

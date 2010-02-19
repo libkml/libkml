@@ -148,9 +148,6 @@ void Feature::SerializeBeforeStyleSelector(Serializer& serializer) const {
   if (has_address()) {
     serializer.SaveFieldById(Type_address, get_address());
   }
-  if (has_phonenumber()) {
-    serializer.SaveFieldById(Type_phoneNumber, get_phonenumber());
-  }
   if (has_xaladdressdetails()) {
     serializer.SaveElement(get_xaladdressdetails());
   }
@@ -189,28 +186,6 @@ void Feature::Serialize(Serializer& serializer) const {
     serializer.SaveElementGroup(get_styleselector(), Type_StyleSelector);
   }
   Feature::SerializeAfterStyleSelector(serializer);
-}
-
-void Feature::AcceptChildren(VisitorDriver* driver) {
-  Object::AcceptChildren(driver);
-  if (has_snippet()) {
-    driver->Visit(get_snippet());
-  }
-  if (has_abstractview()) {
-    driver->Visit(get_abstractview());
-  }
-  if (has_timeprimitive()) {
-    driver->Visit(get_timeprimitive());
-  }
-  if (has_styleselector()) {
-    driver->Visit(get_styleselector());
-  }
-  if (has_region()) {
-    driver->Visit(get_region());
-  }
-  if (has_extendeddata()) {
-    driver->Visit(get_extendeddata());
-  }
 }
 
 }  // namespace kmldom

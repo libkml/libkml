@@ -25,6 +25,7 @@
 
 // This file implements the internal Xsd class specifically for KML 2.2.
 
+#include <string>
 #include "kml/dom/xsd.h"
 #include "kml/dom/kml22.h"
 #include "kml/dom/kml22.cc"
@@ -46,7 +47,7 @@ Xsd::Xsd() {
   }
 }
 
-int Xsd::ElementId(const string& element_name) const {
+int Xsd::ElementId(std::string element_name) const {
   tag_id_map_t::const_iterator iter = tag_to_id.find(element_name);
   if (iter == tag_to_id.end()) {
     return Type_Unknown;
@@ -58,9 +59,9 @@ static bool is_valid(int id) {
   return id > Type_Unknown && id < Type_Invalid;
 }
 
-string Xsd::ElementName(int id) const {
+std::string Xsd::ElementName(int id) const {
   if (!is_valid(id)) {
-    return string();
+    return std::string();
   }
   // This is the other side of the wart found in KmlHandler::StartElement.
   // TODO: factor this and kKml22 out of Xsd.
@@ -79,7 +80,7 @@ XsdType Xsd::ElementType(int id) const {
   return element.xsd_type_;
 }
 
-int Xsd::EnumId(int type_id, string enum_value) const {
+int Xsd::EnumId(int type_id, std::string enum_value) const {
   const int size = sizeof(kKml22Enums)/sizeof(XsdSimpleTypeEnum);
   for (int i = 0; i < size; ++i) {
     XsdSimpleTypeEnum* simple = kKml22Enums + i;
@@ -89,7 +90,7 @@ int Xsd::EnumId(int type_id, string enum_value) const {
            ++enum_value_item) {
         if (*enum_value_item == enum_value) {
           // enum id is simple offset into enum_value_list;
-          return static_cast<int>(enum_value_item - simple->enum_value_list);
+          return enum_value_item - simple->enum_value_list;
         }
       }
     }
@@ -101,16 +102,13 @@ int Xsd::EnumId(int type_id, string enum_value) const {
   return -1;
 }
 
-string Xsd::EnumValue(int type_id, int enum_id) const {
-  if (enum_id < 0) {
-    return string();
-  }
+std::string Xsd::EnumValue(int type_id, int enum_id) const {
   for (XsdSimpleTypeEnum* simple = kKml22Enums; simple; ++simple) {
     if (simple->type_id == type_id) {
       return simple->enum_value_list[enum_id];
     }
   }
-  return string();
+  return std::string();
 }
 
 

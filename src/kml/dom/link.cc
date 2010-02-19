@@ -44,12 +44,12 @@ BasicLink::~BasicLink() {
 static const char *kCdataOpen = "<![CDATA[";
 
 static bool SetStringInsideCdata(ElementPtr element,
-                                 const string& char_data,
-                                 string* val) {
+                                 const std::string& char_data,
+                                 std::string* val) {
   if (!element) {
     return false;
   }
-  string::size_type offset = strlen(kCdataOpen);
+  std::string::size_type offset = strlen(kCdataOpen);
   if (char_data.compare(0, offset, kCdataOpen, offset) == 0) {
     *val = char_data.substr(offset, char_data.size() - offset - 3);
     return true;
@@ -76,10 +76,6 @@ void BasicLink::Serialize(Serializer& serializer) const {
   if (has_href()) {
     serializer.SaveFieldById(Type_href, get_href());
   }
-}
-
-void BasicLink::Accept(Visitor* visitor) {
-  visitor->VisitBasicLink(BasicLinkPtr(this));
 }
 
 // Construct with defaults as per KML standard.
@@ -163,25 +159,13 @@ Link::Link() {}
 
 Link::~Link() {}
 
-void Link::Accept(Visitor* visitor) {
-  visitor->VisitLink(LinkPtr(this));
-}
-
 Icon::Icon() {}
 
 Icon::~Icon() {}
 
-void Icon::Accept(Visitor* visitor) {
-  visitor->VisitIcon(IconPtr(this));
-}
-
 Url::Url() {}
 
 Url::~Url() {}
-
-void Url::Accept(Visitor* visitor) {
-  visitor->VisitUrl(UrlPtr(this));
-}
 
 IconStyleIcon::IconStyleIcon() {}
 
@@ -190,10 +174,6 @@ IconStyleIcon::~IconStyleIcon() {}
 void IconStyleIcon::Serialize(Serializer& serializer) const {
   ElementSerializer element_serializer(*this, serializer);
   BasicLink::Serialize(serializer);
-}
-
-void IconStyleIcon::Accept(Visitor* visitor) {
-  visitor->VisitIconStyleIcon(IconStyleIconPtr(this));
 }
 
 }  // end namespace kmldom

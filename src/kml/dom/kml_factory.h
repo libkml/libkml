@@ -44,10 +44,6 @@ class KmlFactory {
   // Factory functions to create all KML complex elements.
   Alias* CreateAlias() const;
   AtomAuthor* CreateAtomAuthor() const;
-  AtomCategory* CreateAtomCategory() const;
-  AtomContent* CreateAtomContent() const;
-  AtomEntry* CreateAtomEntry() const;
-  AtomFeed* CreateAtomFeed() const;
   AtomLink* CreateAtomLink() const;
   BalloonStyle* CreateBalloonStyle() const;
   Coordinates* CreateCoordinates() const;

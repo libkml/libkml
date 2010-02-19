@@ -30,14 +30,13 @@
 
 #include <map>
 #include <sstream>
+#include <string>
 #include <vector>
-#include "kml/base/util.h"
 
 namespace kmlbase {
 
-typedef std::map<string, string> StringMap;
-typedef std::map<string, string>::value_type StringPair;
-typedef std::vector<string> StringVector;
+typedef std::map<std::string, std::string> StringMap;
+typedef std::map<std::string, std::string>::value_type StringPair;
 
 // Binary-to-ASCII hex conversion.
 void b2a_hex(uint32_t i, char* out);
@@ -77,18 +76,18 @@ class StringMapIterator {
 // start: "$["
 // end: "]"
 // replaced string: "this is your cooler string"
-string CreateExpandedStrings(const string& in,
+std::string CreateExpandedStrings(const std::string& in,
                                   const StringMap& string_map,
-                                  const string& start,
-                                  const string& end);
+                                  const std::string& start,
+                                  const std::string& end);
 
-// This converts from string to any T of int, bool or double.
+// This converts from std::string to any T of int, bool or double.
 template<typename T>
-void FromString(const string& in, T* out);
+void FromString(const std::string& in, T* out);
 
-// This converts to string from any T of int, bool or double.
+// This converts to std::string from any T of int, bool or double.
 template<typename T>
-inline string ToString(T value) {
+inline std::string ToString(T value) {
   std::stringstream ss;
   ss.precision(15);
   ss << value;
@@ -97,42 +96,8 @@ inline string ToString(T value) {
 
 // Split the input string on the split_string saving each string into the
 // output vector.
-void SplitStringUsing(const string& input, const string& split_string,
-                      std::vector<string>* output);
-
-// This processes the given "-escaped string as specified here:
-//   http://www.gdal.org/ogr/drv_csv.html
-// For example:
-// ["The ""big"" cheese."] -> [The "big" cheese.]
-// ["First point"] -> [First point]
-// ["White Bear Lake, MN, USA"] -> [White Bear Lake, MN, USA]
-void SplitQuotedUsing(const char* begin, size_t nbytes,const char split_char,
-                             std::vector<string>* output);
-void SplitQuotedUsingFromString(const string& input, const char split_char,
-                             std::vector<string>* output);
-
-// Returns true if end appears at the end of str.  Returns false if either of
-// str or end are empty or if end is longer than str.
-bool StringEndsWith(const string& str, const string& end);
-
-// This returns true if the two strings are case-insensitively equal.
-// "foo" == "Foo" == "FOO" == "foo" in this regard.
-bool StringCaseEqual(const string& a, const string& b);
-
-// This converts the string representation of the number to a double.  If the
-// string is not numeric false is returned, else true.  It is safe to pass NULL
-// as the output argument in which case this function becomes a simple "is this
-// a number" check.
-bool StringToDouble(const string& number, double* output);
-
-// This returns true if number starts with [-][.][0123456789].
-bool IsDecimalDoubleString(const string& number);
-
-// This returns the offset to the first non-whitespace character.
-size_t SkipLeadingWhitespace(const char* begin, const char* end);
-
-// This returns the offset to the first non-whitespace character.
-size_t SkipLeadingWhitespaceString(const string& str);
+void SplitStringUsing(const std::string& input, const std::string& split_string,
+                      std::vector<std::string>* output);
 
 }  // end namespace kmlbase
 

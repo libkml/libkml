@@ -26,31 +26,17 @@
 #ifndef KML_BASE_XML_NAMESPACES_H__
 #define KML_BASE_XML_NAMESPACES_H__
 
-#include "kml/base/util.h"
+#include <string>
 
 namespace kmlbase {
 
-// These identify KML-related XML namespaces.  Most are not used by KML or
-// by libkml and are here only as a convenience when parsing other XML
-// langauges that may include KML.  Many are specific to the Google Data APIs
-// as indicated.
+// These are libkml-internal ids for well known related XML namespaces.
 typedef enum {
   XMLNS_NONE,
-  XMLNS_APP,
   XMLNS_ATOM,
-  XMLNS_BATCH,  // Google Data
-  XMLNS_DOCS,  // Google Data
-  XMLNS_EXIF,
-  XMLNS_GD,  // Google Data
-  XMLNS_GEORSS,
-  XMLNS_GML,
-  XMLNS_GPHOTO,  // Google Data
   XMLNS_GPX,
   XMLNS_GX22,
-  XMLNS_GS,  // Google Data
   XMLNS_KML22,
-  XMLNS_MEDIA,
-  XMLNS_OPENSEARCH,
   XMLNS_XAL,
   XMLNS_XML,
   XMLNS_XSD,
@@ -71,8 +57,8 @@ struct XmlNamespace {
 // a small identifier instead of a full namespace string.  Either prefix or
 // xml_namespace pointers can be NULL.  The return value indicates whether
 // the given id is known to libkml.
-bool FindXmlNamespaceAndPrefix(XmlnsId xmlns_id, string* prefix,
-                               string* xml_namespace);
+bool FindXmlNamespaceAndPrefix(XmlnsId xmlns_id, std::string* prefix,
+                               std::string* xml_namespace);
 
 }  // end namespace kmlbase
 

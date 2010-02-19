@@ -46,7 +46,6 @@ using kmlbase::ExpatParser;
 using kmlbase::GroundDistanceFromRangeAndElevation;
 using kmlbase::HeightFromRangeAndElevation;
 using kmlbase::Vec3;
-using kmlconvenience::CreateAnimatedUpdateChangePoint;
 using kmlconvenience::CreatePointLatLon;
 using kmldom::CameraPtr;
 using kmldom::ChangePtr;
@@ -63,8 +62,6 @@ using kmldom::PlacemarkPtr;
 using kmldom::UpdatePtr;
 using kmlengine::KmlFile;
 using kmlengine::KmlFilePtr;
-
-static const double kThreshold = 60.0;  // seconds
 
 // Return a <gx:FlyTo> with <Camera> as specified by the lat, lon and heading
 // and with a range scaled by speed.  The duration is used as the <gx:duration>
@@ -105,6 +102,31 @@ static GxFlyToPtr CreateGxFlyTo(double lat, double lon, double heading,
   return flyto;
 }
 
+static GxAnimatedUpdatePtr CreateAnimatedUpdate(const std::string& target_id,
+                                                double lat, double lon,
+                                                double duration) {
+  KmlFactory* kml_factory = KmlFactory::GetFactory();
+  PlacemarkPtr placemark = kml_factory->CreatePlacemark();
+  placemark->set_targetid(target_id);
+  placemark->set_geometry(CreatePointLatLon(lat, lon));
+  ChangePtr change = kml_factory->CreateChange();
+  change->add_object(placemark);
+  UpdatePtr update = kml_factory->CreateUpdate();
+  update->add_updateoperation(change);
+  update->set_targethref("");
+  GxAnimatedUpdatePtr animated_update = kml_factory->CreateGxAnimatedUpdate();
+  animated_update->set_update(update);
+  animated_update->set_gx_duration(duration);
+  return animated_update;
+}
+
+// TODO: move to convenience
+static GxWaitPtr CreateWait(double duration) {
+  GxWaitPtr wait = KmlFactory::GetFactory()->CreateGxWait();
+  wait->set_gx_duration(duration);
+  return wait;
+}
+
 // This specialization of the GpxTrkPtHandler converts each GPX <trkpt> to
 // a KML <gx:AnimatedUpdate> + <gx:FlyTo>.
 class TourTrkPtHandler : public kmlconvenience::GpxTrkPtHandler {
@@ -112,15 +134,8 @@ class TourTrkPtHandler : public kmlconvenience::GpxTrkPtHandler {
   TourTrkPtHandler(ContainerPtr container)
     : placemark_id_("moving-placemark"),
       previous_when_(0),
-      container_(container) {
-  }
-
-  void NewTour() {
-    GxTourPtr tour(KmlFactory::GetFactory()->CreateGxTour());
-    tour->set_name("Play me!");
-    playlist_ = KmlFactory::GetFactory()->CreateGxPlaylist();
-    tour->set_gx_playlist(playlist_);
-    container_->add_feature(tour);
+      container_(container),
+      playlist_(KmlFactory::GetFactory()->CreateGxPlaylist()) {
   }
 
   // This is called for each <trkpt>.
@@ -137,7 +152,10 @@ class TourTrkPtHandler : public kmlconvenience::GpxTrkPtHandler {
       placemark->set_geometry(CreatePointLatLon(where.get_latitude(),
                                                 where.get_longitude()));
       container_->add_feature(placemark);
-      NewTour();
+      GxTourPtr tour(KmlFactory::GetFactory()->CreateGxTour());
+      tour->set_name("Play me!");
+      tour->set_gx_playlist(playlist_);
+      container_->add_feature(tour);
     } else {
       // Convert the GPX <trkpt> to a <gx:AnimatedUpdate> + <gx:FlyTo>.
       // Note, it's quite important that the AnimatedUpdate appear _before_
@@ -146,11 +164,10 @@ class TourTrkPtHandler : public kmlconvenience::GpxTrkPtHandler {
       const double duration = when_timet - previous_when_;
       if (duration < 0) {
         std::cerr << "Ignoring point out of time order." << std::endl;
-      } else if (duration > kThreshold) {
-        NewTour();
       } else {
         playlist_->add_gx_tourprimitive(
-            CreateAnimatedUpdateChangePoint(placemark_id_, where, duration));
+            CreateAnimatedUpdate(placemark_id_, where.get_latitude(),
+                                 where.get_longitude(), duration));
         const double heading = AzimuthBetweenPoints(
             previous_where_.get_latitude(), previous_where_.get_longitude(),
             where.get_latitude(), where.get_longitude());
@@ -161,7 +178,7 @@ class TourTrkPtHandler : public kmlconvenience::GpxTrkPtHandler {
             CreateGxFlyTo(where.get_latitude(), where.get_longitude(),
                           heading, duration, speed));
         // Wait 0 to create smooth animated update...
-        playlist_->add_gx_tourprimitive(kmlconvenience::CreateWait(0));
+        playlist_->add_gx_tourprimitive(CreateWait(0));
       }
     }
     previous_when_ = when_timet;
@@ -203,6 +220,8 @@ static bool CreateGpxTour(const char* gpx_pathname, const char* kml_pathname) {
   KmlPtr kml = kml_factory->CreateKml();
   kml->set_feature(document);
   KmlFilePtr kml_file = KmlFile::CreateFromImport(kml);
+  // TODO: get rid of this once CreateFromImport discovers namespaces.
+  kml_file->AddXmlNamespaceById(kmlbase::XMLNS_GX22);
   std::string kml_data;
   kml_file->SerializeToString(&kml_data);
 

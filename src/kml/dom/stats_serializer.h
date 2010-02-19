@@ -31,6 +31,7 @@
 #define KML_DOM_STATS_SERIALIZER_H__
 
 #include "kml/dom/serializer.h"
+#include <string>
 #include "kml/dom/kml_ptr.h"
 
 namespace kmlbase {
@@ -56,10 +57,10 @@ class StatsSerializer : public Serializer {
   virtual void End() {
     ++end_count_;
   }
-  virtual void SaveStringFieldById(int type_id, string value) {
+  virtual void SaveStringFieldById(int type_id, std::string value) {
     ++field_count_;
   }
-  virtual void SaveContent(const string& content, bool maybe_quote) {
+  virtual void SaveContent(const std::string& content, bool maybe_quote) {
     ++content_count_;
   }
   virtual void SaveElement(const ElementPtr& element) {

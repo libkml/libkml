@@ -1,9 +1,9 @@
 // Copyright 2008, Google Inc. All rights reserved.
 //
-// Redistribution and use in source and binary forms, with or without
+// Redistribution and use in source and binary forms, with or without 
 // modification, are permitted provided that the following conditions are met:
 //
-//  1. Redistributions of source code must retain the above copyright notice,
+//  1. Redistributions of source code must retain the above copyright notice, 
 //     this list of conditions and the following disclaimer.
 //  2. Redistributions in binary form must reproduce the above copyright notice,
 //     this list of conditions and the following disclaimer in the documentation
@@ -13,14 +13,14 @@
 //     specific prior written permission.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
-// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
 // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
 // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
 // PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
 // OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // This file contains the implementation of the abstract element Geometry
@@ -30,8 +30,8 @@
 #include "kml/dom/geometry.h"
 #include <ctype.h>
 #include <stdlib.h>
+#include <string>
 #include "kml/base/attributes.h"
-#include "kml/base/xml_namespaces.h"
 #include "kml/dom/element.h"
 #include "kml/dom/kml22.h"
 #include "kml/dom/kml_cast.h"
@@ -43,9 +43,7 @@ using kmlbase::Vec3;
 
 namespace kmldom {
 
-Coordinates::Coordinates() {
-  set_xmlns(kmlbase::XMLNS_KML22);
-}
+Coordinates::Coordinates() {}
 
 Coordinates::~Coordinates() {}
 
@@ -84,14 +82,6 @@ bool Coordinates::ParseVec3(const char* cstr, char** nextp, Vec3* vec) {
   bool done = false;
   char* endp = const_cast<char*>(cstr);
 
-  // Ignore any commas at the start of our scan. This will cause this:
-  // <coordinates>1,2,3,4,5</coordinates> to be treated as:
-  // <coordinates>1,2,3 4,5</coordinates>, which is how Google Earth treats
-  // the misuse of commas as separators.
-  if (*endp == ',') {
-    ++endp;
-  }
-
   // Longitude first.  strtod() eats leading whitespace.
   vec->set(0, strtod(endp, &endp));
   if (endp) {
@@ -116,14 +106,15 @@ bool Coordinates::ParseVec3(const char* cstr, char** nextp, Vec3* vec) {
     while (isspace(*endp)) {  // Eat whitespace between double and comma.
       ++endp;
     }
+    double altitude = 0.0;
     if (*endp == ',') {
-      // Note that this sets altitude only if an altitude is supplied.
-      vec->set(2, strtod(endp+1, &endp));
+      altitude = strtod(endp+1, &endp);
     }
+    vec->set(2, altitude);
   }
   if (nextp) {
     while (isspace(*endp)) {  // Eat the remaining whitespace before return.
-      ++endp;
+      *endp++;
     }
     *nextp = endp;
   }
@@ -132,7 +123,7 @@ bool Coordinates::ParseVec3(const char* cstr, char** nextp, Vec3* vec) {
 
 // The char_data is everything between <coordinates> elements including
 // leading and trailing whitespace.
-void Coordinates::Parse(const string& char_data) {
+void Coordinates::Parse(const std::string& char_data) {
   const char* cstr = char_data.c_str();
   const char* endp = cstr + char_data.size();
   char* next = const_cast<char*>(cstr);
@@ -150,18 +141,12 @@ void Coordinates::AddElement(const ElementPtr& element) {
 }
 
 void Coordinates::Serialize(Serializer& serializer) const {
-  Attributes dummy;
-  serializer.BeginById(Type(), dummy);
-  serializer.BeginElementArray(Type(), coordinates_array_.size());
+  ElementSerializer element_serializer(*this, serializer);
   for (size_t i = 0; i < coordinates_array_.size(); ++i) {
-    serializer.SaveVec3(coordinates_array_[i]);
+    serializer.SaveLonLatAlt(coordinates_array_[i].get_longitude(),
+                             coordinates_array_[i].get_latitude(),
+                             coordinates_array_[i].get_altitude());
   }
-  serializer.EndElementArray(Type_coordinates);
-  serializer.End();
-}
-
-void Coordinates::Accept(Visitor* visitor) {
-  visitor->VisitCoordinates(CoordinatesPtr(this));
 }
 
 Geometry::Geometry() {}
@@ -225,14 +210,6 @@ void CoordinatesGeometryCommon::AddElement(const ElementPtr& element) {
   }
 }
 
-
-void CoordinatesGeometryCommon::AcceptChildren(VisitorDriver* driver) {
-  ExtrudeGeometryCommon::AcceptChildren(driver);
-  if (has_coordinates()) {
-    driver->Visit(get_coordinates());
-  }
-}
-
 Point::Point() {}
 
 Point::~Point() {}
@@ -252,10 +229,6 @@ void Point::Serialize(Serializer& serializer) const {
   if (has_coordinates()) {
     serializer.SaveElement(get_coordinates());
   }
-}
-
-void Point::Accept(Visitor* visitor) {
-  visitor->VisitPoint(PointPtr(this));
 }
 
 LineCommon::LineCommon()
@@ -300,17 +273,9 @@ LineString::LineString() {}
 
 LineString::~LineString() {}
 
-void LineString::Accept(Visitor* visitor) {
-  visitor->VisitLineString(LineStringPtr(this));
-}
-
 LinearRing::LinearRing() {}
 
 LinearRing::~LinearRing() {}
-
-void LinearRing::Accept(Visitor* visitor) {
-  visitor->VisitLinearRing(LinearRingPtr(this));
-}
 
 BoundaryCommon::BoundaryCommon() {}
 
@@ -331,29 +296,13 @@ void BoundaryCommon::Serialize(Serializer& serializer) const {
   }
 }
 
-
-void BoundaryCommon::AcceptChildren(VisitorDriver* driver) {
-  Element::AcceptChildren(driver);
-  if (has_linearring()) {
-    driver->Visit(get_linearring());
-  }
-}
-
 OuterBoundaryIs::OuterBoundaryIs() {}
 
 OuterBoundaryIs::~OuterBoundaryIs() {}
 
-void OuterBoundaryIs::Accept(Visitor* visitor) {
-  visitor->VisitOuterBoundaryIs(OuterBoundaryIsPtr(this));
-}
-
 InnerBoundaryIs::InnerBoundaryIs() {}
 
 InnerBoundaryIs::~InnerBoundaryIs() {}
-
-void InnerBoundaryIs::Accept(Visitor* visitor) {
-  visitor->VisitInnerBoundaryIs(InnerBoundaryIsPtr(this));
-}
 
 Polygon::Polygon()
   : tessellate_(false),
@@ -402,18 +351,6 @@ void Polygon::Serialize(Serializer& serializer) const {
   serializer.SaveElementArray(innerboundaryis_array_);
 }
 
-void Polygon::Accept(Visitor* visitor) {
-  visitor->VisitPolygon(PolygonPtr(this));
-}
-
-void Polygon::AcceptChildren(VisitorDriver* driver) {
-  ExtrudeGeometryCommon::AcceptChildren(driver);
-  if (has_outerboundaryis()) {
-    driver->Visit(get_outerboundaryis());
-  }
-  Element::AcceptRepeated<InnerBoundaryIsPtr>(&innerboundaryis_array_, driver);
-}
-
 MultiGeometry::MultiGeometry() {}
 
 MultiGeometry::~MultiGeometry() {}
@@ -437,15 +374,6 @@ void MultiGeometry::Serialize(Serializer& serializer) const {
   ElementSerializer element_serializer(*this, serializer);
   Geometry::Serialize(serializer);
   serializer.SaveElementGroupArray(geometry_array_, Type_Geometry);
-}
-
-void MultiGeometry::Accept(Visitor* visitor) {
-  visitor->VisitMultiGeometry(MultiGeometryPtr(this));
-}
-
-void MultiGeometry::AcceptChildren(VisitorDriver* driver) {
-  Geometry::AcceptChildren(driver);
-  Element::AcceptRepeated<GeometryPtr>(&geometry_array_, driver);
 }
 
 }  // end namespace kmldom

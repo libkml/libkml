@@ -28,16 +28,17 @@
 #ifndef KML_BASE_NET_CACHE_H__
 #define KML_BASE_NET_CACHE_H__
 
+#include <string>
 #include <map>
-#include "kml/base/util.h"
 #include "boost/intrusive_ptr.hpp"
+#include "kml/base/time_util.h"
 
 namespace kmlbase {
 
 // A CacheItem is derived from Referent and has a CreateFromString:
 // class SomeCacheItem : public Referent {
 //  public:
-//   static SomeCacheItem* CreateFromString(const string& data);
+//   static SomeCacheItem* CreateFromString(const std::string& data);
 // };
 
 // This is the default NetFetcher.  It represents the empty network which
@@ -50,7 +51,7 @@ namespace kmlbase {
 class NetFetcher {
  public:
   virtual ~NetFetcher() {}
-  virtual bool FetchUrl(const string& url, string* data) const {
+  virtual bool FetchUrl(const std::string& url, std::string* data) const {
     return false;
   }
 };
@@ -61,7 +62,7 @@ class NetFetcher {
 // CreateFromString with the signature given above):
 //   class MyCacheItem : public kmlbase::Referent {
 //    public:
-//     static MyCacheItem* CreateFromString(const string& data) {
+//     static MyCacheItem* CreateFromString(const std::string& data) {
 //       MyCacheItem* my_cache_item = new MyCacheItem;
 //       // whatever else your CacheItem does with an input data buffer
 //       return my_cache_item;
@@ -76,7 +77,7 @@ class NetFetcher {
 // Create a NetFetcher class by inheriting from NetFetcher as described above:
 //   class MyNetFetcher : kmlbase::NetFetcher {
 //    public:
-//     virtual bool FetchUrl(const string& url, string* data) const {
+//     virtual bool FetchUrl(const std::string& url, std::string* data) const {
 //       // do however it is you want to fetch the url, save the content to data
 //       // Note that true means that this IS the data for this URL (not
 //       // a 404 page... _your_ code must detect higher level protocol issues).
@@ -92,13 +93,12 @@ class NetFetcher {
 // When the NetCache goes out of scope all cached CacheItems are deleted,
 // however use of boost::intrusive_ptr does permit any code to hold a pointer
 // to an item originally from cache beyond the cache's lifetime.
-// NOTE: This class is NOT thread safe!
 template<class CacheItem>
 class NetCache {
  public:
   typedef boost::intrusive_ptr<CacheItem> CacheItemPtr;
-  typedef std::pair<CacheItemPtr, uint64_t> CacheEntry;
-  typedef std::map<string, CacheEntry> CacheMap;
+  typedef std::pair<CacheItemPtr, double> CacheEntry;
+  typedef std::map<std::string, CacheEntry> CacheMap;
 
   // Construct the NetCache with the given NetFetcher-derived class and
   // with the given limit on number of items to cache.  This size is entirely
@@ -107,7 +107,6 @@ class NetCache {
   // sizes are expected to be in the 10s to 100s of items.
   NetCache(NetFetcher* net_fetcher, size_t max_size)
       : max_size_(max_size),
-        cache_count_(0),
         net_fetcher_(net_fetcher) {}
 
   // This is the main public method in NetCache.  If the NetFetcher FetchUrl
@@ -116,13 +115,13 @@ class NetCache {
   // is saved to the cache.  If the cache has reached its limit as set in
   // the constructor the oldest entry is discarded from the cache.  If the
   // CacheItem for this URL is in the cache it is simply returned.
-  CacheItemPtr Fetch(const string& url) {
+  CacheItemPtr Fetch(const std::string& url) {
     // If an item is cached for this URL return it and we're done.
     if (CacheItemPtr item = LookUp(url)) {
       return item;
     }
     // Not found in cache: go fetch.
-    string data;
+    std::string data;
     // NetFetcher knows only about "get me the data at this URL".
     if (!net_fetcher_->FetchUrl(url, &data)) {
       return NULL;  // Fetch failed, no such URL.
@@ -139,7 +138,7 @@ class NetCache {
   // If nothing is cached for this url then NULL is returned.
   // In typical usage this method is not used by application code, but it is
   // well behaved as described.
-  const CacheItemPtr LookUp(const string& url) const {
+  const CacheItemPtr LookUp(const std::string& url) const {
     typename CacheMap::const_iterator iter = cache_map_.find(url);
     if (iter == cache_map_.end()) {
       return NULL;
@@ -154,7 +153,7 @@ class NetCache {
   // If the cache is at capacity this also first forces the removall
   // of the oldest item in the cache.  Application code should not typically
   // use this directly: use Fetch().
-  bool Save(const string& url, const CacheItemPtr& cache_item) {
+  bool Save(const std::string& url, const CacheItemPtr& cache_item) {
     const CacheItemPtr exists = LookUp(url);
     if (exists) {
       return false;
@@ -162,9 +161,8 @@ class NetCache {
     if (cache_map_.size() == max_size_) {
       RemoveOldest();
     }
-    // It is not expected cache_count_ ever roll over.  See net_cache_test.cc
-    // for some timing tests and results.
-    CacheEntry cache_entry = std::make_pair(cache_item, cache_count_++);
+    CacheEntry cache_entry = std::make_pair(cache_item,
+                                            kmlbase::GetMicroTime());
     cache_map_[url] = cache_entry;
     return true;
   }
@@ -172,7 +170,7 @@ class NetCache {
   // If a CacheItem exists for this url it is deleted and true is returned.
   // If no CacheItem exists for this url false is returned.  Application code
   // should generally have no need to use this directly.
-  bool Delete(const string& url) {
+  bool Delete(const std::string& url) {
     const CacheItemPtr cache_item = LookUp(url);
     if (cache_item) {
       cache_map_.erase(url);
@@ -207,9 +205,8 @@ class NetCache {
   }
 
  private:
-  const size_t max_size_;
+  size_t max_size_;
   CacheMap cache_map_;
-  uint64_t cache_count_;
   const NetFetcher* net_fetcher_;
 };
 

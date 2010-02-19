@@ -26,6 +26,7 @@
 // This file contains the unit tests for the CreateResolvedStyle() function.
 
 #include "kml/engine/style_resolver.h"
+#include <string>
 #include "kml/dom.h"
 #include "kml/base/file.h"
 #include "kml/base/net_cache_test_util.h"
@@ -33,21 +34,13 @@
 #include "kml/engine/kml_cache.h"
 #include "kml/engine/kml_file.h"
 
-// The following define is a convenience for testing inside Google.
-#ifdef GOOGLE_INTERNAL
-#include "kml/base/google_internal_test.h"
-#endif
-
 #ifndef DATADIR
 #error *** DATADIR must be defined! ***
 #endif
 
 using kmldom::ElementPtr;
 using kmldom::FeaturePtr;
-using kmldom::PairPtr;
 using kmldom::StylePtr;
-using kmldom::StyleMapPtr;
-using kmldom::StyleSelectorPtr;
 
 namespace kmlengine {
 
@@ -60,10 +53,10 @@ class StyleResolverTest : public testing::Test {
   }
 
   // This is an internal utility to read a testdata file.
-  bool ReadDataDirFileToString(const string& filename,
-                               string* content) const;
+  bool ReadDataDirFileToString(const std::string& filename,
+                               std::string* content) const;
   // Parse the given KML file into the test fixture's KmlFile.
-  void ParseFromDataDirFile(const string& filename);
+  void ParseFromDataDirFile(const std::string& filename);
   // This returns 0 if element serializes pretty to exactly the contents of
   // the check file.
   int ComparePretty(const ElementPtr& element, const char* check_file) const;
@@ -98,7 +91,7 @@ static const struct {
     "/style/shared-stylemap-pm0-normal-check.kml" },
   { "/style/allstyles.kml", "f0", kmldom::STYLESTATE_NORMAL,
     "/style/allstyles-f0-normal-check.kml" },
-#if 0  // TODO
+#if 0 // TODO
   { "/style/allstyles.kml", "f0", kmldom::STYLESTATE_HIGHLIGHT,
     "/style/allstyles-f0-highlight-check.kml" },
 #endif
@@ -109,42 +102,32 @@ static const struct {
   { "/style/dup-id.kml", "line", kmldom::STYLESTATE_NORMAL,
     "/style/dup-id-normal-check.kml" },
   { "/style/dup-id.kml", "point", kmldom::STYLESTATE_NORMAL,
-    "/style/dup-id-normal-check.kml" },
-  { "/style/nesting.kml", "p0", kmldom::STYLESTATE_NORMAL,
-    "/style/empty-style-check.kml" },
-  { "/style/nesting.kml", "p0", kmldom::STYLESTATE_HIGHLIGHT,
-    "/style/empty-style-check.kml" },
-  { "/style/nesting.kml", "p1", kmldom::STYLESTATE_NORMAL,
-    "/style/empty-style-check.kml" },
-  { "/style/nesting.kml", "p1", kmldom::STYLESTATE_HIGHLIGHT,
-    "/style/empty-style-check.kml" },
-  { "/style/style-with-unknown-elements.kml", "jb", kmldom::STYLESTATE_NORMAL,
-    "/style/style-with-unknown-elements-jb-check.kml" }
+    "/style/dup-id-normal-check.kml" }
 };
 
 // This is a utility function to read a file relative to the testdata directory.
-bool StyleResolverTest::ReadDataDirFileToString(const string& filename,
-                                                string* content) const {
-  return kmlbase::File::ReadFileToString(string(DATADIR) + filename,
+bool StyleResolverTest::ReadDataDirFileToString(const std::string& filename,
+                                                std::string* content) const {
+  return kmlbase::File::ReadFileToString(std::string(DATADIR) + filename,
                                          content);
 }
 
 // This is a utility function to parse the given string of KML data into
 // the test fixture's KmlFile.
-void StyleResolverTest::ParseFromDataDirFile(const string& filename) {
-  string kml_data;
+void StyleResolverTest::ParseFromDataDirFile(const std::string& filename) {
+  std::string kml_data;
   bool status = ReadDataDirFileToString(filename, &kml_data);
   ASSERT_TRUE(status);
   kml_file_ = KmlFile::CreateFromParse(kml_data, NULL);
   ASSERT_TRUE(kml_file_) << filename;
-  ASSERT_TRUE(kml_file_->get_root());
+  ASSERT_TRUE(kml_file_->root());
 }
 
 // This is a utility function to compare the given element to the KML in the
 // given file.  The comparison uses "pretty" XML serialization.
 int StyleResolverTest::ComparePretty(const ElementPtr& element,
                                      const char* check_file) const {
-  string kml_data;
+  std::string kml_data;
   ReadDataDirFileToString(check_file, &kml_data);
   return kml_data.compare(kmldom::SerializePretty(element));
 }
@@ -157,8 +140,7 @@ TEST_F(StyleResolverTest, TestFiles) {
     ParseFromDataDirFile(kTestCases[i].source_file_);
     FeaturePtr feature = kmldom::AsFeature(
         kml_file_->GetObjectById(kTestCases[i].feature_id_));
-    // This is internal to the test.
-    ASSERT_TRUE(feature) << "no such feature " << kTestCases[i].feature_id_;
+    ASSERT_TRUE(feature);  // This is internal to the test.
 
     // This is the function under test.
     StylePtr style = CreateResolvedStyle(feature, kml_file_,
@@ -172,25 +154,24 @@ TEST_F(StyleResolverTest, TestFiles) {
 }
 
 TEST_F(StyleResolverTest, TestBasicCreateNetworkResolvedStyle) {
-  const string kPath("style/weather/point-sarnen.kml");
-  const string kUrl("http://host.com/" + kPath);
+  const std::string kPath("style/weather/point-sarnen.kml");
+  const std::string kUrl("http://host.com/" + kPath);
   KmlFilePtr kml_file = kml_cache_->FetchKmlAbsolute(kUrl);
   ASSERT_TRUE(kml_file);
   ASSERT_EQ(kml_cache_.get(), kml_file->get_kml_cache());
-  const string kFeatureId("SZXX0026");
+  const std::string kFeatureId("SZXX0026");
   const FeaturePtr& feature = kmldom::AsFeature(
       kml_file->GetObjectById(kFeatureId));
   ASSERT_TRUE(feature);
   // Verify the feature has a styleUrl to another KML file.
   ASSERT_TRUE(feature->has_styleurl());
-  const string kStyleUrl("style.kml#i27");
+  const std::string kStyleUrl("style.kml#i27");
   ASSERT_EQ(kStyleUrl, feature->get_styleurl());
   const kmldom::StyleStateEnum style_state = kmldom::STYLESTATE_NORMAL;
   StylePtr style = CreateResolvedStyle(feature, kml_file,
                                               style_state);
   ASSERT_TRUE(style);
-  ASSERT_TRUE(style->has_id());
-  ASSERT_EQ(string("i27"), style->get_id());
+  ASSERT_EQ(std::string("i27"), style->get_id());
   ASSERT_TRUE(style->has_iconstyle());
   ASSERT_TRUE(style->get_iconstyle()->has_icon());
   ASSERT_TRUE(style->get_iconstyle()->get_icon());
@@ -199,11 +180,11 @@ TEST_F(StyleResolverTest, TestBasicCreateNetworkResolvedStyle) {
   ASSERT_TRUE(style->has_balloonstyle());
 
 #if 0  // TODO: proceed to resolve and fetch IconStyle/Icon/href
-  string iconstyle_icon_url;
+  std::string iconstyle_icon_url;
   ASSERT_TRUE(ResolveUri(kml_file->get_url(),
                             style->get_iconstyle()->get_icon()->get_href(),
                             &iconstyle_icon_url));
-  string icon_data;
+  std::string icon_data;
   ASSERT_TRUE(kmz_cache.FetchUrl(iconstyle_icon_url, &icon_data));
   ASSERT_FALSE(icon_data.empty());
 #endif
@@ -315,67 +296,8 @@ TEST_F(StyleResolverTest, TestRemoteFiles) {
     ASSERT_TRUE(style);
 
     // A text comparison is used as that detects issues with unknown elements.
-    ASSERT_FALSE(ComparePretty(style, kRemoteTestCases[i].check_file_))
-      << kRemoteTestCases[i].check_file_;
+    ASSERT_FALSE(ComparePretty(style, kRemoteTestCases[i].check_file_));
   }
-}
-
-// Verify basic typical usage of StyleResolver::CreateResolvedStyleSelector.
-TEST_F(StyleResolverTest, BasicCreateResolvedStyleSelectorTest) {
-  const string kKml(
-    "<kml>"
-      "<Document>"
-        "<Style id=\"style0\">"
-          "<IconStyle/>"
-        "</Style>"
-        "<Style id=\"style1\">"
-          "<LabelStyle/>"
-        "</Style>"
-        "<StyleMap id=\"stylemap0\">"
-          "<Pair>"
-            "<key>normal</key>"
-            "<styleUrl>#style0</styleUrl>"
-          "</Pair>"
-          "<Pair>"
-            "<key>highlight</key>"
-            "<styleUrl>#style1</styleUrl>"
-          "</Pair>"
-          "<Placemark>"
-            "<styleUrl>#stylemap0</styleUrl>"
-          "</Placemark>"
-        "</StyleMap>"
-      "</Document>"
-    "</kml>");
-  kml_file_ = KmlFile::CreateFromString(kKml);
-  ASSERT_TRUE(kml_file_);
-  const SharedStyleMap& shared_styles = kml_file_->get_shared_style_map();
-  ASSERT_EQ(static_cast<size_t>(3), shared_styles.size());
-  StyleSelectorPtr styleselector =
-      StyleResolver::CreateResolvedStyleSelector("#stylemap0", shared_styles);
-  ASSERT_TRUE(styleselector);
-  StyleMapPtr stylemap = AsStyleMap(styleselector);
-  ASSERT_TRUE(stylemap);
-  ASSERT_EQ(static_cast<size_t>(2), stylemap->get_pair_array_size());
-
-  PairPtr pair = stylemap->get_pair_array_at(0);
-  ASSERT_TRUE(pair->has_key());
-  ASSERT_EQ(kmldom::STYLESTATE_NORMAL, pair->get_key());
-  ASSERT_FALSE(pair->has_styleurl());
-  ASSERT_TRUE(pair->has_styleselector());
-  StylePtr style = AsStyle(pair->get_styleselector());
-  ASSERT_TRUE(style);
-  ASSERT_TRUE(style->has_iconstyle());
-  ASSERT_FALSE(style->has_labelstyle());
-
-  pair = stylemap->get_pair_array_at(1);
-  ASSERT_TRUE(pair->has_key());
-  ASSERT_EQ(kmldom::STYLESTATE_HIGHLIGHT, pair->get_key());
-  ASSERT_FALSE(pair->has_styleurl());
-  ASSERT_TRUE(pair->has_styleselector());
-  style = AsStyle(pair->get_styleselector());
-  ASSERT_TRUE(style);
-  ASSERT_FALSE(style->has_iconstyle());
-  ASSERT_TRUE(style->has_labelstyle());
 }
 
 }  // end namespace kmlengine

@@ -36,10 +36,6 @@ using kmlbase::Attributes;
 namespace kmldom {
 
 // <xal:AddressDetails>
-XalAddressDetails::XalAddressDetails() {
-  set_xmlns(kmlbase::XMLNS_XAL);
-}
-
 void XalAddressDetails::AddElement(const ElementPtr& element) {
   if (!element) {
     return;
@@ -63,11 +59,6 @@ void XalAddressDetails::Serialize(Serializer& serializer) const {
 } 
 
 // <xal:AdministrativeArea>
-XalAdministrativeArea::XalAdministrativeArea()
-    : has_administrativeareaname_(false) {
-  set_xmlns(kmlbase::XMLNS_XAL);
-}
-
 void XalAdministrativeArea::AddElement(const ElementPtr& element) {
   if (!element) {
     return;
@@ -103,11 +94,6 @@ void XalAdministrativeArea::Serialize(Serializer& serializer) const {
 }
 
 // <xal:Country>
-XalCountry::XalCountry()
-    : has_countrynamecode_(false) {
-  set_xmlns(kmlbase::XMLNS_XAL);
-}
-
 void XalCountry::AddElement(const ElementPtr& element) {
   if (!element) {
     return;
@@ -137,11 +123,6 @@ void XalCountry::Serialize(Serializer& serializer) const {
 }
 
 // <xal:Locality>
-XalLocality::XalLocality()
-    : has_localityname_(false) {
-  set_xmlns(kmlbase::XMLNS_XAL);
-}
-
 void XalLocality::AddElement(const ElementPtr& element) {
   if (!element) {
     return;
@@ -173,11 +154,6 @@ void XalLocality::Serialize(Serializer& serializer) const {
 }
 
 // <xal:PostalCode>
-XalPostalCode::XalPostalCode()
-    : has_postalcodenumber_(false) {
-  set_xmlns(kmlbase::XMLNS_XAL);
-}
-
 void XalPostalCode::AddElement(const ElementPtr& element) {
   if (!element) {
     return;
@@ -200,11 +176,6 @@ void XalPostalCode::Serialize(Serializer& serializer) const {
 }
 
 // <xal:SubAdministrativeArea>
-XalSubAdministrativeArea::XalSubAdministrativeArea()
-    : has_subadministrativeareaname_(false) {
-  set_xmlns(kmlbase::XMLNS_XAL);
-}
-
 void XalSubAdministrativeArea::AddElement(const ElementPtr& element) {
   if (!element) {
     return;
@@ -234,12 +205,6 @@ void XalSubAdministrativeArea::Serialize(Serializer& serializer) const {
 }
 
 // <xal:Thoroughfare>
-XalThoroughfare::XalThoroughfare()
-    : has_thoroughfarename_(false),
-      has_thoroughfarenumber_(false) {
-  set_xmlns(kmlbase::XMLNS_XAL);
-}
-
 void XalThoroughfare::AddElement(const ElementPtr& element) {
   if (!element) {
     return;

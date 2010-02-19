@@ -44,10 +44,6 @@ ElementPtr KmlFactory::CreateElementById(KmlDomType id) const {
   switch (id) {
   case Type_Alias: return CreateAlias();
   case Type_AtomAuthor: return CreateAtomAuthor();
-  case Type_AtomCategory: return CreateAtomCategory();
-  case Type_AtomContent: return CreateAtomContent();
-  case Type_AtomEntry: return CreateAtomEntry();
-  case Type_AtomFeed: return CreateAtomFeed();
   case Type_AtomLink: return CreateAtomLink();
   case Type_BalloonStyle: return CreateBalloonStyle();
   case Type_Camera: return CreateCamera();
@@ -146,22 +142,6 @@ Alias* KmlFactory::CreateAlias() const {
 
 AtomAuthor* KmlFactory::CreateAtomAuthor() const {
   return new AtomAuthor();
-}
-
-AtomCategory* KmlFactory::CreateAtomCategory() const {
-  return new AtomCategory();
-}
-
-AtomContent* KmlFactory::CreateAtomContent() const {
-  return new AtomContent();
-}
-
-AtomEntry* KmlFactory::CreateAtomEntry() const {
-  return new AtomEntry();
-}
-
-AtomFeed* KmlFactory::CreateAtomFeed() const {
-  return new AtomFeed();
 }
 
 AtomLink* KmlFactory::CreateAtomLink() const {

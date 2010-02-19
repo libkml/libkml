@@ -56,11 +56,7 @@ class Vec3 {
   }
 
   void set(int i, double val) {
-    if (i == 2) {
-      set_altitude(val);
-    } else {
-      vec_[i] = val;
-    }
+    vec_[i] = val;
   }
 
   double get_longitude() const {
@@ -83,13 +79,6 @@ class Vec3 {
   void clear_altitude() {
     vec_[2] = 0;
     has_altitude_ = false;
-  }
-
-  // Operator overrides.
-  bool operator==(const Vec3& vec3) const {
-    return vec_[0] == vec3.get_longitude() &&
-           vec_[1] == vec3.get_latitude() &&
-           vec_[2] == vec3.get_altitude();
   }
 
  private:

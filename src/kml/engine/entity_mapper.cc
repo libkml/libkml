@@ -126,7 +126,7 @@ void EntityMapper::GatherSchemaDataFields(const SchemaDataPtr& schemadata) {
   if (schemadata->has_schemaurl()) {
     // We need to get the name= attr of the <Schema> with the id= attr that
     // matches this schemaUrl.
-    string schema_id;
+    std::string schema_id;
     if (SplitUriFragment(schemadata->get_schemaurl(), &schema_id)) {
       SchemaPtr schema = kmldom::AsSchema(kml_file_->GetObjectById(schema_id));
       if (schema) {
@@ -165,7 +165,7 @@ void EntityMapper::GatherSimpleDataFields(const SimpleDataPtr& simpledata) {
   }
 }
 
-string CreateExpandedEntities(const string & in,
+std::string CreateExpandedEntities(const std::string & in,
                                    const StringMap& entity_map) {
   // TODO: $[geDirections].
   return kmlbase::CreateExpandedStrings(in, entity_map, "$[", "]");

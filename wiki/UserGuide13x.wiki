@@ -1,8 +1,8 @@
-﻿#summary Release notes for the 1.2 version of libkml
+﻿#summary Release notes for the 1.3 version of libkml
 
 = Introduction =
 
-Welcome to the "1.2" release of libkml! 
+Welcome to the "1.3" release of libkml! 
 
 It is the intention of libkml to adhere strictly to the OGC KML 2.2 standard. 
 
@@ -29,11 +29,9 @@ found at the top of each file.
 This library has been compiled and tested on Windows XP, Mac OS X 10.4 and
 10.5, and various flavors of Linux.
 
-= Changes since 1.1 =
+= Changes since 1.2 =
 
-  * Replaced use of `std::string` with `string` to permit direct use in codebases that have their own (STL-compatible) string implementation
-  * Replaced use of `char*` and `XML_Char*` with string in the low-level wrapper around Expat
-  * Improved Google Maps and Spreadsheets Data API support
+  * By default libkml now parses old KML 2.0/2.1 files that used the `<Schema>` element in a non-standard way. See ParsingOldSchemaFiles for more details.
 
 = Building and installing libkml =
 

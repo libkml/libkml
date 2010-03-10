@@ -32,5 +32,6 @@ However, developers who have to deal with real-world KML know that the [http://w
 </Document>
 }}}
 
-Change [http://code.google.com/p/libkml/source/detail?r=798 r798] introduced this new behavior.
+If loaded into any recent version of Google Earth, both of those files produce equivalent displays and interaction models.
 
+Change [http://code.google.com/p/libkml/source/detail?r=798 r798] introduced this new behavior.

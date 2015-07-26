@@ -54,7 +54,7 @@ if(WITH_JAVA)
   include_directories ( ${JAVA_INCLUDE_PATH} ${JNI_INCLUDE_DIRS} )
 
   # Make sure the nested directory structure exists
-  set(JAVA_SOURCE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/com/google/libkml)
+  set(JAVA_SOURCE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/com/googlecode/libkml)
   set(JAVA_BINARY_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build)
   if(NOT EXISTS "${JAVA_SOURCE_DIRECTORY}")
     file(MAKE_DIRECTORY ${JAVA_SOURCE_DIRECTORY})
@@ -73,8 +73,10 @@ if(WITH_JAVA)
     set_source_files_properties(${INTERFACE_FILE} PROPERTIES CPLUSPLUS ON)
     set_source_files_properties(${INTERFACE_FILE} PROPERTIES CMAKE_SWIG_FLAGS "-includeall  -DSWIGJAVA")
     set_source_files_properties( ${CMAKE_CURRENT_BINARY_DIR}/${MODULE_NAME}JAVA_wrap.cxx COMPILE_FLAGS "-w")
-    swig_add_module(${MODULE_NAME}_java java ${INTERFACE_FILE})
-    swig_link_libraries(${MODULE_NAME}_java kmlbase kmlengine kmldom)
+    swig_add_module(${MODULE_NAME}_swig_java java ${INTERFACE_FILE})
+    swig_link_libraries(${MODULE_NAME}_swig_java ${MODULE_NAME})
+    install(TARGETS ${MODULE_NAME}_swig_java DESTINATION ${JAVA_INSTALL_DIR})
+
   endforeach()
 
   add_custom_target(LibKML_jar ALL DEPENDS LibKML.jar)
@@ -84,7 +86,7 @@ if(WITH_JAVA)
     COMMENT "Creating jar file..."
     COMMAND ${Java_JAVAC_EXECUTABLE} -d ${JAVA_BINARY_DIRECTORY} ${JAVA_SOURCE_DIRECTORY}/*.java
     COMMAND ${Java_JAR_EXECUTABLE} cf ${CMAKE_CURRENT_BINARY_DIR}/LibKML.jar -C ${JAVA_BINARY_DIRECTORY} com
-    DEPENDS LibKML_jar kmlbase_java kmldom_java kmlengine_java kmlengine kmlbase kmldom)
+    DEPENDS LibKML_jar kmlbase_swig_java kmldom_swig_java kmlengine_swig_java)
 
    # Get the location of the extension directory
    string(REGEX REPLACE "include"  "jre/lib/ext" JAVA_EXTENSION_DIR ${JAVA_INCLUDE_PATH})

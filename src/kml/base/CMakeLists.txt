@@ -18,7 +18,31 @@ endif()
 #supress W-long-long
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/zip_file.cc COMPILE_FLAGS "-Wno-long-long")
 
-file(GLOB INCS "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+set(INCS
+  attributes.h
+  csv_splitter.h
+  date_time.h
+  color32.h
+  expat_handler.h
+  expat_handler_ns.h
+  expat_parser.h
+  file.h
+  math_util.h
+  memory_file.h
+  mimetypes.h
+  net_cache.h
+  referent.h
+  string_util.h
+  tempfile.h
+  time_util.h
+  util.h
+  vec3.h
+  version.h
+  xml_element.h
+  xml_file.h
+  xml_namespaces.h
+  xmlns.h
+  zip_file.h)
 
 build_target(
   NAME kmlbase

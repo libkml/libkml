@@ -49,12 +49,15 @@ endif(NOT DEFINED RESOURCE_INSTALL_DIR)
 if(NOT DEFINED LOCALE_INSTALL_DIR)
   set(LOCALE_INSTALL_DIR "${DATA_INSTALL_DIR}/locale/")
 endif(NOT DEFINED LOCALE_INSTALL_DIR)
-if(NOT DEFINED PYTHON_INSTALL_DIR)
-  set(PYTHON_INSTALL_DIR "${LIB_INSTALL_DIR}/python")
-endif(NOT DEFINED PYTHON_INSTALL_DIR)
 if(NOT DEFINED JAVA_INSTALL_DIR)
-  set(JAVA_INSTALL_DIR "${LIB_INSTALL_DIR}/java")
+  set(JAVA_INSTALL_DIR "${DATA_INSTALL_DIR}/java")
 endif(NOT DEFINED JAVA_INSTALL_DIR)
+if(NOT DEFINED JNI_INSTALL_DIR)
+  set(JNI_INSTALL_DIR "${LIB_INSTALL_DIR}/jni")
+endif(NOT DEFINED JNI_INSTALL_DIR)
+if(NOT DEFINED PKGCONFIG_INSTALL_DIR)
+  set(PKGCONFIG_INSTALL_DIR "${LIB_INSTALL_DIR}/pkgconfig")
+endif(NOT DEFINED PKGCONFIG_INSTALL_DIR)
 
 # Path to additional CMake modules
 set(CMAKE_MODULE_PATH
@@ -69,9 +72,7 @@ endif()
 
 include(ExternalProject)
 
-if(NOT INSTALL_DIR)
-  set(INSTALL_DIR "${CMAKE_INSTALL_PREFIX}" CACHE "install directory " PATH)
-endif()
+set(INSTALL_DIR "${CMAKE_INSTALL_PREFIX}" CACHE "install directory " PATH)
 
 set(KMLBASE_LINK_LIBS "" CACHE INTERNAL "KMLBASE_LINK_LIBS")
 set(KMLBASE_DEPENDS "" CACHE INTERNAL "KMLBASE_DEPENDS")
@@ -121,6 +122,18 @@ endif()
 
 include_directories(${Boost_INCLUDE_DIRS})
 
+if(WITH_SWIG)
+  find_package(SWIG)
+  if(SWIG_EXECUTABLE)
+    include(${SWIG_USE_FILE})
+  else()
+    set(WITH_SWIG OFF)
+    set(WITH_PYTHON OFF)
+    set(WITH_JAVA OFF)
+    message(WARNING "Swig not found. Hence bindings will not be built")
+  endif()
+endif()
+
 list(APPEND KMLBASE_LINK_LIBS ${EXPAT_LIBRARY})
 list(APPEND KMLBASE_LINK_LIBS ${ZLIB_LIBRARY})
 list(APPEND KMLBASE_LINK_LIBS ${MINIZIP_LIBRARY})
@@ -129,6 +142,12 @@ list(APPEND KMLBASE_LINK_LIBS ${URIPARSER_LIBRARY})
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 add_subdirectory(src)
+
+configure_file("${CMAKE_SOURCE_DIR}/cmake/libkml.pc.in"
+  "${CMAKE_BINARY_DIR}/libkml.pc" @ONLY)
+
+install(FILES ${CMAKE_BINARY_DIR}/libkml.pc
+   DESTINATION ${PKGCONFIG_INSTALL_DIR})
 
 if(BUILD_TESTING)
   enable_testing()

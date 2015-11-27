@@ -46,6 +46,7 @@ set(INCS
   gx_tour.h
   vec2.h
   xal.h
+  xsd.h
   visitor.h
   visitor_driver.h)
 

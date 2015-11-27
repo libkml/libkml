@@ -1,9 +1,9 @@
 // Copyright 2008, Google Inc. All rights reserved.
 //
-// Redistribution and use in source and binary forms, with or without
+// Redistribution and use in source and binary forms, with or without 
 // modification, are permitted provided that the following conditions are met:
 //
-//  1. Redistributions of source code must retain the above copyright notice,
+//  1. Redistributions of source code must retain the above copyright notice, 
 //     this list of conditions and the following disclaimer.
 //  2. Redistributions in binary form must reproduce the above copyright notice,
 //     this list of conditions and the following disclaimer in the documentation
@@ -13,24 +13,25 @@
 //     specific prior written permission.
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
-// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+// WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
 // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
 // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
 // PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
 // OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // This file contains the KML 2.2 element names as found in the KML 2.2 XSD.
 
 #include "kml/dom/kml22.h"
+#include "kml/dom/xsd.h"
 
 namespace kmldom {
 
 // There is an entry here for each global <xs:element> in the KML 2.2 XSD
- XsdElement kKml22Elements[] = {
+static XsdElement kKml22Elements[] = {
   { "<Unknown>", XSD_UNKNOWN },  // Reserve slot 0, note impossible tag name.
 
   // These are the abstract substitution group elements in the XSD.
@@ -281,22 +282,30 @@ namespace kmldom {
 
 // There is an entry here for each enumeration in the XSD.
 // See the declaration of xsd_simple_type_enum_t for more details.
- const char* kAltitudeModeEnums[] = { "clampToGround", "relativeToGround", "absolute", NULL };
- const char* kColorModeEnums[] = { "normal", "random", NULL };
- const char* kDisplayModeEnums[] = { "default", "hide", NULL };
- const char* kGridOriginEnums[] = { "lowerLeft", "upperLeft", NULL };
- const char* kItemIconStateEnums[] = { "open", "closed", "error", "fetching0", "fetching1", "fetching2", NULL };
- const char* kListItemTypeEnums[] = { "check", "radioFolder", "checkOffOnly", "checkHideChildren", NULL };
- const char* kRefreshModeEnums[] = { "onChange", "onInterval", "onExpire", NULL };
- const char* kShapeEnums[] = { "rectangle", "cylinder", "sphere", NULL };
- const char* kStyleStateEnums[] = { "normal", "highlight", NULL };
- const char* kUnitsEnums[] = { "fraction", "pixels", "insetPixels", NULL };
- const char* kViewRefreshModeEnums[] = { "never", "onRequest", "onStop", "onRegion", NULL };
- const char* kGxAltitudeModeEnums[] = { "clampToSeaFloor", "relativeToSeaFloor", NULL };
- const char* kGxFlyToViewEnums[] = { "bounce", "smooth", NULL };
- const char* kGxPlayModeEnums[] =  { "pause", NULL };
-
- XsdSimpleTypeEnum kKml22Enums[] = {
+static const char* kAltitudeModeEnums[] =
+  { "clampToGround", "relativeToGround", "absolute", NULL };
+static const char* kColorModeEnums[] = { "normal", "random", NULL };
+static const char* kDisplayModeEnums[] = { "default", "hide", NULL };
+static const char* kGridOriginEnums[] = { "lowerLeft", "upperLeft", NULL };
+static const char* kItemIconStateEnums[] =
+  { "open", "closed", "error", "fetching0", "fetching1", "fetching2", NULL };
+static const char* kListItemTypeEnums[] =
+  { "check", "radioFolder", "checkOffOnly", "checkHideChildren", NULL };
+static const char* kRefreshModeEnums[] =
+  { "onChange", "onInterval", "onExpire", NULL };
+static const char* kShapeEnums[] = { "rectangle", "cylinder", "sphere", NULL };
+static const char* kStyleStateEnums[] = { "normal", "highlight", NULL };
+static const char* kUnitsEnums[] =
+  { "fraction", "pixels", "insetPixels", NULL };
+static const char* kViewRefreshModeEnums[] =
+  { "never", "onRequest", "onStop", "onRegion", NULL };
+static const char* kGxAltitudeModeEnums[] =
+  { "clampToSeaFloor", "relativeToSeaFloor", NULL };
+static const char* kGxFlyToViewEnums[] =
+  { "bounce", "smooth", NULL };
+static const char* kGxPlayModeEnums[] =
+  { "pause", NULL };
+static XsdSimpleTypeEnum kKml22Enums[] = {
   { Type_altitudeMode, kAltitudeModeEnums },
   { Type_colorMode, kColorModeEnums },
   { Type_displayMode, kDisplayModeEnums },
@@ -310,9 +319,7 @@ namespace kmldom {
   { Type_viewRefreshMode, kViewRefreshModeEnums },
   { Type_GxAltitudeMode, kGxAltitudeModeEnums },
   { Type_GxFlyToMode, kGxFlyToViewEnums },
-  { Type_GxPlayMode, kGxPlayModeEnums },
+  { Type_GxPlayMode, kGxPlayModeEnums }
 };
-
-int kKml22Enums_size = sizeof(kKml22Enums);
 
 }  // namespace kmldom

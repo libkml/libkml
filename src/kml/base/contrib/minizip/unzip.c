@@ -40,7 +40,7 @@ woven in by Terry Thorsen 1/2003.
 #include <stdlib.h>
 #include <string.h>
 #include <zlib.h> //RR
-#include <minizip/unzip.h> //RR
+#include "unzip.h"
 #include "iomem_simple.h"
 #undef NOUNCRYPT
 
@@ -426,7 +426,6 @@ extern unzFile ZEXPORT libkml_unzOpen2 (path, pzlib_filefunc_def)
     zlib_filefunc_def* pzlib_filefunc_def;
 {
     unz_s us;
-    init_unz_s(&us);
     
     unz_s *s;
     
@@ -441,6 +440,8 @@ extern unzFile ZEXPORT libkml_unzOpen2 (path, pzlib_filefunc_def)
                                    (same than number_entry on nospan) */
 
     int err=UNZ_OK;
+
+    init_unz_s(&us);
 
     if (libkml_unz_copyright[0]!=' ')
         return NULL;
@@ -1652,10 +1653,12 @@ extern unzFile ZEXPORT libkml_unzAttach (stream, pzlib_filefunc_def)
     zlib_filefunc_def* pzlib_filefunc_def;
 {
     unz_s us;
-    init_unz_s(&us);
     
     unz_s *s;
-    uLong central_pos,uL;
+    
+    uLong central_pos;
+    
+    uLong uL;
 
     uLong number_disk;          /* number of the current dist, used for
                                    spaning ZIP, unsupported, always 0*/
@@ -1666,6 +1669,8 @@ extern unzFile ZEXPORT libkml_unzAttach (stream, pzlib_filefunc_def)
                                    (same than number_entry on nospan) */
 
     int err=UNZ_OK;
+
+    init_unz_s(&us);
 
     if (libkml_unz_copyright[0]!=' ')
         return NULL;

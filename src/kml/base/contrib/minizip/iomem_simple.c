@@ -136,7 +136,7 @@ static uLong ZCALLBACK mem_read (opaque, stream, buf, size)
      return 0;
    }
 
-   if ( (handle->position + size) > handle->length)
+   if ( (handle->position + size) > (uLong)handle->length)
    {
       /* There is a bug in this original code. It's possible for the position
        * to exceed the size, which results in memcpy being handed a negative
@@ -162,7 +162,7 @@ static uLong ZCALLBACK mem_write (opaque, stream, buf, size)
 {
    MEMFILE* handle = (MEMFILE*) stream;
 
-   if ((handle->position + size) > handle->length)
+   if ((handle->position + size) > (uLong)handle->length)
    {
       handle->length = handle->position + size;
       handle->buffer = realloc(handle->buffer, handle->length);

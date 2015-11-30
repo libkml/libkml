@@ -31,8 +31,8 @@
 // http://code.google.com/apis/kml/documentation/kmlreference.html
 // Type_${element_name}
 
-#ifndef KML_DOM_KML22_H__
-#define KML_DOM_KML22_H__
+#ifndef KML_DOM_KML22_H
+#define KML_DOM_KML22_H
 
 namespace kmldom {
 

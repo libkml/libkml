@@ -1,4 +1,4 @@
-// Copyright 2008, Google Inc. All rights reserved.
+﻿// Copyright 2008, Google Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -80,8 +80,8 @@ XsdType Xsd::ElementType(int id) const {
 }
 
 int Xsd::EnumId(int type_id, string enum_value) const {
-  const int size = sizeof(kKml22Enums)/sizeof(XsdSimpleTypeEnum);
-  for (int i = 0; i < size; ++i) {
+const int size = sizeof(kKml22Enums)/sizeof(XsdSimpleTypeEnum);
+  for (int i = 0; i < size ; ++i) {
     if (kKml22Enums[i].type_id == type_id) {
       for (const char** enum_value_item = kKml22Enums[i].enum_value_list;
            *enum_value_item;
@@ -104,12 +104,13 @@ string Xsd::EnumValue(int type_id, int enum_id) const {
   if (enum_id < 0) {
     return string();
   }
-  for (XsdSimpleTypeEnum* simple = kKml22Enums; simple; ++simple) {
-    if (simple->type_id == type_id) {
-      return simple->enum_value_list[enum_id];
+const int size = sizeof(kKml22Enums)/sizeof(XsdSimpleTypeEnum);
+
+  for (int i = 0; i < size; ++i) {
+    if (kKml22Enums[i].type_id == type_id) {
+      return kKml22Enums[i].enum_value_list[enum_id];
     }
   }
-
   return string();
 }
 

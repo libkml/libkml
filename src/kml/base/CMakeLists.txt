@@ -1,9 +1,41 @@
 
-if(HAVE_SYSTEM_EXPAT)
-  include_directories(${EXPAT_INCLUDE_DIR})
-endif()
+external_project(MiniZip)
+include_directories(${MINIZIP_INCLUDE_DIR})
 
-list(APPEND KMLBASE_LINK_LIBS ${EXPAT_LIBRARY})
+external_project(ZLIB lib_z)
+include_directories(${ZLIB_INCLUDE_DIR})
+
+
+# find_package(EXPAT)
+# if(EXPAT_FOUND)
+#   include_directories(${EXPAT_INCLUDE_DIR})
+# else()
+#   include(External_expat)
+#   list(APPEND KMLBASE_DEPENDS EXPAT)
+# endif()
+
+# find_package(ZLIB 1.2.8)
+
+# find_package(UriParser)
+# if(URIPARSER_FOUND)
+#   include_directories(${URIPARSER_INCLUDE_DIR})
+# else()
+#   include(External_uriparser)
+#   list(APPEND KMLBASE_DEPENDS URIPARSER)
+# endif()
+
+
+#configure_project(MiniZip)
+#configure_project(UriParser)
+#configure_project(MiniZip)
+#configure_project(Zlib)
+#configure_project(EXPAT)
+
+# if(HAVE_SYSTEM_EXPAT)
+#   include_directories(${EXPAT_INCLUDE_DIR})
+# endif()
+
+#list(APPEND KMLBASE_LINK_LIBS ${EXPAT_LIBRARY})
 
 file(GLOB SRCS "*.cc"
   contrib/minizip/unzip.c
@@ -48,4 +80,4 @@ build_target(
   SRCS ${SRCS}
   INCS ${INCS}
   DEPENDS ${KMLBASE_DEPENDS}
-  LINKS ${KMLBASE_LINK_LIBS} )
+  LINKS ${ZLIB_LIBRARIES} ${MINIZIP_LIBRARIES} )

@@ -77,7 +77,7 @@ endif()
 
 
 include(ExternalProject)
-set(ep_base "/home/rashad/sources/cmake-build/third-party")
+set(ep_base "/tmp/cmake-build/third-party")
 set_property(DIRECTORY PROPERTY "EP_BASE" ${ep_base})
 set(EP_URL "https://github.com/rashadkm")
 find_package(Git)

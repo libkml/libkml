@@ -209,7 +209,7 @@ configure_file(cmake/LibKMLConfigVersion.cmake.in
  
 # Install the LibKMLConfig.cmake and LibKMLConfigVersion.cmake
 install(FILES
-  "${CMAKE_BINARY_DIR}/LibKMLConfig.cmake"
+  "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/LibKMLConfig.cmake"
   "${CMAKE_BINARY_DIR}/LibKMLConfigVersion.cmake"
   DESTINATION "${CMAKE_INSTALL_DIR}" )
  

@@ -6,6 +6,10 @@ set(VERSION_MINOR "3")
 set(VERSION_PATCH "0")
 set(VERSION_STRING "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release")
+endif()
+
 option(BUILD_TESTING  "Build testing." OFF)
 option(BUILD_EXAMPLES  "Build examples." OFF)
 option(INSTALL_EXAMPLES   "Install examples sources and executables" OFF)
@@ -64,6 +68,15 @@ if(NOT DEFINED PKGCONFIG_INSTALL_DIR)
   set(PKGCONFIG_INSTALL_DIR "${LIB_INSTALL_DIR}/pkgconfig")
 endif(NOT DEFINED PKGCONFIG_INSTALL_DIR)
 
+if(WIN32 AND NOT CYGWIN)
+  set(DEF_INSTALL_CMAKE_DIR cmake)
+else()
+  set(DEF_INSTALL_CMAKE_DIR lib/cmake/libkml)
+endif()
+set(CMAKE_INSTALL_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH "Installation directory for CMake files")
+
+set(INSTALL_DIR "${CMAKE_INSTALL_PREFIX}" CACHE "install directory " PATH)
+
 # Path to additional CMake modules
 set(CMAKE_MODULE_PATH
     ${CMAKE_SOURCE_DIR}/cmake
@@ -71,17 +84,13 @@ set(CMAKE_MODULE_PATH
 
 include(LibKMLHelper)
 
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release")
-endif()
-
 include(ExternalProject)
-
-set(INSTALL_DIR "${CMAKE_INSTALL_PREFIX}" CACHE "install directory " PATH)
 
 set(KMLBASE_LINK_LIBS "" CACHE INTERNAL "KMLBASE_LINK_LIBS")
 set(KMLBASE_DEPENDS "" CACHE INTERNAL "KMLBASE_DEPENDS")
 set(MINIZIP_DEPENDS "" CACHE INTERNAL "MINIZIP_DEPENDS")
+
+set(LIBKML_TARGETS)
 
 find_package(EXPAT)
 if(EXPAT_FOUND)
@@ -166,3 +175,43 @@ endif()
 if(BUILD_EXAMPLES)
   add_subdirectory(examples)
 endif()
+
+string(TOUPPER ${CMAKE_BUILD_TYPE} CONFIG_TYPE)
+
+# Make relative paths absolute (needed later on)
+foreach(p LIB BIN INCLUDE CMAKE)
+  set(var ${p}_INSTALL_DIR)
+  if(NOT IS_ABSOLUTE "${${var}}")
+    set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
+  endif()
+endforeach()
+
+export(TARGETS ${LIBKML_TARGETS}
+  FILE "${CMAKE_BINARY_DIR}/LibKMLTargets.cmake")
+  
+# Create the LibKMLConfig.cmake and LibKMLConfigVersion files
+file(RELATIVE_PATH REL_INCLUDE_DIR "${CMAKE_INSTALL_DIR}"
+  "${INCLUDE_INSTALL_DIR}")
+
+# ... for the build tree
+set(CONF_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/src")
+configure_file(cmake/LibKMLConfig.cmake.in
+  "${PROJECT_BINARY_DIR}/LibKMLConfig.cmake" @ONLY)
+
+# ... for the install tree
+set(CONF_INCLUDE_DIRS "\${LIBKML_CMAKE_DIR}/${REL_INCLUDE_DIR}")
+configure_file(cmake/LibKMLConfig.cmake.in
+  "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/LibKMLConfig.cmake" @ONLY)
+
+# ... for both
+configure_file(cmake/LibKMLConfigVersion.cmake.in
+  "${CMAKE_BINARY_DIR}/LibKMLConfigVersion.cmake" @ONLY)
+ 
+# Install the LibKMLConfig.cmake and LibKMLConfigVersion.cmake
+install(FILES
+  "${CMAKE_BINARY_DIR}/LibKMLConfig.cmake"
+  "${CMAKE_BINARY_DIR}/LibKMLConfigVersion.cmake"
+  DESTINATION "${CMAKE_INSTALL_DIR}" )
+ 
+# Install the export set for use with the install-tree
+install(EXPORT LibKMLTargets DESTINATION "${CMAKE_INSTALL_DIR}")

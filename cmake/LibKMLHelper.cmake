@@ -29,9 +29,17 @@ endmacro(build_target)
 
 macro(install_target _target)
   install(TARGETS ${_target}
+    EXPORT LibKMLTargets
     RUNTIME DESTINATION ${BIN_INSTALL_DIR}
     LIBRARY DESTINATION ${LIB_INSTALL_DIR}
     ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
+  
+  list(LENGTH LIBKML_TARGETS LIBKML_TARGETS_LENGTH)
+  if(LIBKML_TARGETS_LENGTH LESS 1)
+    set(LIBKML_TARGETS "${_target}" PARENT_SCOPE)
+  else()
+    set(LIBKML_TARGETS "${LIBKML_TARGETS};${_target}" PARENT_SCOPE)
+    endif()
 endmacro(install_target)
 
 function(build_test)
@@ -51,7 +59,7 @@ endfunction(build_example)
 
 
 macro(include_project_vars _project _lib)
-  set(${_project}_INCLUDE_DIR "${INSTALL_DIR}/include" )
+  set(${_project}_INCLUDE_DIR "${INSTALL_DIR}/include")
   if(WIN32)
     set(_suffix ${CMAKE_LINK_LIBRARY_SUFFIX})
   else(UNIX)
@@ -61,6 +69,6 @@ macro(include_project_vars _project _lib)
       set(_suffix ".a")
     endif()
   endif(WIN32)
-  set(${_project}_LIBRARY "${INSTALL_DIR}/lib/${_lib}${_suffix}" )
+  set(${_project}_LIBRARY "${INSTALL_DIR}/lib/${_lib}${_suffix}")
   include_directories(${${_project}_INCLUDE_DIR})
 endmacro()

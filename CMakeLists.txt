@@ -82,7 +82,7 @@ set_property(DIRECTORY PROPERTY "EP_BASE" ${ep_base})
 set(EP_URL "https://github.com/rashadkm")
 find_package(Git)
 
-include(External)
+include(SuperFind)
 
 set(INSTALL_DIR "${CMAKE_INSTALL_PREFIX}" CACHE "install directory " PATH)
 

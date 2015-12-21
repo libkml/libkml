@@ -3,12 +3,9 @@
 Please read the DEPENDENCIES file carefully and ensure you have the correct
 versions of all required software.
 
-There are two separate build systems: one for GNU/Linux and Mac OS X, and
-another for Microsoft Windows.
+This is last updated for version 1.3.0. The build system has been changed to cmake!
 
-This is last updated for version 1.3.0  There may be changes within the svn tree.
-
-## Linux and Mac OS X ##
+## Building ##
 
 We assume you have a cmake 2.8 or higher installed. 
 Performing a basic build should be as simple as:

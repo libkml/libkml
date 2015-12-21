@@ -7,11 +7,12 @@ If you have trouble building, create an issue on github.com/libkml/libkml
 Required:
 cmake: www.cmake.org >= 2.8
 g++: version >= 4.4
-expat: expat.sourceforge.net version >= 2.1.0
-zlib: www.zlib.net version >= 1.2.8
-boost: www.boost.org   version >= 1.55.0
-minizip: >= 1.2.8
-googletest: http://googletest.googlecode.com >= 1.7.0
+expat: expat.sourceforge.net version >= 2.1.0 (optional)
+zlib: www.zlib.net version >= 1.2.8  (optional)
+boost: www.boost.org   version >= 1.55.0  (optional)
+uriparser >= 0.7.5  (optional)
+minizip: >= 1.2.8  (optional)
+googletest: http://googletest.googlecode.com >= 1.7.0  (optional. if testing is enabled)
 
 Optional:
 java: java.sun.com 1.5.0_13, 1.6.0_04

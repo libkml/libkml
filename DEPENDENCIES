@@ -5,21 +5,21 @@ If you have trouble building, create an issue on github.com/libkml/libkml
 
 
 Required:
-g++: version higher than 4.4 is tested
+cmake: www.cmake.org >= 2.8
+g++: version >= 4.4
 expat: expat.sourceforge.net version >= 2.1.0
 zlib: www.zlib.net version >= 1.2.8
-boost: www.boost.org   version >= 1.44.0
+boost: www.boost.org   version >= 1.55.0
 minizip: >= 1.2.8
 googletest: http://googletest.googlecode.com >= 1.7.0
 
 Optional:
 java: java.sun.com 1.5.0_13, 1.6.0_04
 python: www.python.org 2.7
-swig: www.swig.org 2.0
+swig: www.swig.org 3.0
 
 Development:
 cmake: www.cmake.org >= 2.8
-
 
 
 NOTE: This file will be changed to markdown or RST soon..

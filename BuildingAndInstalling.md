@@ -70,11 +70,9 @@ module often far exceed that module in raw lines of code.
 ## Build and run the libkml unit tests ##
 
 We have provided a large suite of unit tests to verify the correct behavior of
-libkml. We use the [GoogleTest framework](http://googletest.googlecode.com), which
-on Linux and Mac OS X is built automatically as a part of the automake process and is
-supplied in binary form for MS Windows.
+libkml. We use the [GoogleTest framework](http://googletest.googlecode.com).
 
-you can run the tests via ctest no matter what platform you are!
+you can run the tests via ctest no matter what platform you are using!
 
 ```
 ctest 

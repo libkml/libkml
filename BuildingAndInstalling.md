@@ -355,17 +355,5 @@ Test project ~/projects/libkml-1.3.0.build
 
 Total Test time (real) =   5.04 sec
 ```
-
-Some amount of Python SWIG functionality is tested in src/swig/kmldom\_test.py
-and src/swig/kmlengine\_test.py. A successful run of these tests looks as follows:
-
-```
-.......................................
-----------------------------------------------------------------------
-Ran 39 tests in 0.013s
-
-OK
-```
-
-And so on. If any tests fail to pass, you will be asked to report the issue to
+If any tests fail to pass, you will be asked to report the issue to
 this project's issue tracker.

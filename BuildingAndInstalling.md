@@ -6,96 +6,64 @@ versions of all required software.
 There are two separate build systems: one for GNU/Linux and Mac OS X, and
 another for Microsoft Windows.
 
-This is last updated for version 0.6.1.  There may be changes within the svn tree.
+This is last updated for version 1.3.0  There may be changes within the svn tree.
 
 ## Linux and Mac OS X ##
 
-We assume you have a reasonable GCC/autotools environment installation.
+We assume you have a cmake 2.8 or higher installed. 
 Performing a basic build should be as simple as:
 
 ```
-cd libkml-0.x.x
-mkdir build
-cd build
-../configure
+git clone https://github.com/libkml/libkml libkml-1.3.0
+mkdir libkml-1.3.0.build ; cd libkml-1.3.0.build
+cmake ../libkml-1.3.0
+```
+libkml requires some external libraries. They are listed below in a random order
+* boost
+* zlib
+* minizip
+* uriparser
+If any of these are found missing, cmake will download and install it automatically!
+
+### Testing (optional) ####
+To Enable Testing, you need to pass additional options to your cmake configure step:
+```
+cd libkml-1.3.0.build
+cmake -DBUILD_TESTING=TRUE ../libkml-1.3.0
+```
+
+### Examples (optional) ####
+To Enable Examples, you need to pass additional options to your cmake configure step:
+```
+cd libkml-1.3.0.build
+cmake -DBUILD_EXAMPLES=TRUE ../libkml-1.3.0
+```
+#### Build and install ####
+```
 make
 sudo make install
 ```
-
-In addition to the usual GNU build system configure options like --prefix, you
-may fine-tune the building of libkml as follows. (Use ./configure --help to see
-all extra options.)
-
 ### SWIG bindings ###
 
 If you want to create bindings for the additional supported languages, you need
 to install the Simplified Wrapper and Interface Generator
 ([SWIG](http://www.swig.org/)) version 1.3.35.
 
-NOTE: the Microsoft Windows Visual Studio .vcproj's do not build SWIG.
+NOTE: This dependency is not auto-downloaded by cmake
 
-Once SWIG is installed, the
-configure program will check for the existence of development versions of
-Python and Java. If either is found, we attempt to build the SWIG bindings. If
-you have either language installed in a non-default location, you can specify
-the location(s) of your headers and libs like so:
-
+Once SWIG is installed, you can re-run cmake. It will automatically detect swig. But they cmake options that enable bindings are not enabled even if swig is found. This change is made intentionally and not a bug. To activate bindings:
 ```
-../configure --with-java-include-dir=DIR \
-             --with-java-lib-dir=DIR \
-             --with-python-include-dir=DIR \
-             --with-python-lib-dir=DIR
+cd libkml-1.3.0.build
+cmake -DWITH_SWIG=TRUE -DWITH_PYTHON=TRUE -DWITH_JAVA=TRUE ../libkml-1.3.0 
 ```
-
-It is likely that the Python installation and headers will be discovered
-automatically. If you want to build the Java bindings you will almost
-certainly have to tell configure where to find the headers it needs.
-
-For Mac OS X the command is probably quite close to this:
-```
-../configure --with-java-include-dir=/System/Library/Frameworks/JavaVM.framework/Headers
-```
-
-For Linux is it is something like:
-```
-../configure --with-java-include-dir=/usr/lib/jvm/include
-```
-
-If possible, SWIG bindings are always built. You can disable this by:
-
-```
-../configure --disable-swig
-```
-
-Or you can disable specific languages:
-
-```
-../configure --disable-java --disable-python
-```
-
-By default we do not install the Python SWIG bindings in the system Python
-extension directory. This is because writing to that directory likely requires
-root privileges. You can override this behavior as follows. Installation must
-then be performed by `sudo make install`.
-
-```
-../configure --enable-systempython
-```
-
-Otherwise, the Python bindings will be installed to a directory relative to
-configure's prefix. This will likely be similar to
-`/usr/local/lib/python2.5/site-packages/`. Your `PYTHONPATH` will of course
-have to know about this directory.
+The Python bindings, if enabled will be installed to a site-packages directory. 
+This will likely be similar to `/usr/local/lib/python2.7/site-packages/`. 
+Your `PYTHONPATH` will of course have to know about this directory.
 
 
-## Microsoft Windows XP ##
-
-We have used Microsoft Visual Studio 2005 to create the project files. The
-top-level libkml.sln is the main solution file and will build all libraries in
-the libkml system. You can also build the examples from the solution file
-in the examples directory.
-
-(It is known that Microsoft Visual Studio 2008 does not work with libkml)
+## Microsoft Windows ##
+CMake is cross platform and works with a lot of generators. 
+It is easy to generate Visual Studio project files using cmake. Check the CMAKE_GENERATOR variable when using cmake-gui.exe on windows. I had tested a build on VS2010. Other versions might work but the case is simply not tested.
 
 # Running the unit tests #
 
@@ -112,17 +80,10 @@ libkml. We use the [GoogleTest framework](http://googletest.googlecode.com), whi
 on Linux and Mac OS X is built automatically as a part of the automake process and is
 supplied in binary form for MS Windows.
 
-On Linux/OS X you can run the tests like so:
+you can run the tests via ctest no matter what platform you are!
 
 ```
-make check
-```
-
-On Windows you should first build the libkml libraries and then the tests solution. There is a batch script that runs the tests:
-
-```
-cd msvc\tests
-exec_tests.bat
+ctest 
 ```
 
 Excerpts of the test output looks as follows.

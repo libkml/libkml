@@ -1,9 +1,6 @@
 # Building and Installing libkml #
 
-Please read the DEPENDENCIES file carefully and ensure you have the correct
-versions of all required software.
-
-This is last updated for version 1.3.0. The build system has been changed to cmake!
+This is last updated for version 1.3.0
 
 ## Building ##
 

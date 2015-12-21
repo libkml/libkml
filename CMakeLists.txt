@@ -29,7 +29,8 @@ set(TEST_FLAGS "-Wall -Wextra -Wno-unused-parameter -fno-rtti -DGTEST_HAS_RTTI=0
 
 else()
  if(MSVC)
- set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /DUNICODE /D_UNICODE")
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /DUNICODE /D_UNICODE")
+   set(BUILD_SHARED_LIBS OFF)
  endif()
 endif()
 

@@ -11,4 +11,8 @@ ExternalProject_Add(MINIZIP
   -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
   -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS} )
 
-include_project_vars(MINIZIP "libminizip")
+if(MSVC)
+  include_project_vars(MINIZIP "minizip")
+else()
+  include_project_vars(MINIZIP "libminizip")
+endif()

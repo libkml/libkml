@@ -29,7 +29,7 @@ function(super_find_package name)
     find_package(${PKG_NAME} QUIET)
   endif()
   
-  if(NOT ${PKG_NAME}_FOUNDx)    
+  if(NOT ${PKG_NAME}_FOUND)    
     ExternalProject_Add(${PKG_NAME}
       GIT_REPOSITORY ${EP_URL}/${PKG_REPO}
       DOWNLOAD_COMMAND ""

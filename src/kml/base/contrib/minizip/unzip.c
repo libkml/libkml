@@ -148,10 +148,13 @@ typedef struct
     file_in_zip_read_info_s* pfile_in_zip_read; /* structure about the current
                                         file if we are decompressing it */
     int encrypted;
-#    ifndef NOUNCRYPT
-    unsigned long keys[3];     /* keys defining the pseudo-random sequence */
-    const z_crc_t* pcrc_32_tab;
-#    endif
+  
+#ifndef NOUNCRYPT
+  unsigned long keys[3];     /* keys defining the pseudo-random sequence */
+  /*  const z_crc_t* pcrc_32_tab; */
+  const unsigned long* pcrc_32_tab;
+#endif
+  
 } unz_s;
 
 void init_unz_s(unz_s* un)
@@ -1197,7 +1200,7 @@ extern int ZEXPORT libkml_unzOpenCurrentFile3 (file, method, level, raw, passwor
     if (password != NULL)
     {
         int i;
-        s->pcrc_32_tab = get_crc_table();
+	s->pcrc_32_tab = (const unsigned long*)get_crc_table();	
         init_keys(password,s->keys,s->pcrc_32_tab);
         if (ZSEEK(s->z_filefunc, s->filestream,
                   s->pfile_in_zip_read->pos_in_zipfile +

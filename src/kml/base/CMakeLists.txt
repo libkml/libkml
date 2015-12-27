@@ -8,6 +8,8 @@ include_directories(${ZLIB_INCLUDE_DIR})
 super_find_package(UriParser)
 include_directories(${URIPARSER_INCLUDE_DIR})
 
+super_find_package(EXPAT)
+include_directories(${EXPAT_INCLUDE_DIR})
 
 file(GLOB SRCS "*.cc"
   contrib/minizip/unzip.c
@@ -48,16 +50,21 @@ set(INCS
   zip_file.h)
 
 set(KMLBASE_DEPENDS)
+
 if(EXISTS ZLIB)
-list(APPEND KMLBASE_DEPENDS ZLIB)
+  list(APPEND KMLBASE_DEPENDS ZLIB)
 endif()
 
 if(EXISTS MiniZip)
-list(APPEND KMLBASE_DEPENDS MiniZip)
+  list(APPEND KMLBASE_DEPENDS MiniZip)
 endif()
 
 if(EXISTS UriParser)
-list(APPEND KMLBASE_DEPENDS UriParser)
+  list(APPEND KMLBASE_DEPENDS UriParser)
+endif()
+
+if(EXISTS EXPAT)
+  list(APPEND KMLBASE_DEPENDS EXPAT)
 endif()
 
 build_target(

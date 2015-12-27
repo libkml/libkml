@@ -9,4 +9,12 @@ ExternalProject_Add(ZLIB
   -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
   -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS})
 
-include_project_vars(ZLIB "libz")
+ if(MSVC)
+  if(BUILD_SHARED_LIBS)
+    include_project_vars(ZLIB "zlib")
+  else()
+    include_project_vars(ZLIB "zlibstatic")
+  endif()
+else()
+  include_project_vars(ZLIB "libz")
+endif()

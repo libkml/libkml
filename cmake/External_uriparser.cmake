@@ -10,4 +10,9 @@ ExternalProject_Add(URIPARSER
   -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
   -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS} )
 
+
+if(MSVC)
+include_project_vars(URIPARSER "uriparser")
+else()
 include_project_vars(URIPARSER "liburiparser")
+endif()

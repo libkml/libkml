@@ -26,7 +26,7 @@ function(super_find_package name)
     find_package(${PKG_NAME} PATHS ${ep_base}/Build/${PKG_NAME})
   else()
     message(STATUS "[FIND_PACKAGE ${PKG_NAME} ] no config")
-    find_package(${PKG_NAME} )
+    find_package(${PKG_NAME} QUIET)
   endif()
   
   if(NOT ${PKG_NAME}_FOUND)    

@@ -8,12 +8,8 @@ include_directories(${ZLIB_INCLUDE_DIR})
 super_find_package(EXPAT)
 include_directories(${EXPAT_INCLUDE_DIR})
 
-
-
-##set(LIBKML_TARGETS)
-# set(KMLBASE_LINK_LIBS "" CACHE INTERNAL "KMLBASE_LINK_LIBS")
-# set(KMLBASE_DEPENDS "" CACHE INTERNAL "KMLBASE_DEPENDS")
-# set(MINIZIP_DEPENDS "" CACHE INTERNAL "MINIZIP_DEPENDS")
+super_find_package(UriParser)
+include_directories(${URIPARSER_INCLUDE_DIR})
 
 find_package(Boost)
 if(Boost_FOUND)
@@ -26,6 +22,11 @@ endif()
 
 include_directories(${Boost_INCLUDE_DIRS})
 
+
+##set(LIBKML_TARGETS)
+# set(KMLBASE_LINK_LIBS "" CACHE INTERNAL "KMLBASE_LINK_LIBS")
+# set(KMLBASE_DEPENDS "" CACHE INTERNAL "KMLBASE_DEPENDS")
+# set(MINIZIP_DEPENDS "" CACHE INTERNAL "MINIZIP_DEPENDS")
 # list(APPEND KMLBASE_LINK_LIBS ${EXPAT_LIBRARY})
 # list(APPEND KMLBASE_LINK_LIBS ${ZLIB_LIBRARIES})
 # list(APPEND KMLBASE_LINK_LIBS ${MINIZIP_LIBRARIES})
@@ -38,8 +39,6 @@ include_directories(${Boost_INCLUDE_DIRS})
 #   include(External_uriparser)
 #   list(APPEND KMLBASE_DEPENDS URIPARSER)
 # endif()
-
-#configure_project(UriParser)
 
 file(GLOB SRCS "*.cc"
   contrib/minizip/unzip.c

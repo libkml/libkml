@@ -116,12 +116,13 @@ else()
   string(TOUPPER ${CMAKE_BUILD_TYPE} CONFIG_TYPE)
 endif()
 
-configure_file("${CMAKE_SOURCE_DIR}/cmake/libkml.pc.in"
-  "${CMAKE_BINARY_DIR}/libkml.pc" @ONLY)
-
-install(FILES ${CMAKE_BINARY_DIR}/libkml.pc
-   DESTINATION ${PKGCONFIG_INSTALL_DIR})
-
+if(NOT WIN32)
+  configure_file("${CMAKE_SOURCE_DIR}/cmake/libkml.pc.in"
+    "${CMAKE_BINARY_DIR}/libkml.pc" @ONLY)
+  install(FILES ${CMAKE_BINARY_DIR}/libkml.pc
+    DESTINATION ${PKGCONFIG_INSTALL_DIR})
+endif()
+ 
 # Make relative paths absolute (needed later on)
 foreach(p LIB BIN INCLUDE CMAKE)
   set(var ${p}_INSTALL_DIR)

@@ -85,8 +85,6 @@ include(LibKMLHelper)
 
 include(SuperFind)
 
-# super_find_package(EXPAT)
-
 # super_find_package(Boost)
 
 find_package(Boost)
@@ -104,12 +102,6 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 
 add_subdirectory(src)
 
-configure_file("${CMAKE_SOURCE_DIR}/cmake/libkml.pc.in"
-  "${CMAKE_BINARY_DIR}/libkml.pc" @ONLY)
-
-install(FILES ${CMAKE_BINARY_DIR}/libkml.pc
-   DESTINATION ${PKGCONFIG_INSTALL_DIR})
-
 if(BUILD_TESTING)
   add_subdirectory(tests)
 endif()
@@ -118,11 +110,17 @@ if(BUILD_EXAMPLES)
   add_subdirectory(examples)
 endif()
 
+if(CMAKE_BUILD_TYPE STREQUAL "")
+set(CONFIG_TYPE "NOCONFIG")
+else()
+  string(TOUPPER ${CMAKE_BUILD_TYPE} CONFIG_TYPE)
+endif()
 
+configure_file("${CMAKE_SOURCE_DIR}/cmake/libkml.pc.in"
+  "${CMAKE_BINARY_DIR}/libkml.pc" @ONLY)
 
-
-
-string(TOUPPER ${CMAKE_BUILD_TYPE} CONFIG_TYPE)
+install(FILES ${CMAKE_BINARY_DIR}/libkml.pc
+   DESTINATION ${PKGCONFIG_INSTALL_DIR})
 
 # Make relative paths absolute (needed later on)
 foreach(p LIB BIN INCLUDE CMAKE)

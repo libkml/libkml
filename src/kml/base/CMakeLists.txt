@@ -8,18 +8,6 @@ include_directories(${ZLIB_INCLUDE_DIR})
 super_find_package(UriParser)
 include_directories(${URIPARSER_INCLUDE_DIR})
 
-# super_find_package(EXPAT)
-
-find_package(Boost)
-if(Boost_FOUND)
-  message(STATUS "Found Boost: ${Boost_VERSION}")
-else()
-  include(External_boost)
-  list(APPEND KMLBASE_DEPENDS BOOST)
-  message(STATUS "Found Boost includes: ${Boost_INCLUDE_DIRS}")
-endif()
-
-include_directories(${Boost_INCLUDE_DIRS})
 
 file(GLOB SRCS "*.cc"
   contrib/minizip/unzip.c

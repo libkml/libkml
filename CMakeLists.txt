@@ -82,7 +82,7 @@ set(INSTALL_DIR "${CMAKE_INSTALL_PREFIX}" CACHE "install directory " PATH)
 set(LIBKML_TARGETS)
 
 include(LibKMLHelper)
- 
+
 include(ExternalProject)
 
 set(ep_base "/tmp/cmake-build/third-party")
@@ -92,6 +92,19 @@ find_package(Git)
 
 include(SuperFind)
 
+
+# super_find_package(EXPAT)
+
+find_package(Boost)
+if(Boost_FOUND)
+  message(STATUS "Found Boost: ${Boost_VERSION}")
+else()
+  include(External_boost)
+  list(APPEND KMLBASE_DEPENDS BOOST)
+  message(STATUS "Found Boost includes: ${Boost_INCLUDE_DIRS}")
+endif()
+
+include_directories(${Boost_INCLUDE_DIRS})
 
 include_directories(${CMAKE_SOURCE_DIR}/src)
 

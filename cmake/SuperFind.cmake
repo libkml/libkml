@@ -1,4 +1,4 @@
-function(external_project name)
+function(super_find_package name)
   set(PKG_NAME ${name})
   set(PKG_REPO ${PKG_NAME})
   set (extra_args ${ARGN})

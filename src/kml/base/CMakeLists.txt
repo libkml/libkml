@@ -1,20 +1,35 @@
 
-external_project(MiniZip)
+super_find_package(MiniZip)
 include_directories(${MINIZIP_INCLUDE_DIR})
 
-external_project(ZLIB lib_z)
+super_find_package(ZLIB)
 include_directories(${ZLIB_INCLUDE_DIR})
 
+super_find_package(EXPAT)
+include_directories(${EXPAT_INCLUDE_DIR})
 
-# find_package(EXPAT)
-# if(EXPAT_FOUND)
-#   include_directories(${EXPAT_INCLUDE_DIR})
-# else()
-#   include(External_expat)
-#   list(APPEND KMLBASE_DEPENDS EXPAT)
-# endif()
 
-# find_package(ZLIB 1.2.8)
+
+##set(LIBKML_TARGETS)
+# set(KMLBASE_LINK_LIBS "" CACHE INTERNAL "KMLBASE_LINK_LIBS")
+# set(KMLBASE_DEPENDS "" CACHE INTERNAL "KMLBASE_DEPENDS")
+# set(MINIZIP_DEPENDS "" CACHE INTERNAL "MINIZIP_DEPENDS")
+
+find_package(Boost)
+if(Boost_FOUND)
+  message(STATUS "Found Boost: ${Boost_VERSION}")
+else()
+  include(External_boost)
+  list(APPEND KMLBASE_DEPENDS BOOST)
+  message(STATUS "Found Boost includes: ${Boost_INCLUDE_DIRS}")
+endif()
+
+include_directories(${Boost_INCLUDE_DIRS})
+
+# list(APPEND KMLBASE_LINK_LIBS ${EXPAT_LIBRARY})
+# list(APPEND KMLBASE_LINK_LIBS ${ZLIB_LIBRARIES})
+# list(APPEND KMLBASE_LINK_LIBS ${MINIZIP_LIBRARIES})
+# list(APPEND KMLBASE_LINK_LIBS ${URIPARSER_LIBRARY})
 
 # find_package(UriParser)
 # if(URIPARSER_FOUND)
@@ -24,18 +39,7 @@ include_directories(${ZLIB_INCLUDE_DIR})
 #   list(APPEND KMLBASE_DEPENDS URIPARSER)
 # endif()
 
-
-#configure_project(MiniZip)
 #configure_project(UriParser)
-#configure_project(MiniZip)
-#configure_project(Zlib)
-#configure_project(EXPAT)
-
-# if(HAVE_SYSTEM_EXPAT)
-#   include_directories(${EXPAT_INCLUDE_DIR})
-# endif()
-
-#list(APPEND KMLBASE_LINK_LIBS ${EXPAT_LIBRARY})
 
 file(GLOB SRCS "*.cc"
   contrib/minizip/unzip.c
@@ -80,4 +84,4 @@ build_target(
   SRCS ${SRCS}
   INCS ${INCS}
   DEPENDS ${KMLBASE_DEPENDS}
-  LINKS ${ZLIB_LIBRARIES} ${MINIZIP_LIBRARIES} )
+  LINKS ${ZLIB_LIBRARIES} ${MINIZIP_LIBRARIES} ${EXPAT_LIBRARY} )

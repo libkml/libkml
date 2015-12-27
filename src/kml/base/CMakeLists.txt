@@ -5,11 +5,10 @@ include_directories(${MINIZIP_INCLUDE_DIR})
 super_find_package(ZLIB)
 include_directories(${ZLIB_INCLUDE_DIR})
 
-# super_find_package(EXPAT)
-# include_directories(${EXPAT_INCLUDE_DIR})
-
 super_find_package(UriParser)
 include_directories(${URIPARSER_INCLUDE_DIR})
+
+# super_find_package(EXPAT)
 
 find_package(Boost)
 if(Boost_FOUND)
@@ -21,24 +20,6 @@ else()
 endif()
 
 include_directories(${Boost_INCLUDE_DIRS})
-
-
-##set(LIBKML_TARGETS)
-# set(KMLBASE_LINK_LIBS "" CACHE INTERNAL "KMLBASE_LINK_LIBS")
-# set(KMLBASE_DEPENDS "" CACHE INTERNAL "KMLBASE_DEPENDS")
-# set(MINIZIP_DEPENDS "" CACHE INTERNAL "MINIZIP_DEPENDS")
-# list(APPEND KMLBASE_LINK_LIBS ${EXPAT_LIBRARY})
-# list(APPEND KMLBASE_LINK_LIBS ${ZLIB_LIBRARIES})
-# list(APPEND KMLBASE_LINK_LIBS ${MINIZIP_LIBRARIES})
-# list(APPEND KMLBASE_LINK_LIBS ${URIPARSER_LIBRARY})
-
-# find_package(UriParser)
-# if(URIPARSER_FOUND)
-#   include_directories(${URIPARSER_INCLUDE_DIR})
-# else()
-#   include(External_uriparser)
-#   list(APPEND KMLBASE_DEPENDS URIPARSER)
-# endif()
 
 file(GLOB SRCS "*.cc"
   contrib/minizip/unzip.c
@@ -77,6 +58,19 @@ set(INCS
   xml_namespaces.h
   xmlns.h
   zip_file.h)
+
+set(KMLBASE_DEPENDS)
+if(EXISTS ZLIB)
+list(APPEND KMLBASE_DEPENDS ZLIB)
+endif()
+
+if(EXISTS MiniZip)
+list(APPEND KMLBASE_DEPENDS MiniZip)
+endif()
+
+if(EXISTS UriParser)
+list(APPEND KMLBASE_DEPENDS UriParser)
+endif()
 
 build_target(
   NAME kmlbase

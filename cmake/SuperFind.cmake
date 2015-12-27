@@ -1,3 +1,17 @@
+include(ExternalProject)
+
+if(NOT WIN32)
+  set(ep_base "/tmp/cmake-build/third-party")
+else()
+  set(ep_base "C://cmake-build//third-party")
+endif()
+
+set_property(DIRECTORY PROPERTY "EP_BASE" ${ep_base})
+
+set(EP_URL "https://github.com/rashadkm")
+
+find_package(Git)
+
 function(super_find_package name)
   set(PKG_NAME ${name})
   set(PKG_REPO ${PKG_NAME})

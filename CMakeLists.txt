@@ -83,17 +83,11 @@ set(LIBKML_TARGETS)
 
 include(LibKMLHelper)
 
-include(ExternalProject)
-
-set(ep_base "/tmp/cmake-build/third-party")
-set_property(DIRECTORY PROPERTY "EP_BASE" ${ep_base})
-set(EP_URL "https://github.com/rashadkm")
-find_package(Git)
-
 include(SuperFind)
 
-
 # super_find_package(EXPAT)
+
+# super_find_package(Boost)
 
 find_package(Boost)
 if(Boost_FOUND)

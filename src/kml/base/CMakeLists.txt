@@ -1,4 +1,3 @@
-
 super_find_package(MiniZip)
 include_directories(${MINIZIP_INCLUDE_DIR})
 
@@ -51,19 +50,19 @@ set(INCS
 
 set(KMLBASE_DEPENDS)
 
-if(EXISTS ZLIB)
+if(TARGET ZLIB)
   list(APPEND KMLBASE_DEPENDS ZLIB)
 endif()
 
-if(EXISTS MiniZip)
+if(TARGET MiniZip)
   list(APPEND KMLBASE_DEPENDS MiniZip)
 endif()
 
-if(EXISTS UriParser)
+if(TARGET UriParser)
   list(APPEND KMLBASE_DEPENDS UriParser)
 endif()
 
-if(EXISTS EXPAT)
+if(TARGET EXPAT)
   list(APPEND KMLBASE_DEPENDS EXPAT)
 endif()
 

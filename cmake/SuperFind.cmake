@@ -1,16 +1,13 @@
 include(ExternalProject)
 
+find_package(Git)
 if(NOT WIN32)
   set(ep_base "/tmp/cmake-build/third-party")
 else()
-  set(ep_base "C://cmake-build//third-party")
+  set(ep_base "C:/cmake-build/third-party")
 endif()
-
 set_property(DIRECTORY PROPERTY "EP_BASE" ${ep_base})
-
 set(EP_URL "https://github.com/rashadkm")
-
-find_package(Git)
 
 function(super_find_package name)
   set(PKG_NAME ${name})
@@ -22,14 +19,15 @@ function(super_find_package name)
   endif ()
 
   if(EXISTS ${ep_base}/Build/${PKG_NAME}/${PKG_NAME}Config.cmake)
-    message(STATUS "[FIND_PACKAGE ${PKG_NAME} ] using config from ${ep_base}/Build/${PKG_NAME}")
+    message(STATUS "[SuperFind] ${PKG_NAME} using config from ${ep_base}/Build/${PKG_NAME}")
     find_package(${PKG_NAME} PATHS ${ep_base}/Build/${PKG_NAME})
   else()
-    message(STATUS "[FIND_PACKAGE ${PKG_NAME} ] no config")
+    message(STATUS "[SuperFind] ${PKG_NAME} no config")
     find_package(${PKG_NAME} QUIET)
   endif()
   
-  if(NOT ${PKG_NAME}_FOUND)    
+  if(NOT ${PKG_NAME}_FOUND)
+    message(STATUS "[SuperFind] Adding ExternalProject ${PKG_NAME}. update add_dependencies() if needed")    
     ExternalProject_Add(${PKG_NAME}
       GIT_REPOSITORY ${EP_URL}/${PKG_REPO}
       DOWNLOAD_COMMAND ""

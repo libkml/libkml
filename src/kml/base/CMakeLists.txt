@@ -1,9 +1,14 @@
+super_find_package(MiniZip)
+include_directories(${MINIZIP_INCLUDE_DIR})
 
-if(HAVE_SYSTEM_EXPAT)
-  include_directories(${EXPAT_INCLUDE_DIR})
-endif()
+super_find_package(ZLIB)
+include_directories(${ZLIB_INCLUDE_DIR})
 
-list(APPEND KMLBASE_LINK_LIBS ${EXPAT_LIBRARY})
+super_find_package(UriParser)
+include_directories(${URIPARSER_INCLUDE_DIR})
+
+super_find_package(EXPAT)
+include_directories(${EXPAT_INCLUDE_DIR})
 
 file(GLOB SRCS "*.cc"
   contrib/minizip/unzip.c
@@ -43,9 +48,27 @@ set(INCS
   xmlns.h
   zip_file.h)
 
+set(KMLBASE_DEPENDS)
+
+if(TARGET ZLIB)
+  list(APPEND KMLBASE_DEPENDS ZLIB)
+endif()
+
+if(TARGET MiniZip)
+  list(APPEND KMLBASE_DEPENDS MiniZip)
+endif()
+
+if(TARGET UriParser)
+  list(APPEND KMLBASE_DEPENDS UriParser)
+endif()
+
+if(TARGET EXPAT)
+  list(APPEND KMLBASE_DEPENDS EXPAT)
+endif()
+
 build_target(
   NAME kmlbase
   SRCS ${SRCS}
   INCS ${INCS}
   DEPENDS ${KMLBASE_DEPENDS}
-  LINKS ${KMLBASE_LINK_LIBS} )
+  LINKS ${ZLIB_LIBRARIES} ${MINIZIP_LIBRARIES} ${EXPAT_LIBRARY} )

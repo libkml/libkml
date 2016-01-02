@@ -7,11 +7,23 @@ if(NOT TARGET foo AND NOT LIBKML_BINARY_DIR)
   include("${LIBKML_CMAKE_DIR}/LibKMLTargets.cmake")
 endif()
 
+set(BUILD_SHARED_LIBS @BUILD_SHARED_LIBS@)
+
 set(LIBKML_LIBRARIES)
 
 foreach(targ @LIBKML_TARGETS@)
-  get_target_property(LIB_LIB_FILENAME ${targ} IMPORTED_LOCATION_@CONFIG_TYPE@)
+  if(MSVC)
+    if(BUILD_SHARED_LIBS)
+      get_target_property(LIB_LIB_FILENAME @LIB_NAME@ IMPORTED_IMPLIB_@CONFIG_TYPE@)
+    else(BUILD_SHARED_LIBS)
+      get_target_property(LIB_LIB_FILENAME @LIB_NAME@ IMPORTED_LOCATION_@CONFIG_TYPE@)
+    endif(BUILD_SHARED_LIBS)
+  else()
+    get_target_property(LIB_LIB_FILENAME @LIB_NAME@ IMPORTED_LOCATION_@CONFIG_TYPE@)
+  endif()
+ 
   get_target_property(LIB_LINK_FILENAME ${targ} IMPORTED_LINK_INTERFACE_LIBRARIES_@CONFIG_TYPE@)
+  
   string(REGEX MATCH "^kml" matched ${LIB_LINK_FILENAME})
   if(NOT matched)
     list(APPEND LIBKML_LIBRARIES ${LIB_LINK_FILENAME})

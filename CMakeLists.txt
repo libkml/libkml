@@ -14,6 +14,8 @@ option(WITH_SWIG   "Build all swig bindings"   OFF)
 option(WITH_PYTHON "Build python bindings" OFF)
 option(WITH_JAVA   "Build java bindings"   OFF)
 
+set(CMAKE_INCLUDE_DIRECTORIES_BEFORE ON)
+
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)

@@ -96,6 +96,10 @@ endif()
 
 include_directories(${Boost_INCLUDE_DIRS})
 
+#expat is dependency for kmlbase and kmldom
+super_find_package(EXPAT)
+include_directories(${EXPAT_INCLUDE_DIRS})
+
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 add_subdirectory(src)

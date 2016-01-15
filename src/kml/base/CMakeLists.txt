@@ -8,7 +8,7 @@ super_find_package(UriParser)
 include_directories(${URIPARSER_INCLUDE_DIR})
 
 super_find_package(EXPAT)
-include_directories(${EXPAT_INCLUDE_DIR})
+include_directories(${EXPAT_INCLUDE_DIRS})
 
 file(GLOB SRCS "*.cc"
   contrib/minizip/unzip.c

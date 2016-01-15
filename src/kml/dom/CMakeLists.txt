@@ -50,8 +50,6 @@ set(INCS
   visitor.h
   visitor_driver.h)
 
-include_directories(${EXPAT_INCLUDE_DIRS})
-
 build_target(
   NAME kmldom
   SRCS ${SRCS}

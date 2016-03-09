@@ -105,6 +105,7 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 add_subdirectory(src)
 
 if(BUILD_TESTING)
+  enable_testing()
   add_subdirectory(tests)
 endif()
 

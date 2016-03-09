@@ -24,6 +24,7 @@ function(super_find_package name)
     find_package(${PKG_NAME} PATHS ${ep_base}/Build/${PKG_NAME})
   else()
     message(STATUS "[SuperFind] ${PKG_NAME} no config")
+    set(${PKG_NAME_}_FIND_QUIETLY TRUE)
     find_package(${PKG_NAME} QUIET)
   endif()
   
@@ -33,7 +34,7 @@ function(super_find_package name)
       GIT_REPOSITORY ${EP_URL}/${PKG_REPO}
       DOWNLOAD_COMMAND ""
       CONFIGURE_COMMAND ""
-      UPDATE_COMMAND ""        
+      UPDATE_COMMAND ""
       INSTALL_COMMAND)
     set(${PKG_NAME}_INSTALL_DIR ${ep_base}/Install/${PKG_NAME})
     

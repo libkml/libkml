@@ -19,7 +19,6 @@ find_library(MINIZIP_LIBRARY NAMES minizip)
 
 if (MINIZIP_INCLUDE_DIR AND MINIZIP_LIBRARY)
   set(MINIZIP_FOUND TRUE)
-  set(MiniZip_FOUND TRUE)
 endif ()
 
 if (MINIZIP_FOUND)

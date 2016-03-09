@@ -32,19 +32,27 @@ namespace kmlbase {
     m_CurrentLocale(NULL)
   {
     /* Create a new locale object, with LC_NUMERIC=C  */
+#if defined(_WIN32)
+    m_CurrentLocale = _create_locale(LC_NUMERIC, "C");
+#else  
     m_CurrentLocale = newlocale(LC_NUMERIC_MASK, "C", (locale_t) 0);
-    if (m_CurrentLocale == (locale_t) 0)
+    uselocale(m_CurrentLocale);
+#endif
+    
+    if (m_CurrentLocale == NULL)
       printf("Cannot create an instance of locale_t\n");
     
-    uselocale(m_CurrentLocale);
   }
   
   LocaleC::~LocaleC()
   {
-    if (m_CurrentLocale == (locale_t) 0)
+    if (m_CurrentLocale == NULL)
       return;
-    
+#if defined(_WIN32)
+    _free_locale(m_CurrentLocale);
+#else
     freelocale(m_CurrentLocale);
+#endif
   }
  
 }

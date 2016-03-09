@@ -44,8 +44,12 @@ namespace kmlbase {
     
   private:
     
+#if defined(_WIN32)
+    _locale_t m_CurrentLocale;
+#else  
     locale_t m_CurrentLocale;
-   
+ #endif
+    
     LocaleC(const LocaleC&);
     LocaleC& operator=(const LocaleC&);
     

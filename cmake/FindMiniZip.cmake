@@ -7,7 +7,7 @@
 
 if (MINIZIP_INCLUDE_DIR)
  #check cache 
-  set(MINIZIP_FIND_QUIETLY TRUE)
+  set(MiniZip_FIND_QUIETLY TRUE)
 endif ()
 
 if (NOT MINIZIP_INCLUDE_DIR)
@@ -19,15 +19,14 @@ find_library(MINIZIP_LIBRARY NAMES minizip)
 
 if (MINIZIP_INCLUDE_DIR AND MINIZIP_LIBRARY)
   set(MINIZIP_FOUND TRUE)
-  set(MiniZip_FOUND TRUE)
 endif ()
 
 if (MINIZIP_FOUND)
-   if (NOT MINIZIP_FIND_QUIETLY)
+   if (NOT MiniZip_FIND_QUIETLY)
       message(STATUS "Found Minizip library: ${MINIZIP_LIBRARY}")
    endif ()
 else ()
-   if (NOT MINIZIP_FIND_QUIETLY)
+   if (NOT MiniZip_FIND_QUIETLY)
       message(FATAL_ERROR "Could NOT find Minizip library")
     else ()
       message(STATUS "Could NOT find Minizip library")

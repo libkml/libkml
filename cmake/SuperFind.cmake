@@ -11,6 +11,7 @@ set(EP_URL "https://github.com/rashadkm")
 
 function(super_find_package name)
   set(PKG_NAME ${name})
+  set(TOUPPER ${name} PKG_NAME_)
   set(PKG_REPO ${PKG_NAME})
   set (extra_args ${ARGN})
   list(LENGTH extra_args num_extra_args)
@@ -26,7 +27,7 @@ function(super_find_package name)
     find_package(${PKG_NAME} QUIET)
   endif()
   
-  if(NOT ${PKG_NAME}_FOUND)
+  if(NOT ${PKG_NAME_}_FOUND)
     message(STATUS "[SuperFind] Adding ExternalProject ${PKG_NAME}. update add_dependencies() if needed")    
     ExternalProject_Add(${PKG_NAME}
       GIT_REPOSITORY ${EP_URL}/${PKG_REPO}

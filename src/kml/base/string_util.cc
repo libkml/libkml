@@ -28,6 +28,7 @@
 #include "kml/base/string_util.h"
 #include <stdlib.h>  // strtod()
 #include <string.h>  // memcpy, strchr
+#include "kml/base/localec.h"
 
 namespace kmlbase {
 
@@ -83,6 +84,7 @@ void FromString(const string& str, bool* out) {
 
 template<>
 void FromString(const string& str, double* out) {
+  LocaleC lc;
   if (out) {
     *out = strtod(str.c_str(), NULL);
   }
@@ -90,6 +92,7 @@ void FromString(const string& str, double* out) {
 
 template<>
 void FromString(const string& str, int* out) {
+  LocaleC lc;
   if (out) {
     *out = atoi(str.c_str());
   }
@@ -123,8 +126,8 @@ bool StringToDouble(const string& number, double* output) {
   if (!IsDecimalDoubleString(number)) {
     return false;
   }
+    LocaleC lc;
   if (output) {
-    // TODO: consider protobuf's NoLocaleStrtod.
     *output = strtod(number.c_str(), NULL);
   }
   return true;

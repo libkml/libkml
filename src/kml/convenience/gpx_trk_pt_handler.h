@@ -33,6 +33,7 @@
 #include "kml/base/attributes.h"
 #include "kml/base/expat_handler.h"
 #include "kml/base/vec3.h"
+#include "kml/base/localec.h"
 
 namespace kmlconvenience {
 
@@ -86,6 +87,9 @@ class GpxTrkPtHandler : public kmlbase::ExpatHandler {
 
   // ExpatHandler::EndElement()
   virtual void EndElement(const string& name) {
+    //  force_locale_to_C
+    kmlbase::LocaleC lc;
+
     if (name.compare("trkpt") == 0) {
       // </trkpt>
       // If a Vec3 was created for this element call the handler.

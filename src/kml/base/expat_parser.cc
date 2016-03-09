@@ -30,6 +30,8 @@
 #include <sstream>
 #include "kml/base/expat_handler.h"
 
+#include "kml/base/localec.h"
+
 namespace kmlbase {
 
 static void XMLCALL
@@ -143,6 +145,7 @@ bool ExpatParser::ParseInternalBuffer(size_t len, string* errors,
 // Private.
 bool ExpatParser::_ParseString(const string& xml, string* errors) {
   int xml_size = static_cast<int>(xml.size());
+  kmlbase::LocaleC lc;
   XML_Status status = XML_Parse(parser_, xml.c_str(), xml_size, xml_size);
   if (status != XML_STATUS_OK && errors) {
     // This is the other half of XML_StopParser() which is our way of

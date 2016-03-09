@@ -37,6 +37,7 @@
 #include "kml/dom/kml_cast.h"
 #include "kml/dom/kml_ptr.h"
 #include "kml/dom/serializer.h"
+#include "kml/base/localec.h"
 
 using kmlbase::Attributes;
 using kmlbase::Vec3;
@@ -78,10 +79,15 @@ Coordinates::~Coordinates() {}
 // like this: "1.1*2.2,3,3" will become "1.1,3.3,0.0". This precisely matches
 // the precent for parsing of bad coordinate strings set by Google Earth.
 bool Coordinates::ParseVec3(const char* cstr, char** nextp, Vec3* vec) {
+
   if (!cstr || !vec) {  // Not much to do w/o input or output.
     return false;
   }
   bool done = false;
+
+  //  force_locale_to_C
+  kmlbase::LocaleC lc;
+
   char* endp = const_cast<char*>(cstr);
 
   // Ignore any commas at the start of our scan. This will cause this:

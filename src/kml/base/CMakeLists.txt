@@ -43,6 +43,7 @@ set(INCS
   xml_file.h
   xml_namespaces.h
   xmlns.h
+  localec.h
   zip_file.h)
 
 set(KMLBASE_DEPENDS)

@@ -1,4 +1,7 @@
 file(GLOB SRCS "*.cc" )
+
+list(REMOVE_ITEM SRCS "${CMAKE_CURRENT_SOURCE_DIR}/kml22.cc")
+
 set(INCS
   abstractlatlonbox.h
   abstractview.h
@@ -16,6 +19,7 @@ set(INCS
   iconstyle.h
   kml.h
   kml22.h
+  kml22.cc
   kml_cast.h
   kml_factory.h
   kml_funcs.h

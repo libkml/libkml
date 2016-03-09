@@ -1,4 +1,3 @@
-enable_testing()
 find_package(GoogleTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/tests)

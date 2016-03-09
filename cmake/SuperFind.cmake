@@ -11,7 +11,7 @@ set(EP_URL "https://github.com/rashadkm")
 
 function(super_find_package name)
   set(PKG_NAME ${name})
-  set(TOUPPER ${name} PKG_NAME_)
+  string(TOUPPER ${name} PKG_NAME_)
   set(PKG_REPO ${PKG_NAME})
   set (extra_args ${ARGN})
   list(LENGTH extra_args num_extra_args)
@@ -20,14 +20,16 @@ function(super_find_package name)
   endif ()
 
   if(EXISTS ${ep_base}/Build/${PKG_NAME}/${PKG_NAME}Config.cmake)
-    message(STATUS "[SuperFind] ${PKG_NAME} using config from ${ep_base}/Build/${PKG_NAME}")
+    message(STATUS "[SuperFind] ${PKG_NAME} found using config from ${ep_base}/Build/${PKG_NAME}")
     find_package(${PKG_NAME} PATHS ${ep_base}/Build/${PKG_NAME})
   else()
-    message(STATUS "[SuperFind] ${PKG_NAME} no config")
     set(${PKG_NAME_}_FIND_QUIETLY TRUE)
     find_package(${PKG_NAME} QUIET)
+    if(${PKG_NAME_}_FOUND)
+      message(STATUS "[SuperFind] ${PKG_NAME} found from system")
+    endif()
   endif()
-  
+
   if(NOT ${PKG_NAME_}_FOUND)
     message(STATUS "[SuperFind] Adding ExternalProject ${PKG_NAME}. update add_dependencies() if needed")    
     ExternalProject_Add(${PKG_NAME}

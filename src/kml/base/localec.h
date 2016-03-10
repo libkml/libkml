@@ -37,19 +37,18 @@ namespace kmlbase {
   class LocaleC {
     
   public:
+#if defined(_WIN32)
+    typedef char* LocaleType;
+#else
+    typedef locale_t LocaleType;
+#endif
     
     LocaleC();
-    
     ~LocaleC();
     
   private:
     
-#if defined(_WIN32)
-    _locale_t m_CurrentLocale;
-#else  
-    locale_t m_CurrentLocale;
- #endif
-    
+    LocaleType m_CurrentLocale;
     LocaleC(const LocaleC&);
     LocaleC& operator=(const LocaleC&);
     

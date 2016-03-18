@@ -26,7 +26,7 @@
 // This file contains the declarations of various string utility functions.
 
 #include "kml/base/string_util.h"
-#include <stdlib.h>  // strtod()
+#include <stdlib.h>
 #include <string.h>  // memcpy, strchr
 
 namespace kmlbase {

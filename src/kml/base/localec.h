@@ -48,7 +48,7 @@ namespace kmlbase {
     
   private:
     
-    LocaleType m_CurrentLocale;
+    LocaleType previous_locale;
     LocaleC(const LocaleC&);
     LocaleC& operator=(const LocaleC&);
     

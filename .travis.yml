@@ -5,6 +5,7 @@ compiler:
 before_script:
     - sudo apt-get update -qq
     - sudo apt-get install swig python-dev cmake
+    - SOURCE_DIR=`pwd`
     - cd /tmp
     - wget https://github.com/google/googletest/archive/release-1.7.0.tar.gz -O gtest-1.7.0.tar.gz
     - tar xf gtest-1.7.0.tar.gz
@@ -14,6 +15,6 @@ before_script:
     - sudo cp -rv /tmp/googletest-release-1.7.0/include/gtest /usr/local/include/
 
 script:
-- cd && cd build
-- cmake -DCMAKE_INSTALL_PREFIX=../../install ../rashadkm/libkml
+- cd $SOURCE_DIR/../ && mkdir libkml.build && cd libkml.build
+- cmake -DCMAKE_INSTALL_PREFIX=../../install $SOURCE_DIR
 - make && ctest

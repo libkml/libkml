@@ -16,5 +16,5 @@ before_script:
 
 script:
 - cd $SOURCE_DIR/../ && mkdir libkml.build && cd libkml.build
-- cmake -DCMAKE_INSTALL_PREFIX=../../install $SOURCE_DIR
+- cmake -DCMAKE_INSTALL_PREFIX=../../install $SOURCE_DIR -DBUILD_TESTING=ON
 - make && ctest

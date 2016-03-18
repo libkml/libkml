@@ -3,14 +3,15 @@ compiler:
   - gcc
 
 before_script:
-    - mkdir build
-    - cd build
     - sudo apt-get update -qq
     - sudo apt-get install swig python-dev cmake
+    - cd /tmp
     - wget https://github.com/google/googletest/archive/release-1.7.0.tar.gz -O gtest-1.7.0.tar.gz
     - tar xf gtest-1.7.0.tar.gz
     - mkdir gtest.build && cd gtest.build
-    - cmake ../googletest-release-1.7.0  -DBUILD_SHARED_LIBS=ON  && make
-    - sudo make install
+    - cmake /tmp/googletest-release-1.7.0  -DBUILD_SHARED_LIBS=ON  && make
 
-script: cmake -DCMAKE_INSTALL_PREFIX=../../install .. && make && ctest
+script:
+- cd && mkdir build && cd build
+- cmake -DCMAKE_INSTALL_PREFIX=../../install .. -DGTEST_INCLUDE_DIR=/tmp/googletest-release-1.7.0/include -DGTEST_LIBRARY="/tmp/gtest.build/libgtest.so;/tmp/gtest.build/libgtest_main.so"
+- make && ctest

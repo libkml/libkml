@@ -35,7 +35,6 @@
 #include "kml/engine.h"
 #include "kml/convenience/convenience.h"
 #include "kml/convenience/feature_list.h"
-#include "kml/base/localec.h"
 
 namespace kmlconvenience {
 
@@ -47,16 +46,17 @@ using std::vector;
 
 void CsvFile::ParseCsvLine(const string& csv_line) {
   vector<string> csv_parts;
-  kmlbase::LocaleC lc;
   kmlbase::SplitStringUsing(csv_line, "|", &csv_parts);
   if (csv_parts.size() < 5) {
     return;
   }
+  double csv_parts1= 0.0;
+  kmlbase::StringToDouble(csv_parts[1], &csv_parts1);
+  
+  double csv_parts2= 0.0;
+  kmlbase::StringToDouble(csv_parts[2], &csv_parts2);
 
-  PlacemarkPtr placemark = kmlconvenience::CreatePointPlacemark(
-
-      csv_parts[3], strtod(csv_parts[1].c_str(), NULL),
-      strtod(csv_parts[2].c_str(), NULL));
+  PlacemarkPtr placemark = kmlconvenience::CreatePointPlacemark(csv_parts[3], csv_parts1, csv_parts2);
   placemark->set_description(csv_parts[4]);
   if (csv_parts.size() > 5) {
     placemark->set_styleurl(csv_parts[5]);

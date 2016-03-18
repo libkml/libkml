@@ -27,9 +27,11 @@
 // and the concrete elements coordinates, Point, LineString, LinearRing,
 // outerBoundaryIs, innerBoundaryIs and Polygon.
 
+#include <cctype>
+#include <cstdlib>
+#include <cstring>
+#include <string>
 #include "kml/dom/geometry.h"
-#include <ctype.h>
-#include <stdlib.h>
 #include "kml/base/attributes.h"
 #include "kml/base/xml_namespaces.h"
 #include "kml/dom/element.h"
@@ -37,7 +39,7 @@
 #include "kml/dom/kml_cast.h"
 #include "kml/dom/kml_ptr.h"
 #include "kml/dom/serializer.h"
-#include "kml/base/localec.h"
+
 
 using kmlbase::Attributes;
 using kmlbase::Vec3;
@@ -79,60 +81,83 @@ Coordinates::~Coordinates() {}
 // like this: "1.1*2.2,3,3" will become "1.1,3.3,0.0". This precisely matches
 // the precent for parsing of bad coordinate strings set by Google Earth.
 bool Coordinates::ParseVec3(const char* cstr, char** nextp, Vec3* vec) {
-
+  
   if (!cstr || !vec) {  // Not much to do w/o input or output.
     return false;
   }
   bool done = false;
-
-  //  force_locale_to_C
-  kmlbase::LocaleC lc;
-
-  char* endp = const_cast<char*>(cstr);
-
-  // Ignore any commas at the start of our scan. This will cause this:
-  // <coordinates>1,2,3,4,5</coordinates> to be treated as:
-  // <coordinates>1,2,3 4,5</coordinates>, which is how Google Earth treats
-  // the misuse of commas as separators.
-  if (*endp == ',') {
-    ++endp;
+  
+  int k;
+  char lon[1024];
+  k = 0;
+  while(*cstr && *cstr!='-' && !isdigit(*cstr)) { ++cstr; }
+  const char *first = cstr;
+  
+  while (*cstr && *cstr!=' ' && *cstr!='\n' && *cstr!=',') { ++cstr; ++k; }
+  
+  memcpy(lon, first, k);
+  lon[k] = '\0'; 
+  string lon_s = string(lon);
+  if( lon_s.empty()) { done = false; return done; }
+  
+  double longitude; 
+  kmlbase::StringToDouble(lon_s, &longitude);
+  vec->set(0, longitude);
+  
+  
+  while(*cstr && *cstr!='-' && *cstr!='\n' && !isdigit(*cstr)) { ++cstr; ++k; }
+  
+  char lat[1024];
+  first = cstr;
+  k = 0;
+  int b = 0;
+  while (*cstr  && *cstr!=',') {
+    if( *cstr==' ') {
+      b = 1;  
+      break;
+    }
+    ++cstr;  ++k;
   }
-
-  // Longitude first.  strtod() eats leading whitespace.
-  vec->set(0, strtod(endp, &endp));
-  if (endp) {
-
-    // Latitude next.
-    while (isspace(*endp) || *endp != ',') {
-      // We check here to make sure the parse is sane. If we've been passed
-      // an invalid coordinate string, this loop will reach the null
-      // terminator. If we see it, we set the nextp pointer to the end and
-      // return which will let Coordinates::Parse know that it's finished.
-      if (*endp == '\0') {
-        *nextp = endp;
-        return done;
+  memcpy(lat, first, k);
+  lat[k] = '\0';
+  done = true;
+  
+  string lat_s = string(lat);
+  double latitude = 0.0;
+  if( !lat_s.empty())
+    kmlbase::StringToDouble(lat_s, &latitude);
+  
+  vec->set(1, latitude);
+  
+  
+  while(*cstr && *cstr!='-'&& !isdigit(*cstr)) { ++cstr; ++k; }
+  
+  if ( b < 1) {
+    char alt[1024];
+    first = cstr;
+    k = 0;
+    while (*cstr && *cstr!=',') {
+      if( *cstr==' ') {
+	b = 1;  
+	break;
       }
-      // Eat whitespace between double and comma.
-      ++endp;
+      ++cstr;  ++k;
     }
-    vec->set(1, strtod(endp+1, &endp));
-    done = true;  // Need at least lon,lat to be valid.
-
-    // If no altitude set to 0
-    while (isspace(*endp)) {  // Eat whitespace between double and comma.
-      ++endp;
-    }
-    if (*endp == ',') {
-      // Note that this sets altitude only if an altitude is supplied.
-      vec->set(2, strtod(endp+1, &endp));
+    memcpy(alt, first, k); 
+    alt[k] = '\0';
+    
+    string alt_s = string(alt);
+    double altitude;
+    if( !alt_s.empty() ) {
+      kmlbase::StringToDouble(alt_s, &altitude);
+      vec->set(2, altitude);
     }
   }
-  if (nextp) {
-    while ((endp != NULL) && isspace(*endp)) {  // Eat the remaining whitespace before return.
-      ++endp;
-    }
-    *nextp = endp;
-  }
+  
+  while(*cstr && *cstr!='-' && !isdigit(*cstr)) ++cstr;
+  
+  *nextp = const_cast<char*>(cstr);
+  
   return done;
 }
 
@@ -536,7 +561,9 @@ void GxTrack::Parse(const string& char_data, std::vector<Vec3>* out) {
   kmlbase::SplitStringUsing(char_data, " ", &s);
   kmlbase::Vec3 vec;
   for (size_t i = 0; i < s.size(); i++) {
-    vec.set(i, strtod(s[i].c_str(), NULL));
+    double d;
+    kmlbase::FromString(s[i], &d);
+    vec.set(i, d);
     if (i > 2) break;
   }
   out->push_back(vec);

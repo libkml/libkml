@@ -29,7 +29,7 @@
 namespace kmlbase {
   
   LocaleC::LocaleC() :
-   m_CurrentLocale(NULL)
+   previous_locale(NULL)
   {
     /* Create a new locale object, with LC_NUMERIC=C  */
     LocaleType c_locale;
@@ -39,7 +39,7 @@ namespace kmlbase {
     // threads to have their own locale.
     _configthreadlocale(_ENABLE_PER_THREAD_LOCALE);
     // read current locale and save it to m_CurrentLocale
-    m_CurrentLocale = setlocale(LC_NUMERIC, NULL);
+    previous_locale = setlocale(LC_NUMERIC, NULL);
     //set LC_NUMERIC locale category to C
     setlocale(LC_NUMERIC, "C");
     
@@ -47,29 +47,25 @@ namespace kmlbase {
     //create a new C locale for LC_NUMERIC_MASK
     c_locale = newlocale(LC_NUMERIC_MASK, "C", (locale_t) 0);
     //apply c_locale and save previous locale value to m_CurrentLocale
-    m_CurrentLocale = uselocale(c_locale);
+    previous_locale = uselocale(c_locale);
+
 #endif 
 
   }
 
   LocaleC::~LocaleC() {
     
-    if (m_CurrentLocale == (LocaleType) 0) {
-	return;
+    if (previous_locale == NULL) {
+      return;
     }
     
-    #if defined(_WIN32)
-      if (m_CurrentLocale == NULL) {
-	return;
-      }
-      setlocale(LC_NUMERIC, m_CurrentLocale);
-      free(m_CurrentLocale);
+   #if defined(_WIN32)
+      setlocale(LC_NUMERIC, previous_locale);
+      free(previous_locale);
     #else
-      m_CurrentLocale = uselocale(m_CurrentLocale);      
-      freelocale(m_CurrentLocale);
+      locale_t c_locale = uselocale(previous_locale);
+      freelocale(c_locale);
     #endif
-      
-      m_CurrentLocale = NULL;
   }
  
 }

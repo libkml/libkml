@@ -87,15 +87,22 @@ string CreateExpandedStrings(const string& in,
 template<typename T>
 void FromString(const string& in, T* out);
 
-// This converts to string from any T of int, bool or double.
 template<typename T>
-inline string ToString(T value) {
-  std::stringstream ss;
-  ss.precision(15);
-  ss << value;
+  inline string ToString(T value) {
+  std::ostringstream ss;
+  ss.imbue(std::locale::classic());
+  ss << value; 
   return ss.str();
 }
 
+// This converts to string from any T of int, bool or double.
+
+string ToString(bool value);
+string ToString(double value);
+string ToString(float value);
+string ToString(string value);
+string ToString(const char *value);
+ 
 // Split the input string on the split_string saving each string into the
 // output vector.
 void SplitStringUsing(const string& input, const string& split_string,
@@ -125,6 +132,9 @@ bool StringCaseEqual(const string& a, const string& b);
 // as the output argument in which case this function becomes a simple "is this
 // a number" check.
 bool StringToDouble(const string& number, double* output);
+
+//A Helper function to pass const char* to above function
+bool StringToDouble(const char* number, double* output);
 
 // This returns true if number starts with [-][.][0123456789].
 bool IsDecimalDoubleString(const string& number);

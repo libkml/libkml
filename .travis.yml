@@ -21,5 +21,6 @@ script:
 - mkdir libkml.build
 - cd libkml.build
 - cmake -DCMAKE_INSTALL_PREFIX=../../install $SOURCE_DIR -DBUILD_TESTING=ON
+- export LD_LIBRARY_PATH=/tmp/cmake-build/third-party/Install/MiniZip/lib:/tmp/cmake-build/third-party/Install/UriParser/lib
 - make
 - ctest

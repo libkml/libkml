@@ -19,19 +19,24 @@ function(super_find_package name)
     list(GET extra_args 0 PKG_REPO)
   endif ()
 
-  if(EXISTS ${ep_base}/Build/${PKG_NAME}/${PKG_NAME}Config.cmake)
-    message(STATUS "[SuperFind] ${PKG_NAME} found using config from ${ep_base}/Build/${PKG_NAME}")
-    find_package(${PKG_NAME} PATHS ${ep_base}/Build/${PKG_NAME})
+  set(${PKG_NAME_}_FIND_QUIETLY TRUE)
+  find_package(${PKG_NAME})
+  if(${PKG_NAME_}_FOUND)
+    message(STATUS "[SuperFind] ${PKG_NAME} found from system")
   else()
-    set(${PKG_NAME_}_FIND_QUIETLY TRUE)
-    find_package(${PKG_NAME} QUIET)
-    if(${PKG_NAME_}_FOUND)
-      message(STATUS "[SuperFind] ${PKG_NAME} found from system")
+    if(EXISTS ${ep_base}/Build/${PKG_NAME}/${PKG_NAME}Config.cmake)
+      message(STATUS "[SuperFind] ${PKG_NAME} found using config from ${ep_base}/Build/${PKG_NAME}")
+      find_package(${PKG_NAME} PATHS ${ep_base}/Build/${PKG_NAME})    
+      if(${PKG_NAME_}_FOUND)
+	add_custom_target(${PKG_NAME}
+          COMMAND ${CMAKE_COMMAND} "--build" "${ep_base}/Build/${PKG_NAME}" 
+	  WORKING_DIRECTORY "${ep_base}/Build/${PKG_NAME}")
+      endif()
     endif()
   endif()
-
+  
   if(NOT ${PKG_NAME_}_FOUND)
-    message(STATUS "[SuperFind] Adding ExternalProject ${PKG_NAME}. update add_dependencies() if needed")    
+    message(STATUS "[SuperFind] Adding ExternalProject ${PKG_NAME}")    
     ExternalProject_Add(${PKG_NAME}
       GIT_REPOSITORY ${EP_URL}/${PKG_REPO}
       DOWNLOAD_COMMAND ""
@@ -42,7 +47,7 @@ function(super_find_package name)
     
     #download source code.
     if(NOT EXISTS "${ep_base}/Stamp/${PKG_NAME}/${PKG_NAME}-download")
-      execute_process(COMMAND git clone ${EP_URL}/${PKG_REPO} ${PKG_NAME}
+      execute_process(COMMAND git clone --depth 1 ${EP_URL}/${PKG_REPO} ${PKG_NAME}
         WORKING_DIRECTORY  ${ep_base}/Source)
       execute_process(COMMAND ${CMAKE_COMMAND}  -E touch "${PKG_NAME}-download"
         WORKING_DIRECTORY ${ep_base}/Stamp/${PKG_NAME} )  
@@ -54,9 +59,12 @@ function(super_find_package name)
       "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
       "-G${CMAKE_GENERATOR}"
       WORKING_DIRECTORY ${ep_base}/Build/${PKG_NAME} )
-    include(${ep_base}/Build/${PKG_NAME}/${PKG_NAME}Config.cmake)
-    
+    include(${ep_base}/Build/${PKG_NAME}/${PKG_NAME}Config.cmake)    
   endif()
-
 endfunction()
 
+macro(add_dependencies_if_needed prefix tgt)  
+  if(TARGET ${tgt})
+    list(APPEND ${prefix}_DEPENDS ${tgt})
+  endif()
+endmacro()

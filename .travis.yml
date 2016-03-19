@@ -1,12 +1,26 @@
 language: cpp
 compiler:
   - gcc
-  - clang
 
 before_script:
-    - mkdir build
-    - cd build
     - sudo apt-get update -qq
-    - sudo apt-get install swig python-dev
+    - sudo apt-get install swig python-dev cmake
+    - SOURCE_DIR=`pwd`
+    - rm -fr /tmp/cmake-build/third-party/ 
+    - cd /tmp
+    - wget https://github.com/google/googletest/archive/release-1.7.0.tar.gz -O gtest-1.7.0.tar.gz
+    - tar xf gtest-1.7.0.tar.gz
+    - mkdir gtest.build && cd gtest.build
+    - cmake /tmp/googletest-release-1.7.0  -DBUILD_SHARED_LIBS=ON
+    - make
+    - sudo cp -v /tmp/gtest.build/*.so /usr/local/lib
+    - sudo cp -rv /tmp/googletest-release-1.7.0/include/gtest /usr/local/include/
 
-script: cmake -DCMAKE_INSTALL_PREFIX=../../install .. && make
+script:
+- cd $SOURCE_DIR/../
+- mkdir libkml.build
+- cd libkml.build
+- cmake -DCMAKE_INSTALL_PREFIX=../../install $SOURCE_DIR -DBUILD_TESTING=ON
+- make
+- export LD_LIBRARY_PATH=/tmp/cmake-build/third-party/Build/MiniZip:/tmp/cmake-build/third-party/Build/UriParser
+- ctest

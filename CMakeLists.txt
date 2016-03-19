@@ -16,6 +16,10 @@ option(WITH_JAVA   "Build java bindings"   OFF)
 
 set(CMAKE_INCLUDE_DIRECTORIES_BEFORE ON)
 
+if(POLICY CMP0022)
+  cmake_policy(SET CMP0022 NEW)
+endif()
+
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -83,7 +87,7 @@ include(LibKMLHelper)
 
 include(SuperFind)
 
-# super_find_package(Boost)
+set(KMLBASE_DEPENDS)
 
 find_package(Boost)
 if(Boost_FOUND)
@@ -110,6 +114,11 @@ super_find_package(UriParser)
 include_directories(${URIPARSER_INCLUDE_DIR})
 
 include_directories(${CMAKE_SOURCE_DIR}/src)
+
+add_dependencies_if_needed(KMLBASE ZLIB)
+add_dependencies_if_needed(KMLBASE MiniZip)
+add_dependencies_if_needed(KMLBASE UriParser)
+add_dependencies_if_needed(KMLBASE EXPAT)
 
 add_subdirectory(src)
 

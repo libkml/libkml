@@ -19,7 +19,8 @@ xml_namespaces
 xmlns
 net_cache
 uri_parser
-zip_file)
+zip_file
+expat_parser)
 
 foreach(TEST ${TESTS})
   build_test(
@@ -27,8 +28,3 @@ foreach(TEST ${TESTS})
     NAME ${TEST}
     DEPENDS kmlbase)
 endforeach()
-
-build_test(
-  GROUP base
-  NAME expat_parser
-  DEPENDS kmldom)

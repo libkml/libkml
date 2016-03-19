@@ -36,24 +36,6 @@ set(INCS
   xmlns.h
   zip_file.h)
 
-set(KMLBASE_DEPENDS)
-
-if(TARGET ZLIB)
-  list(APPEND KMLBASE_DEPENDS ZLIB)
-endif()
-
-if(TARGET MiniZip)
-  list(APPEND KMLBASE_DEPENDS MiniZip)
-endif()
-
-if(TARGET UriParser)
-  list(APPEND KMLBASE_DEPENDS UriParser)
-endif()
-
-if(TARGET EXPAT)
-  list(APPEND KMLBASE_DEPENDS EXPAT)
-endif()
-
 
 build_target(
   NAME kmlbase
@@ -61,5 +43,3 @@ build_target(
   INCS ${INCS}
   DEPENDS ${KMLBASE_DEPENDS}
   LINKS ${ZLIB_LIBRARY} ${MINIZIP_LIBRARIES} ${URIPARSER_LIBRARY} ${EXPAT_LIBRARY} )
-
-#set_target_properties(kmlbase IMPORTED_LINK_INTERFACE_LIBRARIES_NOCONFIG "${ZLIB_LIBRARY};${MINIZIP_LIBRARIES};${URIPARSER_LIBRARY}")

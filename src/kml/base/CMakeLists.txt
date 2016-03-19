@@ -36,7 +36,7 @@ set(INCS
   xmlns.h
   zip_file.h)
 
-set(KMLBASE_DEPENDS)
+message("URIPARSER_INCLUDE_DIR=${URIPARSER_INCLUDE_DIR}")
 
 if(TARGET ZLIB)
   list(APPEND KMLBASE_DEPENDS ZLIB)

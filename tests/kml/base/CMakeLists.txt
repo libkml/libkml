@@ -16,7 +16,10 @@ version
 xml_element
 xml_file
 xml_namespaces
-xmlns)
+xmlns
+net_cache
+uri_parser
+zip_file)
 
 foreach(TEST ${TESTS})
   build_test(
@@ -27,23 +30,5 @@ endforeach()
 
 build_test(
   GROUP base
-  NAME net_cache
-  LINKS ${URIPARSER_LIBRARY}
-  DEPENDS kmlbase)
-
-build_test(
-  GROUP base
-  NAME uri_parser
-  LINKS ${URIPARSER_LIBRARY}
-  DEPENDS kmlbase)
-
-build_test(
-  GROUP base
-  NAME zip_file
-  LINKS ${MINIZIP_LIBRARY}
-  DEPENDS kmlbase)
-
-build_test(
-  GROUP base
   NAME expat_parser
-  DEPENDS kmlbase;kmldom)
+  DEPENDS kmldom)

@@ -15,5 +15,5 @@ foreach(TEST ${TESTS})
   build_test(
     GROUP regionator
     NAME ${TEST}
-    DEPENDS kmlbase;kmlengine;kmldom;kmlconvenience)
+    DEPENDS kmlconvenience)
 endforeach()

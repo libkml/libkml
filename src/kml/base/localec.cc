@@ -31,10 +31,7 @@ namespace kmlbase {
   LocaleC::LocaleC() :
    previous_locale(NULL)
   {
-    /* Create a new locale object, with LC_NUMERIC=C  */
-    LocaleType c_locale;
-#if defined(_WIN32)
-    
+#if defined(_WIN32)    
     // Configure per-thread locale to cause all subsequently created 
     // threads to have their own locale.
     _configthreadlocale(_ENABLE_PER_THREAD_LOCALE);
@@ -45,10 +42,10 @@ namespace kmlbase {
     
 #else
     //create a new C locale for LC_NUMERIC_MASK
+    LocaleType c_locale;
     c_locale = newlocale(LC_NUMERIC_MASK, "C", (locale_t) 0);
     //apply c_locale and save previous locale value to m_CurrentLocale
-    previous_locale = uselocale(c_locale);
-
+    previous_locale = uselocale(c_locale); 
 #endif 
 
   }

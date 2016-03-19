@@ -563,7 +563,7 @@ void GxTrack::Parse(const string& char_data, std::vector<Vec3>* out) {
   for (size_t i = 0; i < s.size(); i++) {
     double d;
     kmlbase::FromString(s[i], &d);
-    vec.set(i, d);
+    vec.set(static_cast<int>(i), d);
     if (i > 2) break;
   }
   out->push_back(vec);

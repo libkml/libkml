@@ -30,6 +30,10 @@
 #include "kml/convenience/atom_util.h"
 #include "kml/convenience/http_client.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 namespace kmlconvenience {
 
 static const char* kServiceName = "writely";

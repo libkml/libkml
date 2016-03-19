@@ -102,6 +102,16 @@ include_directories(${EXPAT_INCLUDE_DIRS})
 
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
+super_find_package(MiniZip)
+include_directories(${MINIZIP_INCLUDE_DIR})
+
+super_find_package(ZLIB)
+include_directories(${ZLIB_INCLUDE_DIR})
+
+super_find_package(UriParser)
+include_directories(${URIPARSER_INCLUDE_DIR})
+message(WARNING "URIPARSER_INCLUDE_DIR1=${URIPARSER_INCLUDE_DIR}")
+
 add_subdirectory(src)
 
 if(BUILD_TESTING)

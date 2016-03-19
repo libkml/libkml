@@ -6,6 +6,7 @@ before_script:
     - sudo apt-get update -qq
     - sudo apt-get install swig python-dev cmake
     - SOURCE_DIR=`pwd`
+    - rm -fr /tmp/cmake-build/third-party/ 
     - cd /tmp
     - wget https://github.com/google/googletest/archive/release-1.7.0.tar.gz -O gtest-1.7.0.tar.gz
     - tar xf gtest-1.7.0.tar.gz

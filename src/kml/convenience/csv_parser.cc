@@ -151,7 +151,7 @@ CsvParserStatus CsvParser::CsvLineToPlacemark(
   }
   // Walk the actual line cols to handle non-strict mode.
   for (size_t i = 0; i < csv_line.size(); ++i) {
-    CsvSchema::const_iterator iter = csv_schema_.find(i);
+    CsvSchema::const_iterator iter = csv_schema_.find(static_cast<int>(i));
     if (iter != csv_schema_.end()) {
       AddExtendedDataValue(iter->second, csv_line[iter->first], placemark);
     }

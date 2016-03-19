@@ -26,6 +26,8 @@
 // The file contains the implementation of the File methods specific to
 // POSIX platforms.
 
+#ifndef _WIN32
+
 #include "kml/base/file.h"
 #include <stdlib.h>
 #include <string.h>
@@ -74,3 +76,5 @@ bool File::CreateNewTempFile(string* path) {
 }
 
 }  // end namespace kmlbase
+
+#endif

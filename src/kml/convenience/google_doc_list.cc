@@ -30,6 +30,10 @@
 #include "kml/convenience/atom_util.h"
 #include "kml/convenience/http_client.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 namespace kmlconvenience {
 
 static const char* kServiceName = "writely";
@@ -62,9 +66,28 @@ const char* GoogleDocList::get_metafeed_uri() {
 }
 
 static string GetScope() {
+#ifdef _WIN32
+  DWORD bufferSize = 65535; //Limit according to http://msdn.microsoft.com/en-us/library/ms683188.aspx
+  std::wstring buff;
+  buff.resize(bufferSize);
+  bufferSize = GetEnvironmentVariableW(L"GOOGLE_DOC_LIST_SCOPE", &buff[0], bufferSize);
+  if (!bufferSize) {
+    //error getting env variable
+    return "";
+  }
+  else {
+    buff.resize(bufferSize);
+    size_t s = buff.size();
+    string str(static_cast<int>(s+1), 0);
+    WideCharToMultiByte(CP_ACP, 0, buff.c_str(), static_cast<int>(s), &str[0],
+			static_cast<int>(s), NULL, NULL);
+    return str.c_str();
+  }
+#else  
   if (const char* scope = getenv("GOOGLE_DOC_LIST_SCOPE")) {
     return scope;
   }
+#endif
   return kScope;
 }
 

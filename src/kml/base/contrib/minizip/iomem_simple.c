@@ -232,6 +232,6 @@ ZEXTERN void* ZEXPORT mem_simple_create_file(zlib_filefunc_def* api, void* buffe
     api->opaque      = handle;
     handle->position = 0;
     handle->buffer   = buffer;
-    handle->length   = buf_len;
+    handle->length   = (ZPOS_T) buf_len;
     return handle;
 }

@@ -259,16 +259,16 @@ TEST_F(ExtendedDataTest, TestParse) {
     "</ExtendedData>";
   string errors;
   ElementPtr root = Parse(kml, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const ExtendedDataPtr extendeddata = AsExtendedData(root);
-  ASSERT_TRUE(extendeddata);
+  ASSERT_TRUE(extendeddata != 0);
   ASSERT_EQ(static_cast<size_t>(1),
                        extendeddata->get_data_array_size());
   ASSERT_EQ(static_cast<size_t>(1),
                        extendeddata->get_schemadata_array_size());
   const DataPtr data = AsData(extendeddata->get_data_array_at(0));
-  ASSERT_TRUE(data);
+  ASSERT_TRUE(data != 0);
   ASSERT_TRUE(data->has_name());
   ASSERT_EQ(d_name, data->get_name());
   ASSERT_TRUE(data->has_displayname());
@@ -277,13 +277,13 @@ TEST_F(ExtendedDataTest, TestParse) {
   ASSERT_EQ(value, data->get_value());
   const SchemaDataPtr schemadata = AsSchemaData(
       extendeddata->get_schemadata_array_at(0));
-  ASSERT_TRUE(schemadata);
+  ASSERT_TRUE(schemadata != 0);
   ASSERT_TRUE(schemadata->has_schemaurl());
   ASSERT_EQ(schemaurl, schemadata->get_schemaurl());
   ASSERT_EQ(static_cast<size_t>(1), schemadata->get_simpledata_array_size());
   const SimpleDataPtr simpledata = AsSimpleData(
       schemadata->get_simpledata_array_at(0));
-  ASSERT_TRUE(simpledata);
+  ASSERT_TRUE(simpledata != 0);
   ASSERT_TRUE(simpledata->has_name());
   ASSERT_TRUE(simpledata->has_text());
   ASSERT_EQ(sd_name, simpledata->get_name());
@@ -312,7 +312,7 @@ TEST_F(MetadataTest, TestParseSerialize) {
     "</Metadata>");
 
   metadata_ = AsMetadata(Parse(kMetadata, NULL));
-  ASSERT_TRUE(metadata_);
+  ASSERT_TRUE(metadata_ != 0);
   ASSERT_EQ(kMetadata, SerializeRaw(metadata_));
 }
 
@@ -358,9 +358,9 @@ TEST_F(GxSimpleArrayDataTest, TestParseSerialize) {
       "<gx:value>v3</gx:value>"
       "</gx:SimpleArrayData>");
   ElementPtr root = Parse(kKml, NULL);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   const GxSimpleArrayDataPtr gx_simplearraydata = AsGxSimpleArrayData(root);
-  ASSERT_TRUE(gx_simplearraydata);
+  ASSERT_TRUE(gx_simplearraydata != 0);
   ASSERT_TRUE(gx_simplearraydata->has_name());
   ASSERT_EQ("myname", gx_simplearraydata->get_name());
   ASSERT_EQ(static_cast<size_t>(3),

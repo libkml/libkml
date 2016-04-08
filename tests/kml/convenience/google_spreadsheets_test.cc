@@ -116,7 +116,7 @@ TEST_F(GoogleSpreadsheetsTest, TestDownloadSpreadsheet) {
   kmldom::AtomFeedPtr feed = AtomUtil::GetAndParseFeed(
       "http://example.com/gdata/doclist-metafeed.xml",
       test_data_http_client);
-  ASSERT_TRUE(feed);
+  ASSERT_TRUE(feed != 0);
 
   HttpRequestVector request_log;
   google_spreadsheets_.reset(

@@ -55,7 +55,7 @@ TEST_F(KmzTest, TestOpenFromFile) {
   // doc.kmz contains a simple doc.kml and is a valid zip archive.
   const string kGoodKmz = string(DATADIR) + "/kmz/doc.kmz";
   kmz_file_.reset(KmzFile::OpenFromFile(kGoodKmz.c_str()));
-  ASSERT_TRUE(kmz_file_);
+  ASSERT_TRUE(kmz_file_ != 0);
   string kml_data;
   // doc.kml can be read.
   ASSERT_TRUE(kmz_file_->ReadKml(&kml_data));
@@ -63,7 +63,7 @@ TEST_F(KmzTest, TestOpenFromFile) {
   // nokml.kmz is a valid zip archive, but does not contain any KML files
   const string kBadKmz = string(DATADIR) + "/kmz/nokml.kmz";
   kmz_file_.reset(KmzFile::OpenFromFile(kBadKmz.c_str()));
-  ASSERT_TRUE(kmz_file_);
+  ASSERT_TRUE(kmz_file_ != 0);
   kml_data.clear();
   // There is no KML file to read.
   ASSERT_FALSE(kmz_file_->ReadKml(&kml_data));
@@ -91,7 +91,7 @@ TEST_F(KmzTest, TestOpenFromString) {
   ASSERT_TRUE(File::ReadFileToString(kGoodKmz, &kmz_file_data));
   ASSERT_FALSE(kmz_file_data.empty());
   kmz_file_.reset(KmzFile::OpenFromString(kmz_file_data));
-  ASSERT_TRUE(kmz_file_);
+  ASSERT_TRUE(kmz_file_ != 0);
   string kml_data;
   // doc.kml can be read.
   ASSERT_TRUE(kmz_file_->ReadKml(&kml_data));
@@ -102,7 +102,7 @@ TEST_F(KmzTest, TestOpenFromString) {
   ASSERT_TRUE(File::ReadFileToString(kBadKmz, &kmz_file_data));
   ASSERT_FALSE(kmz_file_data.empty());
   kmz_file_.reset(KmzFile::OpenFromString(kmz_file_data));
-  ASSERT_TRUE(kmz_file_);
+  ASSERT_TRUE(kmz_file_ != 0);
   kml_data.clear();
   // There is no KML file to read.
   ASSERT_FALSE(kmz_file_->ReadKml(&kml_data));
@@ -115,7 +115,7 @@ TEST_F(KmzTest, TestReadKml) {
   // of doc.kml.
   const string kDoc = string(DATADIR) + "/kmz/doc.kmz";
   kmz_file_.reset(KmzFile::OpenFromFile(kDoc.c_str()));
-  ASSERT_TRUE(kmz_file_);
+  ASSERT_TRUE(kmz_file_ != 0);
   string kml_data;
   ASSERT_TRUE(kmz_file_->ReadKml(&kml_data));
   ASSERT_FALSE(kml_data.empty());
@@ -123,7 +123,7 @@ TEST_F(KmzTest, TestReadKml) {
   // nokml.kmz is a valid zip archive, but does not contain any KML files
   const string kNokml = string(DATADIR) + "/kmz/nokml.kmz";
   kmz_file_.reset(KmzFile::OpenFromFile(kNokml.c_str()));
-  ASSERT_TRUE(kmz_file_);
+  ASSERT_TRUE(kmz_file_ != 0);
   kml_data.clear();
   ASSERT_FALSE(kmz_file_->ReadKml(&kml_data));
   ASSERT_TRUE(kml_data.empty());
@@ -135,7 +135,7 @@ TEST_F(KmzTest, TestReadKml) {
   // Assert that z/c.kml is read first.
   const string kMulti1 = string(DATADIR) + "/kmz/multikml-nodoc.kmz";
   kmz_file_.reset(KmzFile::OpenFromFile(kMulti1.c_str()));
-  ASSERT_TRUE(kmz_file_);
+  ASSERT_TRUE(kmz_file_ != 0);
   kml_data.clear();
   ASSERT_TRUE(kmz_file_->ReadKml(&kml_data));
   ASSERT_FALSE(kml_data.empty());
@@ -182,7 +182,7 @@ TEST_F(KmzTest, TestReadFile) {
   // nokml.kmz has a file called foo.txt in a folder called foo.
   const string kNokml = string(DATADIR) + "/kmz/nokml.kmz";
   kmz_file_.reset(KmzFile::OpenFromFile(kNokml.c_str()));
-  ASSERT_TRUE(kmz_file_);
+  ASSERT_TRUE(kmz_file_ != 0);
   string file_data;
   ASSERT_TRUE(kmz_file_->ReadFile("foo/foo.txt", &file_data));
   ASSERT_FALSE(file_data.empty());
@@ -219,7 +219,7 @@ TEST_F(KmzTest, TestList) {
   // - a/a.kml
   const string kMulti1 = string(DATADIR) + "/kmz/multikml-nodoc.kmz";
   kmz_file_.reset(KmzFile::OpenFromFile(kMulti1.c_str()));
-  ASSERT_TRUE(kmz_file_);
+  ASSERT_TRUE(kmz_file_ != 0);
   std::vector<string> list;
   kmz_file_->List(&list);
   // 3 files were read into the vector.
@@ -247,7 +247,7 @@ TEST_F(KmzTest, TestWriteKmz) {
   // correctly.
   ASSERT_TRUE(File::Exists(tempfile->name()));
   kmz_file_.reset(KmzFile::OpenFromFile(tempfile->name().c_str()));
-  ASSERT_TRUE(kmz_file_);
+  ASSERT_TRUE(kmz_file_ != 0);
   string kml_data;
   ASSERT_TRUE(kmz_file_->ReadKml(&kml_data));
   ASSERT_FALSE(kml_data.empty());
@@ -275,7 +275,7 @@ TEST_F(KmzTest, TestCreate) {
   kmlbase::TempFilePtr tempfile = kmlbase::TempFile::CreateTempFile();
   ASSERT_TRUE(tempfile != NULL);
   kmz.reset(KmzFile::Create(tempfile->name().c_str()));
-  ASSERT_TRUE(kmz);
+  ASSERT_TRUE(kmz != 0);
 }
 
 TEST_F(KmzTest, TestAddFile) {
@@ -284,7 +284,7 @@ TEST_F(KmzTest, TestAddFile) {
   {
     // Create an empty KmzFile.
     KmzFilePtr kmz = KmzFile::Create(tempfile->name().c_str());
-    ASSERT_TRUE(kmz);
+    ASSERT_TRUE(kmz != 0);
     // Add three files to the archive.
     const string kNewKml = "<Placemark><name/></Placemark>";
     ASSERT_TRUE(kmz->AddFile(kNewKml, "doc.kml"));
@@ -300,7 +300,7 @@ TEST_F(KmzTest, TestAddFile) {
 
   // Verify that the archive we created contains the files in order.
   KmzFilePtr created(KmzFile::OpenFromFile(tempfile->name().c_str()));
-  ASSERT_TRUE(created);
+  ASSERT_TRUE(created != 0);
   std::vector<string> list;
   created->List(&list);
   ASSERT_EQ(static_cast<size_t>(3), list.size());
@@ -316,7 +316,7 @@ TEST_F(KmzTest, TestAddFileList) {
   {
     // Create an empty KmzFile.
     KmzFilePtr kmz_file = KmzFile::Create(tempfile->name().c_str());
-    ASSERT_TRUE(kmz_file);
+    ASSERT_TRUE(kmz_file != 0);
 
     // Create a KmlFile from the testdata file.
     const string kBaseDir = File::JoinPaths(string(DATADIR), "kmz");
@@ -342,7 +342,7 @@ TEST_F(KmzTest, TestAddFileList) {
   // invalid. Verify that only two resources were added by AddFileList.
   ASSERT_EQ(static_cast<size_t>(1), errs);
   KmzFilePtr created(KmzFile::OpenFromFile(tempfile->name().c_str()));
-  ASSERT_TRUE(created);
+  ASSERT_TRUE(created != 0);
   kmlbase::StringVector list;
   created->List(&list);
   ASSERT_EQ(static_cast<size_t>(2), list.size());
@@ -364,7 +364,7 @@ TEST_F(KmzTest, TestCreateFromElement) {
         kml_file->get_root(), kml_file->get_url(), tempfile->name()));
   }
   KmzFilePtr created(KmzFile::OpenFromFile(tempfile->name().c_str()));
-  ASSERT_TRUE(created);
+  ASSERT_TRUE(created != 0);
   std::vector<string> list;
   created->List(&list);
   ASSERT_EQ(static_cast<size_t>(3), list.size());
@@ -382,7 +382,7 @@ TEST_F(KmzTest, TestCreateFromKmlFilePath) {
   ASSERT_TRUE(KmzFile::CreateFromKmlFilepath(kTestKml, tempfile->name()));
   }
   KmzFilePtr created(KmzFile::OpenFromFile(tempfile->name().c_str()));
-  ASSERT_TRUE(created);
+  ASSERT_TRUE(created != 0);
   std::vector<string> list;
   created->List(&list);
   ASSERT_EQ(static_cast<size_t>(3), list.size());
@@ -404,7 +404,7 @@ TEST_F(KmzTest, TestCreateFromKmlFile) {
   ASSERT_TRUE(KmzFile::CreateFromKmlFilepath(kTestKml, tempfile->name()));
   }
   KmzFilePtr created(KmzFile::OpenFromFile(tempfile->name().c_str()));
-  ASSERT_TRUE(created);
+  ASSERT_TRUE(created != 0);
   std::vector<string> list;
   created->List(&list);
   ASSERT_EQ(static_cast<size_t>(3), list.size());
@@ -426,7 +426,7 @@ TEST_F(KmzTest, TestCreateFromGoogleEarthFile) {
   ASSERT_TRUE(KmzFile::CreateFromKmlFilepath(kTestKml, tempfile->name()));
   }
   KmzFilePtr created(KmzFile::OpenFromFile(tempfile->name().c_str()));
-  ASSERT_TRUE(created);
+  ASSERT_TRUE(created != 0);
   std::vector<string> list;
   created->List(&list);
   ASSERT_EQ(static_cast<size_t>(5), list.size());
@@ -441,7 +441,7 @@ TEST_F(KmzTest, TestSaveToString) {
   const string kGoodKmz = string(DATADIR) + "/kmz/doc.kmz";
 
   kmz_file_.reset(KmzFile::OpenFromFile(kGoodKmz.c_str()));
-  ASSERT_TRUE(kmz_file_);
+  ASSERT_TRUE(kmz_file_ != 0);
 
   string read_kmz_data;
   ASSERT_TRUE(kmlbase::File::ReadFileToString(kGoodKmz, &read_kmz_data));
@@ -458,7 +458,7 @@ TEST_F(KmzTest, TestSetGetMaxUncompressedFileSize) {
   const unsigned int kNewSize = 209715200;  // 200 MB.
   const string kGoodKmz = string(DATADIR) + "/kmz/doc.kmz";
   kmz_file_.reset(KmzFile::OpenFromFile(kGoodKmz.c_str()));
-  ASSERT_TRUE(kmz_file_);
+  ASSERT_TRUE(kmz_file_ != 0);
   ASSERT_EQ(kDefaultSize, kmz_file_->get_max_uncompressed_file_size());
   kmz_file_->set_max_uncompressed_file_size(kNewSize);
   ASSERT_EQ(kNewSize, kmz_file_->get_max_uncompressed_file_size());
@@ -467,7 +467,7 @@ TEST_F(KmzTest, TestSetGetMaxUncompressedFileSize) {
 TEST_F(KmzTest, TestMaxUnCompressedSizeExceeded) {
   const string kGoodKmz = string(DATADIR) + "/kmz/doc.kmz";
   kmz_file_.reset(KmzFile::OpenFromFile(kGoodKmz.c_str()));
-  ASSERT_TRUE(kmz_file_);
+  ASSERT_TRUE(kmz_file_ != 0);
   const unsigned int kMaxSize = 43;
   kmz_file_->set_max_uncompressed_file_size(kMaxSize);  // 43 bytes.
   ASSERT_EQ(kMaxSize, kmz_file_->get_max_uncompressed_file_size());

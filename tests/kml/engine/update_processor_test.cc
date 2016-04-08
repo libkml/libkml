@@ -104,14 +104,14 @@ TEST_F(UpdateProcessorTest, TestProcessUpdateChangeWithMappedId) {
       "    <name>new name</name>"
       "  </Placemark>"
       "</Change>"));
-  ASSERT_TRUE(change);
+  ASSERT_TRUE(change != 0);
 
   // Run the method under test.
   update_processor_->ProcessUpdateChange(change);
 
   // Verify all is as expected.
   kmldom::PlacemarkPtr placemark = kmldom::AsPlacemark(kml_file_->get_root());
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   // The <Placemark>'s id= is _not_ effected.
   ASSERT_EQ(string("internal-id"), placemark->get_id());
   // No targetId= is set in the target Object.

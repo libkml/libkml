@@ -248,9 +248,9 @@ void KmlHandlerTest::VerifyElementTypes(
 // This helper function verifies the proper state of kKmlFolder's DOM.
 void KmlHandlerTest::VerifyFolderParse(const ElementPtr& root) const {
   KmlPtr kml = AsKml(root);
-  ASSERT_TRUE(kml);
+  ASSERT_TRUE(kml != 0);
   FolderPtr folder = AsFolder(kml->get_feature());
-  ASSERT_TRUE(folder);
+  ASSERT_TRUE(folder != 0);
   ASSERT_TRUE(folder->has_name());
   ASSERT_FALSE(folder->has_visibility());
   ASSERT_FALSE(folder->has_open());
@@ -454,23 +454,23 @@ TEST_F(KmlHandlerTest, InhibitingEndElement) {
   kml_handler.EndElement("NetworkLinkControl");
   kml_handler.EndElement("kml");
   ElementPtr root = kml_handler.PopRoot();
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   KmlPtr kml = AsKml(root);
-  ASSERT_TRUE(kml);
+  ASSERT_TRUE(kml != 0);
   // Document is a Container and is not collected.
   ASSERT_TRUE(kml->has_feature());
-  ASSERT_TRUE(AsDocument(kml->get_feature()));
+  ASSERT_TRUE(AsDocument(kml->get_feature()) != 0);
   // NetworkLinkControl is not a Feature is not collected.
   ASSERT_TRUE(kml->has_networklinkcontrol());
   // One non-Container Feature is collected.
   ASSERT_EQ(static_cast<size_t>(1), features.size());
   PlacemarkPtr placemark = AsPlacemark(features[0]);
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   // Verify the collected feature has all expected children.
   ASSERT_TRUE(placemark->has_name());
   ASSERT_TRUE(placemark->has_geometry());
   PointPtr point = AsPoint(placemark->get_geometry());
-  ASSERT_TRUE(point);
+  ASSERT_TRUE(point != 0);
   ASSERT_TRUE(point->has_coordinates());
 }
 
@@ -487,11 +487,11 @@ TEST_F(KmlHandlerTest, TestParserHandlesGrossDescriptions) {
   string data;
   ASSERT_TRUE(kmlbase::File::ReadFileToString(kInvalidDescriptions, &data));
   ElementPtr root = Parse(data, NULL);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   KmlPtr kml = AsKml(root);
-  ASSERT_TRUE(kml);
+  ASSERT_TRUE(kml != 0);
   DocumentPtr document = AsDocument(kml->get_feature());
-  ASSERT_TRUE(document);
+  ASSERT_TRUE(document != 0);
   ASSERT_EQ(static_cast<size_t>(3), document->get_feature_array_size());
 
   PlacemarkPtr placemark0 = AsPlacemark(document->get_feature_array_at(0));
@@ -514,7 +514,7 @@ TEST_F(KmlHandlerTest, TestParserHandlesBoolWhitespace) {
   string data;
   ASSERT_TRUE(kmlbase::File::ReadFileToString(kOutlineSpace, &data));
   ElementPtr root = Parse(data, NULL);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   DocumentPtr document = AsDocument(AsKml(root)->get_feature());
   StylePtr style = AsStyle(document->get_styleselector_array_at(0));
   PolyStylePtr polystyle = style->get_polystyle();
@@ -534,7 +534,7 @@ TEST_F(KmlHandlerTest, TestMaxNestingOf100Folders) {
   string data;
   ASSERT_TRUE(kmlbase::File::ReadFileToString(k100Folders, &data));
   ElementPtr root = Parse(data, NULL);
-  ASSERT_TRUE(root);  // Parse succeeded.
+  ASSERT_TRUE(root != 0);  // Parse succeeded.
 }
 
 // 101 nested folders exceeds our default nesting limit of 100.
@@ -606,27 +606,27 @@ TEST_F(KmlHandlerTest, TestHandlesOldSchemaUsage) {
   ASSERT_TRUE(kmlbase::File::ReadFileToString(kOldSchemaKml, &data));
   string errors;
   ElementPtr root = Parse(data, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const KmlPtr kml = AsKml(root);
-  ASSERT_TRUE(kml);
+  ASSERT_TRUE(kml != 0);
   ASSERT_TRUE(kml->has_feature());
   const DocumentPtr document = AsDocument(kml->get_feature());
-  ASSERT_TRUE(document);
+  ASSERT_TRUE(document != 0);
   ASSERT_EQ(static_cast<size_t>(1), document->get_schema_array_size());
   const SchemaPtr schema = AsSchema(document->get_schema_array_at(0));
-  ASSERT_TRUE(schema);
+  ASSERT_TRUE(schema != 0);
   ASSERT_EQ("S_521_525_SSSSS_id", schema->get_id());
   ASSERT_EQ("S_521_525_SSSSS", schema->get_name());
   ASSERT_EQ(static_cast<size_t>(2), schema->get_simplefield_array_size());
   const SimpleFieldPtr simplefield0 =
     AsSimpleField(schema->get_simplefield_array_at(0));
-  ASSERT_TRUE(simplefield0);
+  ASSERT_TRUE(simplefield0 != 0);
   ASSERT_EQ("Foo", simplefield0->get_name());
   ASSERT_EQ("string", simplefield0->get_type());
   const SimpleFieldPtr simplefield1 =
     AsSimpleField(schema->get_simplefield_array_at(1));
-  ASSERT_TRUE(simplefield1);
+  ASSERT_TRUE(simplefield1 != 0);
   ASSERT_EQ("Bar", simplefield1->get_name());
   ASSERT_EQ("string", simplefield1->get_type());
   ASSERT_EQ(static_cast<size_t>(2), document->get_feature_array_size());
@@ -637,21 +637,21 @@ TEST_F(KmlHandlerTest, TestHandlesOldSchemaUsage) {
   ASSERT_TRUE(placemark0->has_extendeddata());
   const ExtendedDataPtr extendeddata0 =
     AsExtendedData(placemark0->get_extendeddata());
-  ASSERT_TRUE(extendeddata0);
+  ASSERT_TRUE(extendeddata0 != 0);
   ASSERT_EQ(static_cast<size_t>(1), extendeddata0->get_schemadata_array_size());
   const SchemaDataPtr schemadata0 =
     AsSchemaData(extendeddata0->get_schemadata_array_at(0));
-  ASSERT_TRUE(schemadata0);
+  ASSERT_TRUE(schemadata0 != 0);
   ASSERT_EQ("S_521_525_SSSSS_id", schemadata0->get_schemaurl());
   ASSERT_EQ(static_cast<size_t>(2), schemadata0->get_simpledata_array_size());
   const SimpleDataPtr simpledata00 =
     AsSimpleData(schemadata0->get_simpledata_array_at(0));
-  ASSERT_TRUE(simpledata00);
+  ASSERT_TRUE(simpledata00 != 0);
   ASSERT_EQ("Foo", simpledata00->get_name());
   ASSERT_EQ("foo 1", simpledata00->get_text());
   const SimpleDataPtr simpledata01 =
     AsSimpleData(schemadata0->get_simpledata_array_at(1));
-  ASSERT_TRUE(simpledata01);
+  ASSERT_TRUE(simpledata01 != 0);
   ASSERT_EQ("Bar", simpledata01->get_name());
   ASSERT_EQ("bar 1", simpledata01->get_text());
 
@@ -661,21 +661,21 @@ TEST_F(KmlHandlerTest, TestHandlesOldSchemaUsage) {
   ASSERT_TRUE(placemark1->has_extendeddata());
   const ExtendedDataPtr extendeddata1 =
     AsExtendedData(placemark1->get_extendeddata());
-  ASSERT_TRUE(extendeddata1);
+  ASSERT_TRUE(extendeddata1 != 0);
   ASSERT_EQ(static_cast<size_t>(1), extendeddata1->get_schemadata_array_size());
   const SchemaDataPtr schemadata1 =
     AsSchemaData(extendeddata1->get_schemadata_array_at(0));
-  ASSERT_TRUE(schemadata1);
+  ASSERT_TRUE(schemadata1 != 0);
   ASSERT_EQ("S_521_525_SSSSS_id", schemadata1->get_schemaurl());
   ASSERT_EQ(static_cast<size_t>(2), schemadata1->get_simpledata_array_size());
   const SimpleDataPtr simpledata10 =
     AsSimpleData(schemadata1->get_simpledata_array_at(0));
-  ASSERT_TRUE(simpledata10);
+  ASSERT_TRUE(simpledata10 != 0);
   ASSERT_EQ("Foo", simpledata10->get_name());
   ASSERT_EQ("foo 2", simpledata10->get_text());
   const SimpleDataPtr simpledata11 =
     AsSimpleData(schemadata1->get_simpledata_array_at(1));
-  ASSERT_TRUE(simpledata11);
+  ASSERT_TRUE(simpledata11 != 0);
   ASSERT_EQ("Bar", simpledata11->get_name());
   ASSERT_EQ("bar 2", simpledata11->get_text());
 }
@@ -701,7 +701,7 @@ TEST_F(KmlHandlerTest, TestOldSchemaParserObserver) {
   parser.AddObserver(&simple_new_element_observer);
   string errors;
   ElementPtr root = parser.Parse(kOldSchemaKml, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   // NewElement() is called only 4 times; The logic that handles the old
   // <Schema> knows to look for <Foo> as a child, and the handing there is
@@ -738,7 +738,7 @@ TEST_F(KmlHandlerTest, TestOldSchemaHandling) {
   kml_handler_->EndElement(kOldStyleSchemaChild);
   kml_handler_->EndElement(kOldStyleSchemaName);
   ElementPtr root = kml_handler_->PopRoot();
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_EQ(Type_Document, root->Type());
   // A Placemark was created from OldStyleSchemaName.
   ASSERT_EQ(Type_Placemark, AsDocument(root)->get_feature_array_at(0)->Type());

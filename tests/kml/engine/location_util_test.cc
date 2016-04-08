@@ -248,12 +248,12 @@ TEST(LocationUtilTest, RunTestCases) {
     KmlFilePtr kml_file =
         ParseFromDataDirFile(kTestCases[i].subdir, kTestCases[i].kml_filename);
     // Assert basic sanity of KmlFile.
-    ASSERT_TRUE(kml_file) << kTestCases[i].kml_filename;
-    ASSERT_TRUE(kml_file->get_root());
+    ASSERT_TRUE(kml_file != 0) << kTestCases[i].kml_filename;
+    ASSERT_TRUE(kml_file->get_root() != 0);
     kmldom::FeaturePtr feature = kmldom::AsFeature(
         kml_file->GetObjectById(kTestCases[i].feature_id));
     // Asserts both that this id is found and is a Feature.
-    ASSERT_TRUE(feature);
+    ASSERT_TRUE(feature != 0);
     Bbox bbox;
     ASSERT_EQ(kTestCases[i].has_bounds, GetFeatureBounds(feature, &bbox))
         << kTestCases[i].kml_filename << " " << kTestCases[i].feature_id;

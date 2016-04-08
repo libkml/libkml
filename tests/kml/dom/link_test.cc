@@ -155,10 +155,10 @@ TEST_F(LinkTest, TestParse) {
   const string kLink = "<Link>" + kHref + "</Link>";
   string errors;
   ElementPtr root = Parse(kLink, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const LinkPtr link = AsLink(root);
-  ASSERT_TRUE(link);
+  ASSERT_TRUE(link != 0);
   ASSERT_TRUE(link->has_href());
   ASSERT_EQ(kContent, link->get_href());
 }
@@ -170,10 +170,10 @@ TEST_F(LinkTest, TestAcceptCdataInHref) {
   const string kLink = "<Link>" + kHref + "</Link>";
   string errors;
   ElementPtr root = Parse(kLink, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const LinkPtr link = AsLink(root);
-  ASSERT_TRUE(link);
+  ASSERT_TRUE(link != 0);
   ASSERT_TRUE(link->has_href());
   ASSERT_TRUE(kContent == link->get_href());
 }
@@ -522,7 +522,7 @@ TEST_F(IconStyleIconTest, TestParseSerializeUnknown) {
       "<refreshMode>onExpire</refreshMode>"
       "</Icon>");
   ElementPtr element(Parse(kIcon, NULL));
-  ASSERT_TRUE(element);
+  ASSERT_TRUE(element != 0);
   ASSERT_EQ(kIcon, SerializeRaw(element));
 }
 

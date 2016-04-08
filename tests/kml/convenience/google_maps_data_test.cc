@@ -553,7 +553,7 @@ TEST_F(GoogleMapsDataTest, TestGetKmlUri) {
       string(DATADIR) + "/gmaps/metafeed.xml", &maps_feed_xml));
   const kmldom::AtomFeedPtr feed =
       kmldom::AsAtomFeed(kmldom::ParseAtom(maps_feed_xml, NULL));
-  ASSERT_TRUE(feed);
+  ASSERT_TRUE(feed != 0);
 
   const string want("http://maps.google.com/maps/ms?msa=0&msid="
                     "201514259179526663268.0004687a1a3e44d72b6b4&output=kml");

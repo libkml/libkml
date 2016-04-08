@@ -66,10 +66,10 @@ TEST_F(FolderTest, TestParse) {
     "</Folder>";
   string errors;
   ElementPtr root = Parse(kFolder, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const FolderPtr folder = AsFolder(root);
-  ASSERT_TRUE(folder);
+  ASSERT_TRUE(folder != 0);
   // Verify the Object-ness of Folder.
   ASSERT_EQ(string("folder123"), folder->get_id());
   ASSERT_FALSE(folder->has_targetid());

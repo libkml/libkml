@@ -66,7 +66,7 @@ class KmlFileTest : public testing::Test {
 // Verify the encoding appears properly in the xml header.
 TEST_F(KmlFileTest, TestEncoding) {
   kml_file_ = KmlFile::CreateFromParse("<kml/>", NULL);
-  ASSERT_TRUE(kml_file_);
+  ASSERT_TRUE(kml_file_ != 0);
   ASSERT_EQ(string("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"),
             kml_file_->CreateXmlHeader());
 
@@ -81,11 +81,11 @@ TEST_F(KmlFileTest, TestEncoding) {
 // Verify basic usage of the ParseFromString() method.
 TEST_F(KmlFileTest, TestBasicParseFromString) {
   kml_file_ = KmlFile::CreateFromParse("<kml/>", NULL);
-  ASSERT_TRUE(kml_file_);
+  ASSERT_TRUE(kml_file_ != 0);
   ElementPtr root = kml_file_->get_root();
   // Verify old API exists and functions.
   ASSERT_EQ(root, kml_file_->root());
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_EQ(kmldom::Type_kml, root->Type());
 
   string errors;
@@ -97,7 +97,7 @@ TEST_F(KmlFileTest, TestBasicParseFromString) {
 TEST_F(KmlFileTest, TestRoot) {
   kml_file_ = KmlFile::CreateFromParse("<kml/>", NULL);
   ElementPtr root = kml_file_->get_root();
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_EQ(kmldom::Type_kml, root->Type());
 
   // Verify that any complex element can be used as root.
@@ -113,7 +113,7 @@ TEST_F(KmlFileTest, TestBasicObjectIdParse) {
     "<Placemark id=\"placemark\"/>"
     "</Folder>",
     NULL);
-  ASSERT_TRUE(kml_file_);
+  ASSERT_TRUE(kml_file_ != 0);
   ObjectPtr f = kml_file_->GetObjectById("folder");
   ASSERT_EQ(kmldom::Type_Folder, f->Type());
   ObjectPtr p = kml_file_->GetObjectById("placemark");
@@ -129,9 +129,9 @@ TEST_F(KmlFileTest, TestObjectIdDupePassing) {
     "</Folder>",
     &errors);
   // By default the duplicate ids do not cause the parse to fail.
-  ASSERT_TRUE(kml_file_);
+  ASSERT_TRUE(kml_file_ != 0);
   // Verify an element of the duplicate id exists.
-  ASSERT_TRUE(kml_file_->GetObjectById(kDupeId));
+  ASSERT_TRUE(kml_file_->GetObjectById(kDupeId) != 0);
 }
 
 // TODO: how/if to bring back strict mode for import from xml
@@ -172,19 +172,19 @@ TEST_F(KmlFileTest, TestBasicGetSharedStyleById) {
         "<Style id=\"" + kFolderStyleId + "\"/>"
       "</Folder>"
     "</Document>", NULL);
-  ASSERT_TRUE(kml_file_);  // Verify the parse succeeded.
+  ASSERT_TRUE(kml_file_ != 0);  // Verify the parse succeeded.
 
   // Verify both shared style selectors were found.
   StyleSelectorPtr style = kml_file_->GetSharedStyleById(kStyleId);
-  ASSERT_TRUE(AsStyle(style));  // Verify it's a <Style>
+  ASSERT_TRUE(AsStyle(style) != 0);  // Verify it's a <Style>
   ASSERT_EQ(kStyleId, style->get_id());
   StyleSelectorPtr stylemap = kml_file_->GetSharedStyleById(kStyleMapId);
-  ASSERT_TRUE(AsStyleMap(stylemap));  // Verify it's a <StyleMap>
+  ASSERT_TRUE(AsStyleMap(stylemap) != 0);  // Verify it's a <StyleMap>
   ASSERT_EQ(kStyleMapId, stylemap->get_id());
 
   // Verify that the local style is found as an Object...
   ObjectPtr object = kml_file_->GetObjectById(kFolderStyleId);
-  ASSERT_TRUE(AsStyle(object));  // Verify it's a <Style>
+  ASSERT_TRUE(AsStyle(object) != 0);  // Verify it's a <Style>
   ASSERT_EQ(kFolderStyleId, object->get_id());
   // ...but is not found as a shared style.
   ASSERT_FALSE(kml_file_->GetSharedStyleById(kFolderStyleId));
@@ -194,8 +194,8 @@ TEST_F(KmlFileTest, TestBasicGetSharedStyleById) {
 // is a Placemark with the given name.
 void KmlFileTest::VerifyIsPlacemarkWithName(const ElementPtr& root,
                                             const string& name) {
-  ASSERT_TRUE(root);
-  ASSERT_TRUE(AsPlacemark(root));
+  ASSERT_TRUE(root != 0);
+  ASSERT_TRUE(AsPlacemark(root) != 0);
   ASSERT_EQ(name, AsPlacemark(root)->get_name());
 }
 
@@ -225,7 +225,7 @@ void KmlFileTest::KmlToKmz(const string& kml_data,
   const char* tempname = tempfile->name().c_str();
   ASSERT_TRUE(KmzFile::WriteKmz(tempname, kml_data));
   KmzFilePtr kmz_file = KmzFile::OpenFromFile(tempname);
-  ASSERT_TRUE(kmz_file);
+  ASSERT_TRUE(kmz_file != 0);
   ASSERT_TRUE(kmz_file->ReadKml(kmz_data));
 }
 
@@ -251,7 +251,7 @@ TEST_F(KmlFileTest, TestGetLinkParents) {
   string errors;
   kml_file_ = KmlFile::CreateFromParse(kml, &errors);
   ASSERT_TRUE(errors.empty());
-  ASSERT_TRUE(kml_file_);
+  ASSERT_TRUE(kml_file_ != 0);
   const ElementVector& link_parents = kml_file_->get_link_parent_vector();
   // This is obviously exactly matched to the content of alllinks.kml.
   ASSERT_EQ(static_cast<size_t>(7), link_parents.size());
@@ -272,7 +272,7 @@ TEST_F(KmlFileTest, TestGetLinkParents) {
 // Verify const behavior.
 TEST_F(KmlFileTest, TestConstNull) {
   const KmlFilePtr kml_file = KmlFile::CreateFromParse("<kml/>", NULL);
-  ASSERT_TRUE(kml_file);
+  ASSERT_TRUE(kml_file != 0);
   ASSERT_FALSE(kml_file->GetObjectById("blah"));
   ASSERT_FALSE(kml_file->GetSharedStyleById("blah"));
 }
@@ -283,7 +283,7 @@ TEST_F(KmlFileTest, TestBasicCreateFromString) {
   const string kPlacemark("<Placemark><name>" + kName +
                                "</name></Placemark>");
   kml_file_ = KmlFile::CreateFromString(kPlacemark);
-  ASSERT_TRUE(kml_file_);
+  ASSERT_TRUE(kml_file_ != 0);
 }
 
 // Verify basic usage of the CreateFromStringWithUrl() static method.
@@ -294,11 +294,11 @@ TEST_F(KmlFileTest, TestBasicCreateFromStringWithUrl) {
   const string kUrl("http://foo.com/goo/baz.kml");
   // There's no requirement a NetCache need exist.
   kml_file_ = KmlFile::CreateFromStringWithUrl(kPlacemark, kUrl, NULL);
-  ASSERT_TRUE(kml_file_);
+  ASSERT_TRUE(kml_file_ != 0);
   ASSERT_EQ(kUrl, kml_file_->get_url());
   PlacemarkPtr placemark = AsPlacemark(kml_file_->get_root());
   ASSERT_EQ(placemark, AsPlacemark(kml_file_->root()));
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   ASSERT_EQ(kName, placemark->get_name());
   ASSERT_FALSE(kml_file_->get_kml_cache());
 }
@@ -346,11 +346,11 @@ TEST_F(KmlFileTest, TestCreateFromImport) {
   KmlPtr kml = KmlFactory::GetFactory()->CreateKml();
   kml->set_feature(placemark);
   KmlFilePtr kml_file = KmlFile::CreateFromImport(kml);
-  ASSERT_TRUE(kml_file);
+  ASSERT_TRUE(kml_file != 0);
   ElementPtr root = kml_file->get_root();
   ASSERT_EQ(root, kml_file->root());
-  ASSERT_TRUE(root);
-  ASSERT_TRUE(kmldom::AsKml(root));
+  ASSERT_TRUE(root != 0);
+  ASSERT_TRUE(kmldom::AsKml(root) != 0);
   ASSERT_EQ(kName, kmldom::AsKml(root)->get_feature()->get_name());
 }
 
@@ -365,7 +365,7 @@ TEST_F(KmlFileTest, TestCreateFromImportFailsOnDupeIds) {
 TEST_F(KmlFileTest, TestCreateFromImportSerialize) {
   KmlPtr kml = KmlFactory::GetFactory()->CreateKml();
   kml_file_ = KmlFile::CreateFromImport(kml);
-  ASSERT_TRUE(kml_file_);
+  ASSERT_TRUE(kml_file_ != 0);
   string xml;
   ASSERT_TRUE(kml_file_->SerializeToString(&xml));
   ASSERT_EQ(string(
@@ -382,11 +382,11 @@ TEST_F(KmlFileTest, TestCreateFromImportAndGetById) {
   string kml;
   ASSERT_TRUE(kmlbase::File::ReadFileToString(kAllStyles, &kml));
   ElementPtr element = kmldom::Parse(kml, NULL);
-  ASSERT_TRUE(element);
+  ASSERT_TRUE(element != 0);
 
   // Import this dom into a KmlFile.
   kml_file_ = KmlFile::CreateFromImport(element);
-  ASSERT_TRUE(kml_file_);
+  ASSERT_TRUE(kml_file_ != 0);
   ASSERT_EQ(kmldom::Type_Style,
             kml_file_->GetSharedStyleById("allstyles")->Type());
   ASSERT_EQ(kmldom::Type_ListStyle,
@@ -415,18 +415,18 @@ TEST_F(KmlFileTest, TestCreateFromImportLax) {
   ASSERT_FALSE(KmlFile::CreateFromImport(folder));
   // CreateFromImportLax() permits duplicate ids...
   KmlFilePtr kml_file = KmlFile::CreateFromImportLax(folder);
-  ASSERT_TRUE(kml_file);
+  ASSERT_TRUE(kml_file != 0);
   // ...and the id mapping hits the last object with that id...
   placemark = AsPlacemark(kml_file->GetObjectById(kId));
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   ASSERT_EQ(kLastName, placemark->get_name());
   // ...and the first one is the first feature in the folder
   folder = AsFolder(kml_file->get_root());
   ASSERT_EQ(folder, AsFolder(kml_file->root()));
-  ASSERT_TRUE(folder);
+  ASSERT_TRUE(folder != 0);
   ASSERT_EQ(static_cast<size_t>(2), folder->get_feature_array_size());
   placemark = AsPlacemark(folder->get_feature_array_at(0));
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   ASSERT_EQ(kFirstName, placemark->get_name());
   ASSERT_EQ(kId, placemark->get_id());
 }
@@ -434,7 +434,7 @@ TEST_F(KmlFileTest, TestCreateFromImportLax) {
 TEST_F(KmlFileTest, TestForSerializeWithNamespaces) {
   kml_file_ = KmlFile::CreateFromString(
       "<Document><gx:Tour><atom:author/></gx:Tour></Document>");
-  ASSERT_TRUE(kml_file_);
+  ASSERT_TRUE(kml_file_ != 0);
   string xml;
   ASSERT_TRUE(kml_file_->SerializeToString(&xml));
   const string kExpected =
@@ -452,7 +452,7 @@ TEST_F(KmlFileTest, TestForSerializeWithNamespaces) {
 TEST_F(KmlFileTest, TestBasicSerializeToOstream) {
   kml_file_ = KmlFile::CreateFromString(
       "<Document><gx:Tour><atom:author/></gx:Tour></Document>");
-  ASSERT_TRUE(kml_file_);
+  ASSERT_TRUE(kml_file_ != 0);
   std::ostringstream oss;
   ASSERT_TRUE(kml_file_->SerializeToOstream(&oss));
   const string kExpected =

@@ -100,10 +100,10 @@ TEST_F(PlacemarkTest, TestParse) {
     "</Placemark>";
   string errors;
   ElementPtr root = Parse(kPlacemark, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const PlacemarkPtr placemark = AsPlacemark(root);
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   ASSERT_FALSE(placemark->has_id());
   ASSERT_FALSE(placemark->has_targetid());
   ASSERT_TRUE(placemark->has_name());

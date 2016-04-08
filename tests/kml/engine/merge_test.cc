@@ -381,7 +381,7 @@ void MergeTest::VerifyPointPlacemark(PlacemarkPtr placemark,
   ASSERT_EQ(name, placemark->get_name());
   ASSERT_TRUE(placemark->has_geometry());
   PointPtr point = kmldom::AsPoint(placemark->get_geometry());
-  ASSERT_TRUE(point);
+  ASSERT_TRUE(point != 0);
   ASSERT_TRUE(point->has_coordinates());
   CoordinatesPtr coordinates = point->get_coordinates();
   ASSERT_EQ(static_cast<size_t>(1),

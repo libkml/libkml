@@ -53,7 +53,7 @@ TEST_F(KmlFeatureListSaverTest, TestBasicSaveToFeatureList) {
   // Verify that this is our Placemark.
   kmldom::PlacemarkPtr got_placemark =
       kmldom::AsPlacemark(folder->get_feature_array_at(0));
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   ASSERT_EQ(id, placemark->get_id());
 }
 

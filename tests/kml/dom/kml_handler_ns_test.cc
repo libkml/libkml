@@ -184,7 +184,7 @@ TEST_F(KmlHandlerNSTest, TestNamespaceParsing) {
   string errors;
   ElementPtr root = parser.ParseNS(kNamespaceKml, &errors);
   ASSERT_TRUE(errors.empty());
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
 
   // TODO: ultimately the parse is preserved 1:1. Currently the parse will
   // drop the xmlns attrs and the element prefixes so this is a test of an

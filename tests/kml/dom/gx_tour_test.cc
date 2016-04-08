@@ -49,9 +49,9 @@ TEST_F(GxTourTest, TestType) {
   ASSERT_FALSE(gx_tour_->IsA(Type_Container));
   ASSERT_FALSE(gx_tour_->IsA(Type_Geometry));
   ASSERT_TRUE(gx_tour_->IsA(Type_Object));
-  ASSERT_TRUE(AsGxTour(gx_tour_));
-  ASSERT_TRUE(AsFeature(gx_tour_));
-  ASSERT_TRUE(AsObject(gx_tour_));
+  ASSERT_TRUE(AsGxTour(gx_tour_) != 0);
+  ASSERT_TRUE(AsFeature(gx_tour_) != 0);
+  ASSERT_TRUE(AsObject(gx_tour_) != 0);
 }
 
 // Verify proper defaults:
@@ -90,10 +90,10 @@ TEST_F(GxTourTest, TestParse) {
     "</gx:Tour>";
   string errors;
   ElementPtr root = Parse(kGxTour, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const GxTourPtr tour = AsGxTour(root);
-  ASSERT_TRUE(tour);
+  ASSERT_TRUE(tour != 0);
   ASSERT_FALSE(tour->has_id());
   ASSERT_FALSE(tour->has_targetid());
   ASSERT_TRUE(tour->has_name());
@@ -151,9 +151,9 @@ TEST_F(GxPlaylistTest, TestType) {
   ASSERT_FALSE(gx_playlist_->IsA(Type_Feature));
   ASSERT_FALSE(gx_playlist_->IsA(Type_Geometry));
   ASSERT_TRUE(gx_playlist_->IsA(Type_Object));
-  ASSERT_TRUE(AsGxPlaylist(gx_playlist_));
+  ASSERT_TRUE(AsGxPlaylist(gx_playlist_) != 0);
   ASSERT_FALSE(AsFeature(gx_playlist_));
-  ASSERT_TRUE(AsObject(gx_playlist_));
+  ASSERT_TRUE(AsObject(gx_playlist_) != 0);
 }
 
 // Verify proper defaults:
@@ -182,19 +182,19 @@ TEST_F(GxPlaylistTest, TestParse) {
     "</gx:Playlist>";
   string errors;
   ElementPtr root = Parse(kGxPlaylist, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const GxPlaylistPtr gx_playlist = AsGxPlaylist(root);
-  ASSERT_TRUE(gx_playlist);
+  ASSERT_TRUE(gx_playlist != 0);
   ASSERT_TRUE(gx_playlist->has_id());
   ASSERT_EQ(string("gx_playlist123"), gx_playlist->get_id());
   ASSERT_FALSE(gx_playlist->has_targetid());
   ASSERT_EQ(static_cast<size_t>(3),
       gx_playlist->get_gx_tourprimitive_array_size());
   ASSERT_TRUE(AsGxAnimatedUpdate(
-        gx_playlist->get_gx_tourprimitive_array_at(0)));
-  ASSERT_TRUE(AsGxFlyTo(gx_playlist->get_gx_tourprimitive_array_at(1)));
-  ASSERT_TRUE(AsGxWait(gx_playlist->get_gx_tourprimitive_array_at(2)));
+        gx_playlist->get_gx_tourprimitive_array_at(0)) != 0);
+  ASSERT_TRUE(AsGxFlyTo(gx_playlist->get_gx_tourprimitive_array_at(1)) != 0);
+  ASSERT_TRUE(AsGxWait(gx_playlist->get_gx_tourprimitive_array_at(2)) != 0);
 }
 
 TEST_F(GxPlaylistTest, TestSerialize) {
@@ -215,9 +215,9 @@ TEST_F(GxAnimatedUpdateTest, TestType) {
   ASSERT_TRUE(gx_animatedupdate_->IsA(Type_GxAnimatedUpdate));
   ASSERT_TRUE(gx_animatedupdate_->IsA(Type_GxTourPrimitive));
   ASSERT_TRUE(gx_animatedupdate_->IsA(Type_Object));
-  ASSERT_TRUE(AsGxAnimatedUpdate(gx_animatedupdate_));
-  ASSERT_TRUE(AsGxTourPrimitive(gx_animatedupdate_));
-  ASSERT_TRUE(AsObject(gx_animatedupdate_));
+  ASSERT_TRUE(AsGxAnimatedUpdate(gx_animatedupdate_) != 0);
+  ASSERT_TRUE(AsGxTourPrimitive(gx_animatedupdate_) != 0);
+  ASSERT_TRUE(AsObject(gx_animatedupdate_) != 0);
 }
 
 // Verify proper defaults:
@@ -256,12 +256,12 @@ TEST_F(GxAnimatedUpdateTest, TestParse) {
     "</gx:AnimatedUpdate>";
   string errors;
   ElementPtr root = Parse(kGxAnimatedUpdate, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const GxAnimatedUpdatePtr animatedupdate = AsGxAnimatedUpdate(root);
   ASSERT_TRUE(animatedupdate->has_gx_duration());
   ASSERT_DOUBLE_EQ(1.1, animatedupdate->get_gx_duration());
-  ASSERT_TRUE(animatedupdate);
+  ASSERT_TRUE(animatedupdate != 0);
   ASSERT_TRUE(animatedupdate->has_update());
   ASSERT_EQ(kGxAnimatedUpdate, SerializeRaw(Parse(kGxAnimatedUpdate, NULL)));
 }
@@ -293,9 +293,9 @@ TEST_F(GxFlyToTest, TestType) {
   ASSERT_TRUE(gx_flyto_->IsA(Type_GxFlyTo));
   ASSERT_TRUE(gx_flyto_->IsA(Type_GxTourPrimitive));
   ASSERT_TRUE(gx_flyto_->IsA(Type_Object));
-  ASSERT_TRUE(AsGxFlyTo(gx_flyto_));
-  ASSERT_TRUE(AsGxTourPrimitive(gx_flyto_));
-  ASSERT_TRUE(AsObject(gx_flyto_));
+  ASSERT_TRUE(AsGxFlyTo(gx_flyto_) != 0);
+  ASSERT_TRUE(AsGxTourPrimitive(gx_flyto_) != 0);
+  ASSERT_TRUE(AsObject(gx_flyto_) != 0);
 }
 
 TEST_F(GxFlyToTest, TestDefaults) {
@@ -358,16 +358,16 @@ TEST_F(GxFlyToTest, TestParse) {
     "</gx:FlyTo>";
   string errors;
   ElementPtr root = Parse(kGxFlyTo, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const GxFlyToPtr flyto = AsGxFlyTo(root);
-  ASSERT_TRUE(flyto);
+  ASSERT_TRUE(flyto != 0);
   ASSERT_TRUE(flyto->has_gx_duration());
   ASSERT_DOUBLE_EQ(10.0, flyto->get_gx_duration());
   ASSERT_TRUE(flyto->has_gx_flytomode());
   ASSERT_TRUE(GX_FLYTOMODE_SMOOTH == flyto->get_gx_flytomode());
   ASSERT_TRUE(flyto->has_abstractview());
-  ASSERT_TRUE(AsCamera(flyto->get_abstractview()));
+  ASSERT_TRUE(AsCamera(flyto->get_abstractview()) != 0);
 }
 
 TEST_F(GxFlyToTest, TestSerialize) {
@@ -397,9 +397,9 @@ TEST_F(GxSoundCueTest, TestType) {
   ASSERT_TRUE(gx_soundcue_->IsA(Type_GxSoundCue));
   ASSERT_TRUE(gx_soundcue_->IsA(Type_GxTourPrimitive));
   ASSERT_TRUE(gx_soundcue_->IsA(Type_Object));
-  ASSERT_TRUE(AsGxSoundCue(gx_soundcue_));
-  ASSERT_TRUE(AsGxTourPrimitive(gx_soundcue_));
-  ASSERT_TRUE(AsObject(gx_soundcue_));
+  ASSERT_TRUE(AsGxSoundCue(gx_soundcue_) != 0);
+  ASSERT_TRUE(AsGxTourPrimitive(gx_soundcue_) != 0);
+  ASSERT_TRUE(AsObject(gx_soundcue_) != 0);
 }
 
 TEST_F(GxSoundCueTest, TestDefaults) {
@@ -438,10 +438,10 @@ TEST_F(GxSoundCueTest, TestParse) {
     "</gx:SoundCue>";
   string errors;
   ElementPtr root = Parse(kGxSoundCue, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const GxSoundCuePtr soundcue = AsGxSoundCue(root);
-  ASSERT_TRUE(soundcue);
+  ASSERT_TRUE(soundcue != 0);
   ASSERT_TRUE(soundcue->has_href());
   ASSERT_EQ("some/cool/file.mp3", soundcue->get_href());
 }
@@ -469,9 +469,9 @@ TEST_F(GxTourControlTest, TestType) {
   ASSERT_TRUE(gx_tourcontrol_->IsA(Type_GxTourControl));
   ASSERT_TRUE(gx_tourcontrol_->IsA(Type_GxTourPrimitive));
   ASSERT_TRUE(gx_tourcontrol_->IsA(Type_Object));
-  ASSERT_TRUE(AsGxTourControl(gx_tourcontrol_));
-  ASSERT_TRUE(AsGxTourPrimitive(gx_tourcontrol_));
-  ASSERT_TRUE(AsObject(gx_tourcontrol_));
+  ASSERT_TRUE(AsGxTourControl(gx_tourcontrol_) != 0);
+  ASSERT_TRUE(AsGxTourPrimitive(gx_tourcontrol_) != 0);
+  ASSERT_TRUE(AsObject(gx_tourcontrol_) != 0);
 }
 
 TEST_F(GxTourControlTest, TestDefaults) {
@@ -510,10 +510,10 @@ TEST_F(GxTourControlTest, TestParse) {
     "</gx:TourControl>";
   string errors;
   ElementPtr root = Parse(kGxTourControl, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const GxTourControlPtr tourcontrol = AsGxTourControl(root);
-  ASSERT_TRUE(tourcontrol);
+  ASSERT_TRUE(tourcontrol != 0);
   ASSERT_TRUE(tourcontrol->has_gx_playmode());
   ASSERT_TRUE(GX_PLAYMODE_PAUSE == tourcontrol->get_gx_playmode());
 }
@@ -541,9 +541,9 @@ TEST_F(GxWaitTest, TestType) {
   ASSERT_TRUE(gx_wait_->IsA(Type_GxWait));
   ASSERT_TRUE(gx_wait_->IsA(Type_GxTourPrimitive));
   ASSERT_TRUE(gx_wait_->IsA(Type_Object));
-  ASSERT_TRUE(AsGxWait(gx_wait_));
-  ASSERT_TRUE(AsGxTourPrimitive(gx_wait_));
-  ASSERT_TRUE(AsObject(gx_wait_));
+  ASSERT_TRUE(AsGxWait(gx_wait_) != 0);
+  ASSERT_TRUE(AsGxTourPrimitive(gx_wait_) != 0);
+  ASSERT_TRUE(AsObject(gx_wait_) != 0);
 }
 
 }  // end namespace kmldom

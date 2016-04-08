@@ -77,13 +77,13 @@ TEST(UpdateTest, TestProcessUpdateNull) {
 
 TEST(UpdateTest, TestSingleSimpleChange) {
   KmlFilePtr target_file = KmlFile::CreateFromParse(target_change, NULL);
-  ASSERT_TRUE(target_file);
+  ASSERT_TRUE(target_file != 0);
   PlacemarkPtr target_placemark =
       kmldom::AsPlacemark(target_file->GetObjectById("p"));
   ASSERT_EQ(string("hi"), target_placemark->get_name());
-  ASSERT_TRUE(target_placemark);
+  ASSERT_TRUE(target_placemark != 0);
   UpdatePtr update = AsUpdate(kmldom::Parse(source_change, NULL));
-  ASSERT_TRUE(update);
+  ASSERT_TRUE(update != 0);
   ProcessUpdate(update, target_file);
   ASSERT_EQ(string("NEW NAME"), target_placemark->get_name());
   ASSERT_FALSE(target_placemark->has_targetid());
@@ -108,12 +108,12 @@ static const char target_create[] = "<Folder id=\"f\"/>";
 
 TEST(UpdateTest, TestSingleSimpleCreate) {
   KmlFilePtr target_file = KmlFile::CreateFromParse(target_create, NULL);
-  ASSERT_TRUE(target_file);
+  ASSERT_TRUE(target_file != 0);
   FolderPtr folder = kmldom::AsFolder(target_file->get_root());
-  ASSERT_TRUE(folder);
+  ASSERT_TRUE(folder != 0);
   ASSERT_EQ(static_cast<size_t>(0), folder->get_feature_array_size());
   UpdatePtr update = AsUpdate(kmldom::Parse(source_create, NULL));
-  ASSERT_TRUE(update);
+  ASSERT_TRUE(update != 0);
   ProcessUpdate(update, target_file);
   ASSERT_EQ(static_cast<size_t>(1), folder->get_feature_array_size());
   ASSERT_EQ(string("Update-Created Placemark"),
@@ -207,13 +207,13 @@ static const char target_delete[] = "<Folder><Placemark id=\"p\"/></Folder>";
 
 TEST(UpdateTest, TestSingleSimpleDelete) {
   KmlFilePtr target_file = KmlFile::CreateFromParse(target_delete, NULL);
-  ASSERT_TRUE(target_file);
+  ASSERT_TRUE(target_file != 0);
   UpdatePtr update = AsUpdate(kmldom::Parse(source_delete, NULL));
-  ASSERT_TRUE(update);
+  ASSERT_TRUE(update != 0);
   ProcessUpdate(update, target_file);
   // Verify the Placemark has been removed from the Folder.
   FolderPtr folder = kmldom::AsFolder(target_file->get_root());
-  ASSERT_TRUE(folder);
+  ASSERT_TRUE(folder != 0);
   ASSERT_EQ(static_cast<size_t>(0), folder->get_feature_array_size());
   // TODO: actually remove the object from the KmlFile's map(s).
   // Verify the KmlFile's id mapping for the Placemark is gone.
@@ -253,7 +253,7 @@ TEST(UpdateTest, TestManyDeletes) {
   ASSERT_EQ(string("i0"), folder->get_feature_array_at(0)->get_id());
   ASSERT_EQ(kmldom::Type_Placemark, folder->get_feature_array_at(0)->Type());
   KmlFilePtr kml_file = KmlFile::CreateFromImport(folder);
-  ASSERT_TRUE(kml_file);
+  ASSERT_TRUE(kml_file != 0);
   for (int i = 0; i < kNumFeatures; ++i) {
     DeletePtr deleet = kml_factory->CreateDelete();
     deleet->add_feature(CreateFeature(i, false));  // Set targetId=
@@ -285,7 +285,7 @@ TEST(UpdateTest, TestChangeCoordinates) {
   placemark->set_name(kName);
   placemark->set_geometry(point);
   KmlFilePtr kml_file = KmlFile::CreateFromImport(placemark);
-  ASSERT_TRUE(kml_file);
+  ASSERT_TRUE(kml_file != 0);
 
   // Create the <Update> KML.
   coordinates = kml_factory->CreateCoordinates();
@@ -305,14 +305,14 @@ TEST(UpdateTest, TestChangeCoordinates) {
   // Call the function under test.
   ProcessUpdate(update, kml_file);
   // Verify the KML file's contents have changed.
-  ASSERT_TRUE(kml_file);
+  ASSERT_TRUE(kml_file != 0);
   placemark = AsPlacemark(kml_file->get_root());
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   ASSERT_EQ(kId, placemark->get_id());
   ASSERT_EQ(kName, placemark->get_name());
   ASSERT_TRUE(placemark->has_geometry());
   point = AsPoint(placemark->get_geometry());
-  ASSERT_TRUE(point);
+  ASSERT_TRUE(point != 0);
   ASSERT_TRUE(point->has_coordinates());
   coordinates = point->get_coordinates();
   ASSERT_EQ(static_cast<size_t>(1), coordinates->get_coordinates_array_size());
@@ -378,11 +378,11 @@ TEST(UpdateTest, TestFiles) {
   const size_t size = sizeof(kTestCases)/sizeof(kTestCases[0]);
   for (size_t i = 0; i < size; ++i) {
     KmlFilePtr target = ParseTestCaseFile(kTestCases[i].target_file_);
-    ASSERT_TRUE(target);
+    ASSERT_TRUE(target != 0);
     KmlFilePtr source = ParseTestCaseFile(kTestCases[i].source_file_);
-    ASSERT_TRUE(source);
+    ASSERT_TRUE(source != 0);
     UpdatePtr update = AsUpdate(source->get_root());
-    ASSERT_TRUE(update);
+    ASSERT_TRUE(update != 0);
     ProcessUpdate(update, target);
     string actual;
     ASSERT_TRUE(target->SerializeToString(&actual));
@@ -401,7 +401,7 @@ TEST(UpdateTest, TestProcessUpdateWithIdMapNull) {
 TEST(UpdateTest, TestProcessUpdateWithIdMapBasic) {
   KmlFilePtr kml_file(KmlFile::CreateFromString(
       "<Placemark id=\"inner\"><name>old name</name></Placemark>"));
-  ASSERT_TRUE(kml_file);
+  ASSERT_TRUE(kml_file != 0);
 
   kmldom::UpdatePtr update = kmldom::AsUpdate(kmldom::ParseKml(
       "<Update>"
@@ -411,7 +411,7 @@ TEST(UpdateTest, TestProcessUpdateWithIdMapBasic) {
       "    </Placemark>"
       "  </Change>"
       "</Update>"));
-  ASSERT_TRUE(update);
+  ASSERT_TRUE(update != 0);
 
   kmlbase::StringMap id_map;
   id_map["outer"] = "inner";
@@ -419,7 +419,7 @@ TEST(UpdateTest, TestProcessUpdateWithIdMapBasic) {
   ProcessUpdateWithIdMap(update, &id_map, kml_file);
 
   PlacemarkPtr placemark = AsPlacemark(kml_file->get_root());
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   ASSERT_TRUE(placemark->has_name());
   ASSERT_EQ(string("new name"), placemark->get_name());
   ASSERT_TRUE(placemark->has_id());

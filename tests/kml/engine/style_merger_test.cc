@@ -94,10 +94,10 @@ void StyleMergerTest::VerifyEmptyStyle(const StylePtr& style) const {
 // test fixture.
 void StyleMergerTest::VerifyStyleMergersEmpty() const {
   StylePtr style = style_merger_normal_->GetResolvedStyle();
-  ASSERT_TRUE(style);
+  ASSERT_TRUE(style != 0);
   VerifyEmptyStyle(style);
   style = style_merger_highlight_->GetResolvedStyle();
-  ASSERT_TRUE(style);
+  ASSERT_TRUE(style != 0);
   VerifyEmptyStyle(style);
 }
 
@@ -108,7 +108,7 @@ void StyleMergerTest::VerifyStyleLineStyle(const StylePtr& style,
                                            const string& color,
                                            double width) const {
   ASSERT_EQ(id, style->get_id());
-  ASSERT_TRUE(style->get_linestyle());
+  ASSERT_TRUE(style->get_linestyle() != 0);
   ASSERT_EQ(color,
                        style->get_linestyle()->get_color().to_string_abgr());
   ASSERT_EQ(width, style->get_linestyle()->get_width());
@@ -347,14 +347,14 @@ TEST_F(StyleMergerTest, TestNestingDepthDetection) {
   ASSERT_EQ(0, style_merger_normal_->get_nesting_depth());
   // The resolved style is the one with a <LineStyle>
   StylePtr resolved_style = style_merger_normal_->GetResolvedStyle();
-  ASSERT_TRUE(resolved_style);
+  ASSERT_TRUE(resolved_style != 0);
   ASSERT_TRUE(resolved_style->has_linestyle());
   ASSERT_FALSE(resolved_style->has_iconstyle());
   // Now try to resolve against another styleUrl to another StyleSelector.
   style_merger_normal_->MergeStyleUrl(string("#") + kStyleMapId);
   ASSERT_EQ(-1, style_merger_normal_->get_nesting_depth());
   // Verify that no further merging happened.
-  ASSERT_TRUE(resolved_style);
+  ASSERT_TRUE(resolved_style != 0);
   ASSERT_TRUE(resolved_style->has_linestyle());
   ASSERT_FALSE(resolved_style->has_iconstyle());
 }

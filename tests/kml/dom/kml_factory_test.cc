@@ -321,9 +321,9 @@ TEST(KmlFactoryTest, TestCreateElementFromName) {
   ASSERT_FALSE(kf->CreateElementFromName("complete junk"));
   ASSERT_FALSE(kf->CreateElementFromName("<Placemark"));
 
-  ASSERT_TRUE(kmldom::AsPlacemark(kf->CreateElementFromName("Placemark")));
-  ASSERT_TRUE(kmldom::AsAtomAuthor(kf->CreateElementFromName("atom:author")));
-  ASSERT_TRUE(kmldom::AsGxTour(kf->CreateElementFromName("gx:Tour")));
+  ASSERT_TRUE(kmldom::AsPlacemark(kf->CreateElementFromName("Placemark")) != 0);
+  ASSERT_TRUE(kmldom::AsAtomAuthor(kf->CreateElementFromName("atom:author")) != 0);
+  ASSERT_TRUE(kmldom::AsGxTour(kf->CreateElementFromName("gx:Tour")) != 0);
 }
 
 }  // end namespace kmldom

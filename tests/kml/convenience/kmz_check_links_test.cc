@@ -55,7 +55,7 @@ TEST_F(KmzCheckLinksTest, TestNoLinks) {
   // doc.kmz has no links.
   const string kNoLinks = string(DATADIR) + "/kmz/doc.kmz";
   kmz_file_.reset(KmzFile::OpenFromFile(kNoLinks.c_str()));
-  ASSERT_TRUE(kmz_file_);
+  ASSERT_TRUE(kmz_file_ != 0);
   ASSERT_TRUE(KmzCheckLinks(*kmz_file_, NULL));
 }
 
@@ -66,7 +66,7 @@ TEST_F(KmzCheckLinksTest, TestOverlay) {
                                  "/kmz/zermatt-photo.kmz";
   kmz_file_.reset(KmzFile::OpenFromFile(kPhotoLink.c_str()));
   // The KML parses fine.
-  ASSERT_TRUE(kmz_file_);
+  ASSERT_TRUE(kmz_file_ != 0);
   // And all expected files are within the KMZ.
   vector<string> missing_links;
   ASSERT_TRUE(KmzCheckLinks(*kmz_file_, &missing_links));
@@ -80,7 +80,7 @@ TEST_F(KmzCheckLinksTest, TestBadOverlay) {
                                    "/kmz/zermatt-photo-bad.kmz";
   kmz_file_.reset(KmzFile::OpenFromFile(kNoPhotoLink.c_str()));
   // The KML parses file.
-  ASSERT_TRUE(kmz_file_);
+  ASSERT_TRUE(kmz_file_ != 0);
   // But there's a dangling link.
   vector<string> missing_links;
   ASSERT_FALSE(KmzCheckLinks(*kmz_file_, &missing_links));
@@ -93,7 +93,7 @@ TEST_F(KmzCheckLinksTest, TestNull) {
   // There is no KML file in this KMZ file.
   const string kNoKml = string(DATADIR) + "/kmz/nokml.kmz";
   kmz_file_.reset(KmzFile::OpenFromFile(kNoKml.c_str()));
-  ASSERT_TRUE(kmz_file_);
+  ASSERT_TRUE(kmz_file_ != 0);
   ASSERT_FALSE(KmzCheckLinks(*kmz_file_, NULL));
 }
 

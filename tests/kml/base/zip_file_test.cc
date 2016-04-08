@@ -55,7 +55,7 @@ TEST_F(ZipFileTest, TestOpenFromString) {
   ASSERT_TRUE(File::ReadFileToString(kGoodKmz, &zip_file_data));
   ASSERT_FALSE(zip_file_data.empty());
   zip_file_.reset(ZipFile::OpenFromString(zip_file_data));
-  ASSERT_TRUE(zip_file_);
+  ASSERT_TRUE(zip_file_ != 0);
   string kml_data;
   // doc.kml can be read.
   ASSERT_TRUE(zip_file_->FindFirstOf(".kml", &kml_data));
@@ -66,7 +66,7 @@ TEST_F(ZipFileTest, TestOpenFromString) {
   ASSERT_TRUE(File::ReadFileToString(kBadKmz, &zip_file_data));
   ASSERT_FALSE(zip_file_data.empty());
   zip_file_.reset(ZipFile::OpenFromString(zip_file_data));
-  ASSERT_TRUE(zip_file_);
+  ASSERT_TRUE(zip_file_ != 0);
   kml_data.clear();
   // There is no KML file to read.
   ASSERT_FALSE(zip_file_->FindFirstOf(".kml", &kml_data));
@@ -77,7 +77,7 @@ TEST_F(ZipFileTest, TestOpenFromFile) {
   // doc.kmz contains doc.kml and is a valid zip archive.
   const string kGoodKmz = string(DATADIR) + "/kmz/doc.kmz";
   zip_file_.reset(ZipFile::OpenFromFile(kGoodKmz.c_str()));
-  ASSERT_TRUE(zip_file_);
+  ASSERT_TRUE(zip_file_ != 0);
   string kml_data;
   // doc.kml can be read.
   ASSERT_TRUE(zip_file_->FindFirstOf(".kml", &kml_data));
@@ -85,7 +85,7 @@ TEST_F(ZipFileTest, TestOpenFromFile) {
   // nokml.kmz is a valid zip archive, but does not contain any KML files
   const string kBadKmz = string(DATADIR) + "/kmz/nokml.kmz";
   zip_file_.reset(ZipFile::OpenFromFile(kBadKmz.c_str()));
-  ASSERT_TRUE(zip_file_);
+  ASSERT_TRUE(zip_file_ != 0);
   kml_data.clear();
   // There is no KML file to read.
   ASSERT_FALSE(zip_file_->FindFirstOf(".kml", &kml_data));
@@ -139,7 +139,7 @@ TEST_F(ZipFileTest, TestIsZipData) {
 TEST_F(ZipFileTest, TestFindFirstOf) {
   const string kGoodKmz = string(DATADIR) + "/kmz/doc.kmz";
   zip_file_.reset(ZipFile::OpenFromFile(kGoodKmz.c_str()));
-  ASSERT_TRUE(zip_file_);
+  ASSERT_TRUE(zip_file_ != 0);
   string kml_data;
   ASSERT_FALSE(zip_file_->FindFirstOf(".bad", &kml_data));
   ASSERT_TRUE(kml_data.empty());
@@ -153,7 +153,7 @@ TEST_F(ZipFileTest, TestGetToc) {
   // - a/a.kml
   const string kMulti1 = string(DATADIR) + "/kmz/multikml-nodoc.kmz";
   zip_file_.reset(ZipFile::OpenFromFile(kMulti1.c_str()));
-  ASSERT_TRUE(zip_file_);
+  ASSERT_TRUE(zip_file_ != 0);
   StringVector list;
   zip_file_->GetToc(&list);
   // 3 files were read into the vector.
@@ -167,7 +167,7 @@ TEST_F(ZipFileTest, TestGetToc) {
 TEST_F(ZipFileTest, TestIsInToc) {
   const string kGoodKmz = string(DATADIR) + "/kmz/doc.kmz";
   zip_file_.reset(ZipFile::OpenFromFile(kGoodKmz.c_str()));
-  ASSERT_TRUE(zip_file_);
+  ASSERT_TRUE(zip_file_ != 0);
   ASSERT_TRUE(zip_file_->IsInToc("doc.kml"));
   ASSERT_FALSE(zip_file_->IsInToc("docx.kml"));
 }
@@ -176,7 +176,7 @@ TEST_F(ZipFileTest, TestGetEntry) {
   // nokml.kmz has a file called foo.txt in a folder called foo.
   const string kNokml = string(DATADIR) + "/kmz/nokml.kmz";
   zip_file_.reset(ZipFile::OpenFromFile(kNokml.c_str()));
-  ASSERT_TRUE(zip_file_);
+  ASSERT_TRUE(zip_file_ != 0);
   string file_data;
   ASSERT_TRUE(zip_file_->GetEntry("foo/foo.txt", &file_data));
   ASSERT_FALSE(file_data.empty());
@@ -195,7 +195,7 @@ TEST_F(ZipFileTest, TestGetKmzData) {
   string kmz_data;
   File::ReadFileToString(kGoodKmz, &kmz_data);
   zip_file_.reset(ZipFile::OpenFromString(kmz_data));
-  ASSERT_TRUE(zip_file_);
+  ASSERT_TRUE(zip_file_ != 0);
   ASSERT_EQ(kmz_data, zip_file_->get_data());
 }
 
@@ -331,25 +331,25 @@ TEST_F(ZipFileTest, TestMinizipOverflow) {
   const string kOverflowBadOffset = string(DATADIR) +
     "/kmz/overflow_bad_offset.kmz";
   zip_file_.reset(ZipFile::OpenFromFile(kOverflowBadOffset.c_str()));
-  ASSERT_TRUE(zip_file_);
+  ASSERT_TRUE(zip_file_ != 0);
   ASSERT_FALSE(zip_file_->GetEntry(kDefaultKml, NULL));
 
   const string kOverflowStack = string(DATADIR) +
     "/kmz/overflow_corrupted_stack.kmz";
   zip_file_.reset(ZipFile::OpenFromFile(kOverflowStack.c_str()));
-  ASSERT_TRUE(zip_file_);
+  ASSERT_TRUE(zip_file_ != 0);
   ASSERT_FALSE(zip_file_->GetEntry(kDefaultKml, NULL));
 
   const string kOverflowOpen = string(DATADIR) +
     "/kmz/overflow_unzOpenCurrentFile.kmz";
   zip_file_.reset(ZipFile::OpenFromFile(kOverflowOpen.c_str()));
-  ASSERT_TRUE(zip_file_);
+  ASSERT_TRUE(zip_file_ != 0);
   ASSERT_FALSE(zip_file_->GetEntry(kDefaultKml, NULL));
 
   const string kOverflowRead = string(DATADIR) +
     "/kmz/overflow_unzReadCurrentFile.kmz";
   zip_file_.reset(ZipFile::OpenFromFile(kOverflowRead.c_str()));
-  ASSERT_TRUE(zip_file_);
+  ASSERT_TRUE(zip_file_ != 0);
   ASSERT_TRUE(zip_file_->GetEntry(kDefaultKml, NULL));
 }
 

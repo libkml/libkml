@@ -118,7 +118,7 @@ TEST_F(IconStyleTest, TestParse) {
     "</IconStyle>";
   string errors;
   ElementPtr root = Parse(kIconStyleIcon, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const IconStylePtr iconstyle = AsIconStyle(root);
   ASSERT_TRUE(iconstyle->has_icon());

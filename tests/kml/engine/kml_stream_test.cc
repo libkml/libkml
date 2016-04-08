@@ -61,13 +61,13 @@ TEST(KmlStreamTest, TestBasicParseFromIstream) {
   ASSERT_TRUE(errors.empty());
   ASSERT_TRUE(string_stream.eof());
   ElementPtr root = kml_stream->get_root();
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   PlacemarkPtr placemark = AsPlacemark(root);
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   ASSERT_EQ(string("hello"), placemark->get_name());
   ASSERT_TRUE(placemark->has_geometry());
   PointPtr point = AsPoint(placemark->get_geometry());
-  ASSERT_TRUE(point);
+  ASSERT_TRUE(point != 0);
   ASSERT_TRUE(point->has_coordinates());
   ASSERT_EQ(static_cast<size_t>(1),
             point->get_coordinates()->get_coordinates_array_size());
@@ -123,12 +123,12 @@ TEST(KmlStreamTest, TestBigParseFromIstream) {
       kml_stream(KmlStream::ParseFromIstream(&test_istream, NULL, NULL));
   ASSERT_TRUE(kml_stream.get());
   ElementPtr root = kml_stream->get_root();
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   KmlPtr kml = AsKml(root);
-  ASSERT_TRUE(kml);
+  ASSERT_TRUE(kml != 0);
   ASSERT_TRUE(kml->has_feature());
   FolderPtr folder = AsFolder(kml->get_feature());
-  ASSERT_TRUE(folder);
+  ASSERT_TRUE(folder != 0);
   ASSERT_EQ(kFeatureCount, folder->get_feature_array_size());
 }
 
@@ -142,12 +142,12 @@ TEST(KmlStreamTest, TestBigParseFromIstreamWithObserver) {
       KmlStream::ParseFromIstream(&test_istream, NULL, &parser_observer));
   ASSERT_TRUE(kml_stream.get());
   ElementPtr root = kml_stream->get_root();
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   KmlPtr kml = AsKml(root);
-  ASSERT_TRUE(kml);
+  ASSERT_TRUE(kml != 0);
   ASSERT_TRUE(kml->has_feature());
   FolderPtr folder = AsFolder(kml->get_feature());
-  ASSERT_TRUE(folder);
+  ASSERT_TRUE(folder != 0);
   ASSERT_EQ(kFeatureCount, folder->get_feature_array_size());
 }
 
@@ -176,9 +176,9 @@ TEST(KmlStreamTest, TestParseFromIstreamWithObserver) {
       KmlStream::ParseFromIstream(&test_istream, NULL, &parser_observer));
   ASSERT_TRUE(kml_stream.get());
   ElementPtr root = kml_stream->get_root();
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   KmlPtr kml = AsKml(root);
-  ASSERT_TRUE(kml);
+  ASSERT_TRUE(kml != 0);
   ASSERT_FALSE(kml->has_feature());  // Folder is a (discarded) Feature.
   ASSERT_EQ(kFeatureCount + 1, parser_observer.get_feature_count());
 }

@@ -308,7 +308,7 @@ TEST_F(CameraTest, TestSetGetHasClear) {
 TEST(AbstractViewTest, TestParseSerializeGxAltitudeMode) {
   KmlFactory* factory = KmlFactory::GetFactory();
   CameraPtr camera = factory->CreateCamera();
-  ASSERT_TRUE(camera);
+  ASSERT_TRUE(camera != 0);
   camera->set_latitude(37.0);
   camera->set_longitude(-122.0);
   camera->set_gx_altitudemode(GX_ALTITUDEMODE_RELATIVETOSEAFLOOR);
@@ -322,7 +322,7 @@ TEST(AbstractViewTest, TestParseSerializeGxAltitudeMode) {
   ASSERT_EQ(kCameraExpected, SerializeRaw(Parse(kCameraExpected, NULL)));
 
   LookAtPtr lookat = factory->CreateLookAt();
-  ASSERT_TRUE(lookat);
+  ASSERT_TRUE(lookat != 0);
   lookat->set_latitude(37.0);
   lookat->set_longitude(-122.0);
   lookat->set_gx_altitudemode(GX_ALTITUDEMODE_CLAMPTOSEAFLOOR);
@@ -340,7 +340,7 @@ TEST(AbstractViewTest, TestGxTimePrimitives) {
   KmlFactory* factory = KmlFactory::GetFactory();
 
   CameraPtr camera = factory->CreateCamera();
-  ASSERT_TRUE(camera);
+  ASSERT_TRUE(camera != 0);
   camera->set_latitude(37.0);
   camera->set_longitude(-122.0);
   GxTimeSpanPtr gx_timespan = factory->CreateGxTimeSpan();
@@ -355,7 +355,7 @@ TEST(AbstractViewTest, TestGxTimePrimitives) {
   ASSERT_EQ(kCameraExpected, SerializeRaw(Parse(kCameraExpected, NULL)));
 
   LookAtPtr lookat = factory->CreateLookAt();
-  ASSERT_TRUE(lookat);
+  ASSERT_TRUE(lookat != 0);
   lookat->set_latitude(37.0);
   lookat->set_longitude(-122.0);
   GxTimeStampPtr gx_timestamp = factory->CreateGxTimeStamp();

@@ -32,6 +32,7 @@ This file contains unit tests for the KML Engine Python SWIG bindings.
 import unittest
 import kmldom
 import kmlengine
+import os
 
 # These VerySimple tests really only verify that the function/class exists.
 
@@ -239,7 +240,7 @@ class BasicKmlFileSerializeToStringTestCase(unittest.TestCase):
 
 class BasicKmzFileTestCase(unittest.TestCase):
   def runTest(self):
-    kmz_filepath = '../../testdata/kmz/model-macky.kmz'
+    kmz_filepath = os.path.join(os.path.dirname(__file__), '../../testdata/kmz/model-macky.kmz')
     kmzfile = kmlengine.KmzFile.OpenFromFile(kmz_filepath)
     assert kmzfile
     (ok, kml) = kmzfile.ReadKml()

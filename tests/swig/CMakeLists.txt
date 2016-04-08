@@ -1,12 +1,18 @@
 if(WITH_PYTHON)
 add_test(NAME test_python_kmlbase
   COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/kmlbase_test.py)
+set_tests_properties(test_python_kmlbase
+     PROPERTIES ENVIRONMENT "PYTHONPATH=${CMAKE_BINARY_DIR}/src/swig:${CMAKE_BINARY_DIR}/lib")
 
 add_test(NAME test_python_kmldom
   COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/kmldom_test.py)
+set_tests_properties(test_python_kmldom
+     PROPERTIES ENVIRONMENT "PYTHONPATH=${CMAKE_BINARY_DIR}/src/swig:${CMAKE_BINARY_DIR}/lib")
 
 add_test(NAME test_python_kmlengine
   COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/kmlengine_test.py)
+set_tests_properties(test_python_kmlengine
+     PROPERTIES ENVIRONMENT "PYTHONPATH=${CMAKE_BINARY_DIR}/src/swig:${CMAKE_BINARY_DIR}/lib")
 endif()
 
 if(WITH_JAVA)

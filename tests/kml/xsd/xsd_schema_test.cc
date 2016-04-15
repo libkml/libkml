@@ -65,7 +65,7 @@ TEST_F(XsdSchemaTest, TestCreate) {
   attributes_.SetString(string("xmlns:") + kPrefix, kNamespace);
   attributes_.SetString(kTargetNamespace, kNamespace);
   xsd_schema_ = XsdSchema::Create(attributes_);
-  ASSERT_TRUE(xsd_schema_);
+  ASSERT_TRUE(xsd_schema_ != 0);
   ASSERT_EQ(kNamespace, xsd_schema_->get_target_namespace());
   ASSERT_EQ(kPrefix, xsd_schema_->get_target_namespace_prefix());
 }

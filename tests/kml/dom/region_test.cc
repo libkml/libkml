@@ -127,10 +127,10 @@ TEST_F(LatLonAltBoxTest, TestParseAltitudeMode) {
     "</LatLonAltBox>";
   string errors;
   ElementPtr root = Parse(kLatLonAltBoxAbsolute, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const LatLonAltBoxPtr llab_absolute = AsLatLonAltBox(root);
-  ASSERT_TRUE(llab_absolute);
+  ASSERT_TRUE(llab_absolute != 0);
 
   // Verify the proper values in the object model:
   ASSERT_TRUE(llab_absolute->has_north());
@@ -154,10 +154,10 @@ TEST_F(LatLonAltBoxTest, TestParseAltitudeMode) {
     "<altitudeMode>clampToGround</altitudeMode>"
     "</LatLonAltBox>";
   root = Parse(kLatLonAltBoxClampToGround, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const LatLonAltBoxPtr llab_clamptoground = AsLatLonAltBox(root);
-  ASSERT_TRUE(llab_clamptoground);
+  ASSERT_TRUE(llab_clamptoground != 0);
   ASSERT_FALSE(llab_clamptoground->has_north());
   ASSERT_FALSE(llab_clamptoground->has_south());
   ASSERT_FALSE(llab_clamptoground->has_east());
@@ -174,10 +174,10 @@ TEST_F(LatLonAltBoxTest, TestParseAltitudeMode) {
     "<altitudeMode>relativeToGround</altitudeMode>"
     "</LatLonAltBox>";
   root = Parse(kLatLonAltBoxRelativeToGround, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const LatLonAltBoxPtr llab_relativetoground = AsLatLonAltBox(root);
-  ASSERT_TRUE(llab_relativetoground);
+  ASSERT_TRUE(llab_relativetoground != 0);
   ASSERT_TRUE(llab_relativetoground->has_altitudemode());
   ASSERT_FALSE(llab_relativetoground->has_gx_altitudemode());
   ASSERT_EQ(static_cast<int>(ALTITUDEMODE_RELATIVETOGROUND),
@@ -188,10 +188,10 @@ TEST_F(LatLonAltBoxTest, TestParseAltitudeMode) {
     "<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>"
     "</LatLonAltBox>";
   root = Parse(kLatLonAltBoxRelativeToSeaFloor, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const LatLonAltBoxPtr llab_relativetoseafloor = AsLatLonAltBox(root);
-  ASSERT_TRUE(llab_relativetoseafloor);
+  ASSERT_TRUE(llab_relativetoseafloor != 0);
   ASSERT_FALSE(llab_relativetoseafloor->has_north());
   ASSERT_FALSE(llab_relativetoseafloor->has_south());
   ASSERT_FALSE(llab_relativetoseafloor->has_east());
@@ -313,10 +313,10 @@ TEST_F(RegionTest, TestParse) {
     "</Region>";
   string errors;
   ElementPtr root = Parse(kRegion, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const RegionPtr region = AsRegion(root);
-  ASSERT_TRUE(region);
+  ASSERT_TRUE(region != 0);
   ASSERT_EQ(string("region123"), region->get_id());
   ASSERT_TRUE(region->has_latlonaltbox());
   ASSERT_DOUBLE_EQ(101.101, region->get_latlonaltbox()->get_minaltitude());

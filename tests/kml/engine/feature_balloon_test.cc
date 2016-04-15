@@ -251,7 +251,7 @@ TEST_F(FeatureBalloonTest, TestAllBalloonsFile) {
   kml_file_ = KmlFile::CreateFromParse(data, &errors);
   ASSERT_FALSE(data.empty());
   ASSERT_TRUE(errors.empty());
-  ASSERT_TRUE(kml_file_);
+  ASSERT_TRUE(kml_file_ != 0);
   for (size_t i = 0; i < sizeof(kFeatures)/sizeof(kFeatures[0]); ++i) {
     // Extract the Placemark.
     const FeaturePtr feature=

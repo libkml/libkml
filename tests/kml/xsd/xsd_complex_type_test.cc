@@ -46,7 +46,7 @@ TEST_F(XsdComplexTypeTest, TestBasicCreate) {
   // <xs:complexType name="chocolateType"/>
   const string kChocolateType("chocolateType");
   xsd_complex_type_ = CreateXsdComplexType(kChocolateType);
-  ASSERT_TRUE(xsd_complex_type_);
+  ASSERT_TRUE(xsd_complex_type_ != 0);
   ASSERT_EQ(kChocolateType, xsd_complex_type_->get_name());
 }
 
@@ -80,14 +80,14 @@ TEST_F(XsdComplexTypeTest, TestAddElement) {
   // Add a child XsdElement: // <element name="latitude" type="double"/>.
   const string kLatitude("latitude");
   XsdElementPtr latitude = CreateXsdElement(kLatitude, "double");
-  ASSERT_TRUE(latitude);
+  ASSERT_TRUE(latitude != 0);
   xsd_complex_type_->add_element(latitude);
   ASSERT_EQ(static_cast<size_t>(1), xsd_complex_type_->get_sequence_size());
   ASSERT_EQ(kLatitude, xsd_complex_type_->get_sequence_at(0)->get_name());
   // Add another child XsdElement: // <element name="longitude" type="double"/>.
   const string kLongitude("longitude");
   XsdElementPtr longitude = CreateXsdElement(kLongitude, "double");
-  ASSERT_TRUE(longitude);
+  ASSERT_TRUE(longitude != 0);
   xsd_complex_type_->add_element(longitude);
   ASSERT_EQ(static_cast<size_t>(2), xsd_complex_type_->get_sequence_size());
   ASSERT_EQ(kLatitude, xsd_complex_type_->get_sequence_at(0)->get_name());

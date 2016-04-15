@@ -35,20 +35,20 @@
 bool SplitStyles(const char* input_filename, const char* output_filename) {
   std::string kml_input;
   if (!kmlbase::File::ReadFileToString(input_filename, &kml_input)) {
-    std::cerr << "read failed: " << input_filename << std::cerr;
+    std::cerr << "read failed: " << input_filename << std::endl;
     return false;
   }
   std::string errors;
   kmldom::ElementPtr root = kmlengine::SplitStyles(kml_input, &errors);
   if (!root) {
-    std::cerr << "parse failed: " << input_filename << std::cerr;
-    std::cerr << "parse failed: " << errors << std::cerr;
+    std::cerr << "parse failed: " << input_filename << std::endl;
+    std::cerr << "parse failed: " << errors << std::endl;
     return false;
   }
 
   std::string kml_output = kmldom::SerializePretty(root);
   if (!kmlbase::File::WriteStringToFile(kml_output, output_filename)) {
-    std::cerr << "write failed: " << output_filename << std::cerr;
+    std::cerr << "write failed: " << output_filename << std::endl;
     return false;
   }
   return true;

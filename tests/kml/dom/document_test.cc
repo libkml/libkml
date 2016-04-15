@@ -110,7 +110,7 @@ TEST_F(DocumentTest, TestDeleteSchemaAndStyleSelectorAt) {
   orig_style->set_id("style0");
   document_->add_styleselector(orig_style);
   StyleSelectorPtr got_style = document_->DeleteStyleSelectorAt(0);
-  ASSERT_TRUE(got_style);
+  ASSERT_TRUE(got_style != 0);
   ASSERT_EQ(orig_style->get_id(), got_style->get_id());
   ASSERT_FALSE(document_->DeleteStyleSelectorAt(0));
 
@@ -118,7 +118,7 @@ TEST_F(DocumentTest, TestDeleteSchemaAndStyleSelectorAt) {
   orig_schema->set_name("schema0");
   document_->add_schema(orig_schema);
   SchemaPtr got_schema = document_->DeleteSchemaAt(0);
-  ASSERT_TRUE(got_schema);
+  ASSERT_TRUE(got_schema != 0);
   ASSERT_EQ(orig_schema->get_name(), got_schema->get_name());
   ASSERT_FALSE(document_->DeleteSchemaAt(0));
 }

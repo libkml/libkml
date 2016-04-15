@@ -85,12 +85,12 @@ TEST_F(KmlCacheTest, TestBasicFetchKml) {
   KmlFilePtr kml_file = kml_cache_->FetchKmlRelative(kBaseUrl, kTargetHref);
   // Verify that this file fetches, parses, has the right url, has a Placemark
   // with the given id and is at the given lat,lon.
-  ASSERT_TRUE(kml_file);
+  ASSERT_TRUE(kml_file != 0);
   ASSERT_EQ(kTargetUrl, kml_file->get_url());
      
   kmldom::PlacemarkPtr placemark =
       AsPlacemark(kml_file->GetObjectById("SZXX0026"));
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   double lat, lon;
   ASSERT_TRUE(kmlengine::GetFeatureLatLon(placemark, &lat, &lon));
   ASSERT_EQ(46.9, lat);
@@ -103,9 +103,9 @@ TEST_F(KmlCacheTest, TestBasicFetchKml) {
   kml_file = NULL;  // Releases our reference to this KmlFile.
   placemark = NULL;  // Releases our reference to this Placemark
   kml_file = kml_cache_->FetchKmlRelative(kBaseUrl, kTargetHref);
-  ASSERT_TRUE(kml_file);
+  ASSERT_TRUE(kml_file != 0);
   placemark = AsPlacemark(kml_file->GetObjectById("SZXX0026"));
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
 
   // The immediately preceding should not have caused a fetch.
   //ASSERT_EQ(1, testdata_net_fetcher_.get_fetch_count());
@@ -223,7 +223,7 @@ TEST_F(KmlCacheTest, TestFetchDataRelativeTestCases) {
                                                 kTestCases[i].target_href,
                                                 &data);
     if (kTestCases[i].bytes) {
-      ASSERT_TRUE(status);
+      ASSERT_TRUE(status != 0);
       ASSERT_EQ(kTestCases[i].bytes, data.size());
     } else {
       ASSERT_FALSE(status);

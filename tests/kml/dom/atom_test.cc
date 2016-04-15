@@ -75,7 +75,7 @@ TEST_F(AtomCategoryTest, TestParseScheme) {
   // ParseKml calls AddElement.
   atomcategory_ = AsAtomCategory(
       ParseKml(string("<atom:category scheme='") + kScheme + "'/>"));
-  ASSERT_TRUE(atomcategory_);
+  ASSERT_TRUE(atomcategory_ != 0);
   ASSERT_TRUE(atomcategory_->has_scheme());
   ASSERT_EQ(kScheme, atomcategory_->get_scheme());
 }
@@ -85,7 +85,7 @@ TEST_F(AtomCategoryTest, TestParseLabel) {
   // ParseKml calls AddElement.
   atomcategory_ = AsAtomCategory(
       ParseKml(string("<atom:category label='") + kLabel + "'/>"));
-  ASSERT_TRUE(atomcategory_);
+  ASSERT_TRUE(atomcategory_ != 0);
   ASSERT_TRUE(atomcategory_->has_label());
   ASSERT_EQ(kLabel, atomcategory_->get_label());
 }
@@ -95,7 +95,7 @@ TEST_F(AtomCategoryTest, TestParseTerm) {
   // ParseKml calls AddElement.
   atomcategory_ = AsAtomCategory(
       ParseKml(string("<atom:category term='") + kTerm + "'/>"));
-  ASSERT_TRUE(atomcategory_);
+  ASSERT_TRUE(atomcategory_ != 0);
   ASSERT_TRUE(atomcategory_->has_term());
   ASSERT_EQ(kTerm, atomcategory_->get_term());
 }
@@ -124,7 +124,7 @@ TEST_F(AtomContentTest, TestParseSrc) {
   // ParseKml calls AddElement.
   atomcontent_ = AsAtomContent(
       ParseKml(string("<atom:content src='") + kSrc + "'/>"));
-  ASSERT_TRUE(atomcontent_);
+  ASSERT_TRUE(atomcontent_ != 0);
   ASSERT_TRUE(atomcontent_->has_src());
   ASSERT_EQ(kSrc, atomcontent_->get_src());
 }
@@ -134,7 +134,7 @@ TEST_F(AtomContentTest, TestParseType) {
   // ParseKml calls AddElement.
   atomcontent_ = AsAtomContent(
       ParseKml(string("<atom:content type='") + kType + "'/>"));
-  ASSERT_TRUE(atomcontent_);
+  ASSERT_TRUE(atomcontent_ != 0);
   ASSERT_TRUE(atomcontent_->has_type());
   ASSERT_EQ(kType, atomcontent_->get_type());
 }
@@ -143,7 +143,7 @@ TEST_F(AtomContentTest, TestParseUnknownContent) {
   const string kContent("<goo:bar>baz<goo:a>foo</goo:a></goo:bar>\n");
   atomcontent_ = AsAtomContent(
       ParseKml(string("<atom:content>") + kContent + "</atom:content>"));
-  ASSERT_TRUE(atomcontent_);
+  ASSERT_TRUE(atomcontent_ != 0);
   ASSERT_EQ(static_cast<size_t>(1),
             atomcontent_->get_unknown_elements_array_size());
   ASSERT_EQ(kContent, atomcontent_->get_unknown_elements_array_at(0));
@@ -162,7 +162,7 @@ TEST_F(AtomContentTest, TestParseUnknownContentWithUnknownAttributes) {
      string("<atom:content type='xhtml' xml:lang='en'") +
                     " xml:base='http://diveintomark.org/'>" + kContent +
                  "</atom:content>"));
-  ASSERT_TRUE(atomcontent_);
+  ASSERT_TRUE(atomcontent_ != 0);
   ASSERT_EQ(static_cast<size_t>(1),
             atomcontent_->get_unknown_elements_array_size());
   ASSERT_EQ(kContent, atomcontent_->get_unknown_elements_array_at(0));
@@ -186,14 +186,14 @@ TEST_F(AtomContentTest, TestParseMisplacedContent) {
                                "</name></Placemark>");
   atomcontent_ = AsAtomContent(
       ParseKml(string("<atom:content>") + kPlacemark + "</atom:content>"));
-  ASSERT_TRUE(atomcontent_);
+  ASSERT_TRUE(atomcontent_ != 0);
   ASSERT_EQ(static_cast<size_t>(0),
             atomcontent_->get_unknown_elements_array_size());
   ASSERT_EQ(static_cast<size_t>(1),
             atomcontent_->get_misplaced_elements_array_size());
   PlacemarkPtr placemark = AsPlacemark(
       atomcontent_->get_misplaced_elements_array_at(0));
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   ASSERT_EQ(kName, placemark->get_name());
 }
 
@@ -402,7 +402,7 @@ TEST_F(AtomEntryTest, TestSetSummary) {
 TEST_F(AtomEntryTest, TestSetContent) {
   atomentry_->set_content(KmlFactory::GetFactory()->CreateAtomContent());
   ASSERT_TRUE(atomentry_->has_content());
-  ASSERT_TRUE(atomentry_->get_content());
+  ASSERT_TRUE(atomentry_->get_content() != 0);
 }
 
 TEST_F(AtomEntryTest, TestParseSummary) {

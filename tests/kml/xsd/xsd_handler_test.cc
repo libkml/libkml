@@ -204,10 +204,10 @@ TEST_F(XsdHandlerTest, TestGetKml21ElementChildren) {
 TEST_F(XsdHandlerTest, TestGetKml21ExtensionBase) {
   ParseKml21Xsd();
   XsdElementPtr element = xsd_file_->FindElement("GroundOverlay");
-  ASSERT_TRUE(element);
+  ASSERT_TRUE(element != 0);
   XsdComplexTypePtr groundoverlay = XsdComplexType::AsComplexType(
       xsd_file_->FindElementType(element));
-  ASSERT_TRUE(groundoverlay);
+  ASSERT_TRUE(groundoverlay != 0);
   std::vector<XsdComplexTypePtr> type_hier;
   ASSERT_TRUE(xsd_file_->GetTypeHierarchy(groundoverlay, &type_hier));
   ASSERT_EQ(static_cast<size_t>(3), type_hier.size());
@@ -222,7 +222,7 @@ TEST_F(XsdHandlerTest, TestGetKml21Enumeration) {
   ParseKml21Xsd();
   XsdSimpleTypePtr altitude_mode_enum = XsdSimpleType::AsSimpleType(
       xsd_file_->FindType("altitudeModeEnum"));
-  ASSERT_TRUE(altitude_mode_enum);
+  ASSERT_TRUE(altitude_mode_enum != 0);
   ASSERT_TRUE(altitude_mode_enum->IsEnumeration());
   ASSERT_EQ(string("string"), altitude_mode_enum->get_restriction_base());
   ASSERT_EQ(static_cast<size_t>(3), altitude_mode_enum->get_enumeration_size());

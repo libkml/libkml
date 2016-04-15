@@ -59,7 +59,7 @@ TEST(UnknownTest, TestUnknownElement) {
     "</Placemark>",
     &errors);
   // This is XML valid and hence parses fine.
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   // The root element is a Placemark.
   const PlacemarkPtr placemark = AsPlacemark(root);
@@ -90,7 +90,7 @@ TEST(UnknownTest, TestMisplaced) {
       "<name>placemark</name>"
     "</Placemark>",
     &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const PlacemarkPtr placemark = AsPlacemark(root);
   ASSERT_EQ(string("placemark"), placemark->get_name());
@@ -114,7 +114,7 @@ TEST(UnknownTest, TestUnknownAttribute) {
     "</GroundOverlay>",
     &errors);
   // This is XML valid so it parses fine.
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   // The root is a GroundOverlay.
   const GroundOverlayPtr groundoverlay = AsGroundOverlay(root);
@@ -155,7 +155,7 @@ TEST(UnknownTest, TestSaveUnknown) {
                          kUnknownSimple + "<kml/>" +
                          kUnknownComplex + "<kml/>" +
                          "</" + kTagName + ">");
-      ASSERT_TRUE(element) << kTagName;
+      ASSERT_TRUE(element != 0) << kTagName;
       ASSERT_EQ(static_cast<size_t>(2),
                 element->get_unknown_elements_array_size());
       ASSERT_EQ(kUnknownSimple, element->get_unknown_elements_array_at(0));

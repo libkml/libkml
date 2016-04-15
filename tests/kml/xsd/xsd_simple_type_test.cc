@@ -47,7 +47,7 @@ TEST_F(XsdSimpleTypeTest, TestBasicCreate) {
 
   xsd_simple_type_ = XsdSimpleType::Create(attributes_);
 
-  ASSERT_TRUE(xsd_simple_type_);
+  ASSERT_TRUE(xsd_simple_type_ != 0);
   ASSERT_EQ(kTypeName, xsd_simple_type_->get_name());
 }
 
@@ -55,7 +55,7 @@ TEST_F(XsdSimpleTypeTest, TestEnumeration) {
   // <simpleType name="altitudeModeEnumType">
   attributes_.SetString(kName, "altitudeModeEnumType");
   xsd_simple_type_ = XsdSimpleType::Create(attributes_);
-  ASSERT_TRUE(xsd_simple_type_);
+  ASSERT_TRUE(xsd_simple_type_ != 0);
   ASSERT_FALSE(xsd_simple_type_->IsEnumeration());
   ASSERT_EQ(static_cast<size_t>(0),
                        xsd_simple_type_->get_enumeration_size());
@@ -91,7 +91,7 @@ TEST_F(XsdSimpleTypeTest, TestEqualsOperator) {
   // <simpleType name="altitudeModeEnumType">
   attributes_.SetString(kName, "altitudeModeEnumType");
   altitude_mode_type_ = XsdSimpleType::Create(attributes_);
-  ASSERT_TRUE(altitude_mode_type_);
+  ASSERT_TRUE(altitude_mode_type_ != 0);
 
   ASSERT_TRUE(altitude_mode_type_ == altitude_mode_type_);
 
@@ -99,7 +99,7 @@ TEST_F(XsdSimpleTypeTest, TestEqualsOperator) {
   const string kTypeName("anglepos90Type");
   attributes_.SetString(kName, kTypeName);
   angle_pos90_type_ = XsdSimpleType::Create(attributes_);
-  ASSERT_TRUE(angle_pos90_type_);
+  ASSERT_TRUE(angle_pos90_type_ != 0);
 
   ASSERT_FALSE(angle_pos90_type_ == altitude_mode_type_);
 }

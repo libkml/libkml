@@ -213,7 +213,7 @@ TEST_F(IdMapperTest, TestClearIds) {
   folder0_->set_name(kFolderName);
   folder0_->add_feature(placemark0_);
   FolderPtr folder = AsFolder(ClearIds(folder0_));
-  ASSERT_TRUE(folder);
+  ASSERT_TRUE(folder != 0);
   ASSERT_TRUE(folder->has_name());
   ASSERT_EQ(kFolderName, folder->get_name());
   ASSERT_EQ(static_cast<size_t>(1), folder->get_feature_array_size());
@@ -359,7 +359,7 @@ TEST_F(IdMapperTest, TestUnknownElements) {
     "</IconStyle>"
     "</Style>");
   ElementPtr root = kmldom::Parse(kKml, NULL);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   MapIds(root, &object_id_map_, NULL);
   ASSERT_EQ(static_cast<size_t>(2), object_id_map_.size());
 
@@ -367,13 +367,13 @@ TEST_F(IdMapperTest, TestUnknownElements) {
   ASSERT_FALSE(find == object_id_map_.end());
   kmldom::IconStylePtr iconstyle =
       kmldom::AsIconStyle(object_id_map_[kIconStyleId]);
-  ASSERT_TRUE(iconstyle);
+  ASSERT_TRUE(iconstyle != 0);
   ASSERT_EQ(kIconStyleId, iconstyle->get_id());
 
   find = object_id_map_.find(kStyleId);
   ASSERT_FALSE(find == object_id_map_.end());
   kmldom::StylePtr style = kmldom::AsStyle(object_id_map_[kStyleId]);
-  ASSERT_TRUE(iconstyle);
+  ASSERT_TRUE(iconstyle != 0);
   ASSERT_EQ(kStyleId, style->get_id());
 }
 

@@ -49,18 +49,18 @@ TEST(ParserTest, TestValidKml) {
                           &errors);
   // KML is valid so there are no errors and the root is <kml>.
   ASSERT_TRUE(errors.empty());
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
 
   const KmlPtr kml = AsKml(root);
-  ASSERT_TRUE(kml);
+  ASSERT_TRUE(kml != 0);
 
   errors.clear();
   // Assigning to root releases storage allocated in Parse above.
   root = Parse(" <kml/>", &errors);  // Note leading space.
   ASSERT_TRUE(errors.empty());
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
 
-  ASSERT_TRUE(AsKml(root));
+  ASSERT_TRUE(AsKml(root) != 0);
 
   // ElementPtr root going out of scope releases storage allocated in 2nd
   // Parse.
@@ -148,7 +148,7 @@ TEST(ParserTest, TestKmlWithUnknownEmptyFields) {
   const string kKml(
       string("<kml>") + kUnknownXml + "</kml>");
   ElementPtr root = Parse(kKml, NULL);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_EQ(static_cast<size_t>(1), root->get_unknown_elements_array_size());
   ASSERT_EQ(kUnknownXml, root->get_unknown_elements_array_at(0));
 }
@@ -171,7 +171,7 @@ TEST(ParserTest, TestBasicParseAtom) {
                               &errors);
   ASSERT_TRUE(errors.empty());
   ASSERT_TRUE(root.get());
-  ASSERT_TRUE(AsAtomFeed(root));
+  ASSERT_TRUE(AsAtomFeed(root) != 0);
   ASSERT_EQ(kmlbase::XMLNS_ATOM, root->get_xmlns());
 }
 

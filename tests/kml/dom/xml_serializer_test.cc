@@ -264,7 +264,7 @@ TEST_F(XmlSerializerTest, SerializeRawCoordinates) {
       "    <coordinates>1.2,3.4,5.6 9.8,7.6</coordinates>"
       "  </LineString>"
       "</Placemark>"));
-  ASSERT_TRUE(placemark_);
+  ASSERT_TRUE(placemark_ != 0);
   const string want(
       "<Placemark>"
       "<LineString>"

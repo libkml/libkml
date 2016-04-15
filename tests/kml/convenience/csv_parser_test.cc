@@ -226,7 +226,7 @@ TEST(CsvParserTest, TestCsvLineToPlacemarkWithNameAndDescription) {
   ASSERT_EQ(static_cast<size_t>(1), folder->get_feature_array_size());
   kmldom::PlacemarkPtr placemark =
       kmldom::AsPlacemark(folder->get_feature_array_at(0));
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   ASSERT_TRUE(CheckPointLatLon(placemark, kLat, kLon));
   ASSERT_TRUE(placemark->has_name());
   ASSERT_EQ(kName, placemark->get_name());
@@ -297,7 +297,7 @@ TEST(CsvParserTest, TestLincolnParkGc) {
   for (size_t i = 0; i < 18; ++i) {
     const kmldom::PlacemarkPtr& p =
         kmldom::AsPlacemark(folder->get_feature_array_at(i));
-    ASSERT_TRUE(p);
+    ASSERT_TRUE(p != 0);
     ASSERT_EQ(kmlbase::ToString(i+1), p->get_name());
     ASSERT_TRUE(p->has_extendeddata());
     const kmldom::ExtendedDataPtr ed = p->get_extendeddata();
@@ -426,7 +426,7 @@ TEST(CsvParserTest, TestFeatureId) {
   ASSERT_EQ(static_cast<size_t>(1), folder->get_feature_array_size());
   const kmldom::PlacemarkPtr p =
       kmldom::AsPlacemark(folder->get_feature_array_at(0));
-  ASSERT_TRUE(p);
+  ASSERT_TRUE(p != 0);
   ASSERT_TRUE(p->has_id());
   ASSERT_EQ(string("feature-abc"), p->get_id());
   ASSERT_TRUE(CheckPointLatLon(p, 1.1, -2.2));
@@ -441,14 +441,14 @@ TEST(CsvParserTest, TestStyleId) {
   ASSERT_TRUE(CsvParser::ParseCsv(&csv_splitter, &container_saver));
   ASSERT_EQ(static_cast<size_t>(2), folder->get_feature_array_size());
   kmldom::PlacemarkPtr p = kmldom::AsPlacemark(folder->get_feature_array_at(0));
-  ASSERT_TRUE(p);
+  ASSERT_TRUE(p != 0);
   ASSERT_TRUE(p->has_id());
   ASSERT_EQ(string("feature-abc"), p->get_id());
   ASSERT_TRUE(p->has_styleurl());
   ASSERT_EQ(string("style.kml#style-big"), p->get_styleurl());
   ASSERT_TRUE(CheckPointLatLon(p, 1.1, -2.2));
   p = kmldom::AsPlacemark(folder->get_feature_array_at(1));
-  ASSERT_TRUE(p);
+  ASSERT_TRUE(p != 0);
   ASSERT_TRUE(p->has_id());
   ASSERT_EQ(string("feature-xyz"), p->get_id());
   ASSERT_TRUE(p->has_styleurl());
@@ -474,7 +474,7 @@ TEST(CsvParserTest, TestGnisAk101) {
   for (size_t i = 0; i < 101; ++i) {
     const kmldom::PlacemarkPtr& p =
         kmldom::AsPlacemark(folder->get_feature_array_at(i));
-    ASSERT_TRUE(p);
+    ASSERT_TRUE(p != 0);
     ASSERT_TRUE(p->has_extendeddata());
     const kmldom::ExtendedDataPtr ed = p->get_extendeddata();
     ASSERT_EQ(static_cast<size_t>(14), ed->get_data_array_size());

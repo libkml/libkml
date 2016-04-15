@@ -520,10 +520,10 @@ TEST_F(PointTest, TestSerializeParseAll) {
   ASSERT_EQ(expected, SerializeRaw(point_));
   string errors;
   ElementPtr element = Parse(expected, &errors);
-  ASSERT_TRUE(element);
+  ASSERT_TRUE(element != 0);
   ASSERT_TRUE(errors.empty());
   PointPtr point = AsPoint(element);
-  ASSERT_TRUE(point);
+  ASSERT_TRUE(point != 0);
   ASSERT_TRUE(point->has_id());
   ASSERT_EQ(string("point-id"), point->get_id());
   ASSERT_TRUE(point->has_extrude());
@@ -646,10 +646,10 @@ TEST_F(LineStringTest, TestSerializeParseAll) {
   ASSERT_EQ(expected, SerializeRaw(linestring_));
   string errors;
   ElementPtr element = Parse(expected, &errors);
-  ASSERT_TRUE(element);
+  ASSERT_TRUE(element != 0);
   ASSERT_TRUE(errors.empty());
   LineStringPtr linestring = AsLineString(element);
-  ASSERT_TRUE(linestring);
+  ASSERT_TRUE(linestring != 0);
   ASSERT_TRUE(linestring->has_id());
   ASSERT_EQ(string("linestring-id"), linestring->get_id());
   ASSERT_TRUE(linestring->has_extrude());
@@ -775,10 +775,10 @@ TEST_F(LinearRingTest, TestSerializeParseAll) {
   ASSERT_EQ(expected, SerializeRaw(linearring_));
   string errors;
   ElementPtr element = Parse(expected, &errors);
-  ASSERT_TRUE(element);
+  ASSERT_TRUE(element != 0);
   ASSERT_TRUE(errors.empty());
   LinearRingPtr linearring = AsLinearRing(element);
-  ASSERT_TRUE(linearring);
+  ASSERT_TRUE(linearring != 0);
   ASSERT_TRUE(linearring->has_id());
   ASSERT_EQ(string("linearring-id"), linearring->get_id());
   ASSERT_TRUE(linearring->has_extrude());
@@ -816,7 +816,7 @@ TEST_F(OuterBoundaryIsTest, TestSetGetHasClear) {
   outerboundaryis_->set_linearring(
       KmlFactory::GetFactory()->CreateLinearRing());
   ASSERT_TRUE(outerboundaryis_->has_linearring());
-  ASSERT_TRUE(outerboundaryis_->get_linearring());
+  ASSERT_TRUE(outerboundaryis_->get_linearring() != 0);
   // Clear it and verify we're back to the default state.
   outerboundaryis_->clear_linearring();
 }
@@ -846,7 +846,7 @@ TEST_F(InnerBoundaryIsTest, TestSetGetHasClear) {
   innerboundaryis_->set_linearring(
       KmlFactory::GetFactory()->CreateLinearRing());
   ASSERT_TRUE(innerboundaryis_->has_linearring());
-  ASSERT_TRUE(innerboundaryis_->get_linearring());
+  ASSERT_TRUE(innerboundaryis_->get_linearring() != 0);
   // Clear it and verify we're back to the default state.
   innerboundaryis_->clear_linearring();
 }
@@ -968,10 +968,10 @@ TEST_F(PolygonTest, TestSerializeParseAll) {
   ASSERT_EQ(expected, SerializeRaw(polygon_));
   string errors;
   ElementPtr element = Parse(expected, &errors);
-  ASSERT_TRUE(element);
+  ASSERT_TRUE(element != 0);
   ASSERT_TRUE(errors.empty());
   PolygonPtr polygon = AsPolygon(element);
-  ASSERT_TRUE(polygon);
+  ASSERT_TRUE(polygon != 0);
   ASSERT_TRUE(polygon->has_id());
   ASSERT_EQ(string("polygon-id"), polygon->get_id());
   ASSERT_TRUE(polygon->has_extrude());
@@ -1129,10 +1129,10 @@ TEST_F(GxTrackTest, TestParse) {
   );
   string errors;
   ElementPtr element = Parse(kGxTrackKml, &errors);
-  ASSERT_TRUE(element);
+  ASSERT_TRUE(element != 0);
   ASSERT_TRUE(errors.empty());
   const GxTrackPtr gx_track = AsGxTrack(element);
-  ASSERT_TRUE(gx_track);
+  ASSERT_TRUE(gx_track != 0);
   ASSERT_TRUE(gx_track->has_altitudemode());
   ASSERT_EQ(ALTITUDEMODE_RELATIVETOGROUND, gx_track->get_altitudemode());
   ASSERT_EQ(static_cast<size_t>(2), gx_track->get_when_array_size());

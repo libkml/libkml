@@ -104,7 +104,7 @@ TEST_F(NetworkLinkTest, TestParseUrl) {
   ElementPtr root = Parse(kNetworkLinkUrl + kHref + kUrlNetworkLink, &errors);
   ASSERT_TRUE(errors.empty());
   const NetworkLinkPtr networklink = AsNetworkLink(root);
-  ASSERT_TRUE(networklink);
+  ASSERT_TRUE(networklink != 0);
   // Verify that the Url was set as the Link.
   ASSERT_TRUE(networklink->has_link());
   ASSERT_EQ(Type_Url, networklink->get_link()->Type());

@@ -92,9 +92,9 @@ TEST_F(SnippetTest, TestBasicParse) {
   const string kPlacemark = "<Placemark>" + kSnippet + "</Placemark>";
   string errors;
   ElementPtr root = Parse(kPlacemark, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   const PlacemarkPtr placemark = AsPlacemark(root);
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   ASSERT_TRUE(placemark->has_snippet());
   ASSERT_FALSE(placemark->get_snippet()->has_maxlines());
   ASSERT_EQ(2, placemark->get_snippet()->get_maxlines());  // The default.
@@ -115,12 +115,12 @@ TEST_F(SnippetTest, TestParseMaxLines) {
   const string kFolder = "<Folder>" + kSnippet + "</Folder>";
   string errors;
   ElementPtr root = Parse(kFolder, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const FolderPtr folder = AsFolder(root);
   ASSERT_TRUE(folder->has_snippet());
   const SnippetPtr snippet = folder->get_snippet();
-  ASSERT_TRUE(snippet);
+  ASSERT_TRUE(snippet != 0);
   ASSERT_TRUE(snippet->has_maxlines());
   ASSERT_EQ(5, snippet->get_maxlines());
 }
@@ -195,7 +195,7 @@ TEST_F(LinkSnippetTest, TestBasicParse) {
     kLinkSnippet + "</NetworkLinkControl>";
   string errors;
   ElementPtr root = Parse(kNetworkLinkControl, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   const NetworkLinkControlPtr networklinkcontrol = AsNetworkLinkControl(root);
   ASSERT_TRUE(networklinkcontrol->has_linksnippet());
   const LinkSnippetPtr linksnippet = networklinkcontrol->get_linksnippet();
@@ -217,12 +217,12 @@ TEST_F(LinkSnippetTest, TestParseMaxLines) {
     kLinkSnippet + "</NetworkLinkControl>";
   string errors;
   ElementPtr root = Parse(kNetworkLinkControl, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const NetworkLinkControlPtr networklinkcontrol = AsNetworkLinkControl(root);
   ASSERT_TRUE(networklinkcontrol->has_linksnippet());
   const LinkSnippetPtr linksnippet = networklinkcontrol->get_linksnippet();
-  ASSERT_TRUE(linksnippet);
+  ASSERT_TRUE(linksnippet != 0);
   ASSERT_TRUE(linksnippet->has_maxlines());
   ASSERT_EQ(7, linksnippet->get_maxlines());
 }

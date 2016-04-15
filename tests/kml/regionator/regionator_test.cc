@@ -137,7 +137,7 @@ TEST_F(RegionatorTest, TwoLevelPointRegionatorTest) {
   // The Document in the root KML has 5 features.
   DocumentPtr document1 =
       kmldom::AsDocument(kml_file_map_["1.kml"]->get_feature());
-  ASSERT_TRUE(document1);
+  ASSERT_TRUE(document1 != 0);
   ASSERT_EQ(static_cast<size_t>(5), document1->get_feature_array_size()); 
   // The 5 features are 4 x NetworkLinks + the Folder returned by 
   // PointRegionHandler's GetFeature
@@ -224,13 +224,13 @@ TEST_F(RegionatorTest, SetRootFilenameTest) {
   const string k2Kml("2.kml");
   ASSERT_EQ(kmldom::Type_kml, kml_file_map_[k2Kml]->Type());
   DocumentPtr d = kmldom::AsDocument(kml_file_map_[kPickleKml]->get_feature());
-  ASSERT_TRUE(d);
+  ASSERT_TRUE(d != 0);
   ASSERT_TRUE(d->has_atomlink());
   AtomLinkPtr link = d->get_atomlink();
   ASSERT_EQ(string(kPickleKml), link->get_href());
   ASSERT_EQ(string("self"), link->get_rel());
   d = kmldom::AsDocument(kml_file_map_[k2Kml]->get_feature());
-  ASSERT_TRUE(d);
+  ASSERT_TRUE(d != 0);
   ASSERT_TRUE(d->has_atomlink());
   link = d->get_atomlink();
   ASSERT_EQ(string(kPickleKml), link->get_href());
@@ -249,11 +249,11 @@ TEST_F(RegionatorTest, SetNaturalRegionTest) {
   rtor.SetNaturalRegion(region);
   rtor.Regionate(NULL);
   kmldom::KmlPtr kml = kml_file_map_["1.kml"];
-  ASSERT_TRUE(kml);
+  ASSERT_TRUE(kml != 0);
   ASSERT_TRUE(kml->has_feature());
   kmldom::LookAtPtr lookat =
       kmldom::AsLookAt(kml->get_feature()->get_abstractview());
-  ASSERT_TRUE(lookat);
+  ASSERT_TRUE(lookat != 0);
   ASSERT_DOUBLE_EQ(35.78925, lookat->get_latitude());
   ASSERT_DOUBLE_EQ(-86.032775, lookat->get_longitude());
 }

@@ -174,7 +174,7 @@ TEST_F(CloneTest, TestClonePointCoordinates) {
 
   // Verify that a new <coordinates> was created and has the expected content.
   CoordinatesPtr coordinates_clone = AsCoordinates(clone);
-  ASSERT_TRUE(coordinates_clone);
+  ASSERT_TRUE(coordinates_clone != 0);
   ASSERT_EQ(static_cast<size_t>(1),
             coordinates_clone->get_coordinates_array_size());
   Vec3 vec3 = coordinates_clone->get_coordinates_array_at(0);
@@ -199,7 +199,7 @@ TEST_F(CloneTest, TestCloneLineCoordinates) {
 
   // Verify all the points came over okay.
   CoordinatesPtr cloned_coordinates = AsCoordinates(element);
-  ASSERT_TRUE(cloned_coordinates);
+  ASSERT_TRUE(cloned_coordinates != 0);
   ASSERT_EQ(static_cast<size_t>(kNumPoints),
                        cloned_coordinates->get_coordinates_array_size());
   for (i = 0; i < kNumPoints; ++i) {
@@ -215,7 +215,7 @@ TEST_F(CloneTest, TestCloneSnippet) {
   // Clone an empty/default Snippet.
   ElementPtr element = Clone(snippet_);
   SnippetPtr cloned_snippet = AsSnippet(element);
-  ASSERT_TRUE(cloned_snippet);
+  ASSERT_TRUE(cloned_snippet != 0);
   ASSERT_EQ(snippet_->get_maxlines(),
                        cloned_snippet->get_maxlines());
   ASSERT_EQ(snippet_->get_text(), cloned_snippet->get_text());
@@ -237,7 +237,7 @@ TEST_F(CloneTest, TestCloneIconStyle) {
   ASSERT_EQ(kmldom::Type_IconStyleIcon, iconstyle->get_icon()->Type());
 
   IconStylePtr clone = AsIconStyle(Clone(iconstyle));
-  ASSERT_TRUE(clone);
+  ASSERT_TRUE(clone != 0);
   ASSERT_EQ(kmldom::Type_IconStyle, clone->Type());
   ASSERT_TRUE(clone->has_icon());
   ASSERT_TRUE(clone->get_icon()->has_href());
@@ -248,11 +248,11 @@ TEST_F(CloneTest, TestCloneIconStyle) {
 TEST_F(CloneTest, TestCloneWithMisplacedChild) {
   kmldom::IconPtr icon =
     kmldom::AsIcon(kmldom::Parse("<Icon><x>64</x></Icon>", NULL));
-  ASSERT_TRUE(icon);
+  ASSERT_TRUE(icon != 0);
   ASSERT_EQ(static_cast<size_t>(1), icon->get_misplaced_elements_array_size());
   ASSERT_EQ(static_cast<size_t>(0), icon->get_unknown_elements_array_size());
   kmldom::IconPtr clone = kmldom::AsIcon(Clone(icon));
-  ASSERT_TRUE(clone);
+  ASSERT_TRUE(clone != 0);
   ASSERT_EQ(static_cast<size_t>(1), clone->get_misplaced_elements_array_size());
   ASSERT_EQ(static_cast<size_t>(0), clone->get_unknown_elements_array_size());
   ASSERT_FALSE(kmldom::SerializePretty(clone).empty());
@@ -263,11 +263,11 @@ TEST_F(CloneTest, TestCloneWithFullyUnknownChild) {
   // manifested in cloning any element with a fully unknown child.
   kmldom::IconPtr icon =
       kmldom::AsIcon(kmldom::Parse("<Icon><w>64</w></Icon>", NULL));
-  ASSERT_TRUE(icon);
+  ASSERT_TRUE(icon != 0);
   ASSERT_EQ(static_cast<size_t>(0), icon->get_misplaced_elements_array_size());
   ASSERT_EQ(static_cast<size_t>(1), icon->get_unknown_elements_array_size());
   kmldom::IconPtr clone = kmldom::AsIcon(Clone(icon));
-  ASSERT_TRUE(clone);
+  ASSERT_TRUE(clone != 0);
   ASSERT_EQ(static_cast<size_t>(0), clone->get_misplaced_elements_array_size());
   ASSERT_EQ(static_cast<size_t>(1), clone->get_unknown_elements_array_size());
   ASSERT_FALSE(kmldom::SerializePretty(clone).empty());

@@ -114,7 +114,7 @@ const static struct {
 TEST_F(EntityMapperTest, TestGetEntityFields) {
   string errs;
   kml_file_ = KmlFile::CreateFromParse(kEntityKml, NULL);
-  ASSERT_TRUE(kml_file_);
+  ASSERT_TRUE(kml_file_ != 0);
   ASSERT_TRUE(errs.empty());
 
   DocumentPtr doc = kmldom::AsDocument(kml_file_->get_root());
@@ -233,9 +233,9 @@ TEST_F(EntityMapperTest, TestAltMarkupData) {
   };
 
   kml_file_ = KmlFile::CreateFromParse(kDataKml, NULL);
-  ASSERT_TRUE(kml_file_);
+  ASSERT_TRUE(kml_file_ != 0);
   PlacemarkPtr p = kmldom::AsPlacemark(kml_file_->get_root());
-  ASSERT_TRUE(p);
+  ASSERT_TRUE(p != 0);
   kmlbase::StringMap entity_map;
   kmlbase::StringPairVector alt_markup_map;
   EntityMapper entity_mapper(kml_file_, &entity_map, &alt_markup_map);
@@ -278,11 +278,11 @@ TEST_F(EntityMapperTest, TestAltMarkupSchemaData) {
   kml_file_ = KmlFile::CreateFromParse(data, &errors);
   ASSERT_FALSE(data.empty());
   ASSERT_TRUE(errors.empty());
-  ASSERT_TRUE(kml_file_);
+  ASSERT_TRUE(kml_file_ != 0);
   KmlPtr kml = kmldom::AsKml(kml_file_->get_root());
   DocumentPtr doc = kmldom::AsDocument(kml->get_feature());
   PlacemarkPtr p = kmldom::AsPlacemark(doc->get_feature_array_at(0));
-  ASSERT_TRUE(p);
+  ASSERT_TRUE(p != 0);
   kmlbase::StringMap entity_map;
   kmlbase::StringPairVector alt_markup_map;
   EntityMapper entity_mapper(kml_file_, &entity_map, &alt_markup_map);

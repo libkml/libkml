@@ -364,10 +364,10 @@ TEST_F(OverlayXYTest, TestParse) {
   ElementPtr root = Parse(
     "<overlayXY x=\"0.5\" y=\"123\" xunits=\"fraction\" yunits=\"pixels\"/>",
     &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const OverlayXYPtr overlayxy = AsOverlayXY(root);
-  ASSERT_TRUE(overlayxy);
+  ASSERT_TRUE(overlayxy != 0);
   ASSERT_EQ(0.5, overlayxy->get_x());
   ASSERT_EQ(123, overlayxy->get_y());
   ASSERT_EQ(static_cast<int>(UNITS_FRACTION), overlayxy->get_xunits());
@@ -406,10 +406,10 @@ TEST_F(ScreenXYTest, TestParse) {
     "<screenXY x=\"0.5\" y=\"123\" xunits=\"fraction\" "
       "yunits=\"insetPixels\"/>",
     &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const ScreenXYPtr screenxy = AsScreenXY(root);
-  ASSERT_TRUE(screenxy);
+  ASSERT_TRUE(screenxy != 0);
   ASSERT_EQ(0.5, screenxy->get_x());
   ASSERT_EQ(123., screenxy->get_y());
   ASSERT_EQ(static_cast<int>(UNITS_FRACTION),
@@ -450,10 +450,10 @@ TEST_F(RotationXYTest, TestParse) {
   ElementPtr root = Parse(
     "<rotationXY x=\"512\" y=\"0.7\" xunits=\"pixels\" yunits=\"fraction\"/>",
     &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const RotationXYPtr rotationxy = AsRotationXY(root);
-  ASSERT_TRUE(rotationxy);
+  ASSERT_TRUE(rotationxy != 0);
   ASSERT_EQ(512., rotationxy->get_x());
   ASSERT_EQ(0.7, rotationxy->get_y());
   ASSERT_EQ(static_cast<int>(UNITS_PIXELS),
@@ -494,10 +494,10 @@ TEST_F(SizeTest, TestParse) {
   ElementPtr root = Parse(
     "<size x=\"512\" y=\"0.7\" xunits=\"pixels\" yunits=\"fraction\"/>",
     &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const SizePtr size = AsSize(root);
-  ASSERT_TRUE(size);
+  ASSERT_TRUE(size != 0);
   ASSERT_EQ(512., size->get_x());
   ASSERT_EQ(0.7, size->get_y());
   ASSERT_EQ(static_cast<int>(UNITS_PIXELS), size->get_xunits());

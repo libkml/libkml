@@ -134,7 +134,7 @@ TEST_F(NetCacheTest, TestBasicFetch) {
   ASSERT_FALSE(null_net_cache_->Fetch(kUrl));
   ASSERT_EQ(kSize0, null_net_cache_->Size());
   // Fetch of a valid testdata path succeeds.
-  ASSERT_TRUE(testdata_net_cache_->Fetch(kUrl));
+  ASSERT_TRUE(testdata_net_cache_->Fetch(kUrl) != 0);
   // TODO read the test file directly and compare content
   ASSERT_EQ(static_cast<size_t>(1), testdata_net_cache_->Size());
   // Fetch on UrlDataNetCache returns URL.
@@ -150,11 +150,11 @@ TEST_F(NetCacheTest, TestBasicLookUp) {
   ASSERT_FALSE(testdata_net_cache_->LookUp(kUrl));
   ASSERT_FALSE(url_data_net_cache_->LookUp(kUrl));
   // Fetch this URL into the cache in those caches that save content.
-  ASSERT_TRUE(testdata_net_cache_->Fetch(kUrl));
-  ASSERT_TRUE(url_data_net_cache_->Fetch(kUrl));
+  ASSERT_TRUE(testdata_net_cache_->Fetch(kUrl) != 0);
+  ASSERT_TRUE(url_data_net_cache_->Fetch(kUrl) != 0);
   // Verify that these caches return true now on LookUp.
-  ASSERT_TRUE(testdata_net_cache_->LookUp(kUrl));
-  ASSERT_TRUE(url_data_net_cache_->LookUp(kUrl));
+  ASSERT_TRUE(testdata_net_cache_->LookUp(kUrl) != 0);
+  ASSERT_TRUE(url_data_net_cache_->LookUp(kUrl) != 0);
 }
 
 // Verify basic usage of the Save() method.
@@ -164,7 +164,7 @@ TEST_F(NetCacheTest, TestBasicSave) {
   MemoryFilePtr test_data_item = MemoryFile::CreateFromString(kContent);
   ASSERT_TRUE(url_data_net_cache_->Save(kUrl, test_data_item));
   ASSERT_EQ(static_cast<size_t>(1), url_data_net_cache_->Size());
-  ASSERT_TRUE(url_data_net_cache_->LookUp(kUrl));
+  ASSERT_TRUE(url_data_net_cache_->LookUp(kUrl) != 0);
   ASSERT_EQ(kContent,
                        url_data_net_cache_->Fetch(kUrl)->get_content());
 }
@@ -172,7 +172,7 @@ TEST_F(NetCacheTest, TestBasicSave) {
 // Verify basic usage of the Delete() method.
 TEST_F(NetCacheTest, TestBasicDelete) {
   const string kUrl("http://host.com/style/simple.kml");
-  ASSERT_TRUE(url_data_net_cache_->Fetch(kUrl));
+  ASSERT_TRUE(url_data_net_cache_->Fetch(kUrl) != 0);
   ASSERT_TRUE(url_data_net_cache_->Delete(kUrl));
   ASSERT_EQ(kSize0, url_data_net_cache_->Size());
   ASSERT_FALSE(url_data_net_cache_->LookUp(kUrl));
@@ -181,7 +181,7 @@ TEST_F(NetCacheTest, TestBasicDelete) {
 // Verify basic usage of the RemoveOldest method.
 TEST_F(NetCacheTest, TestBasicRemoveOldest) {
   const string kUrl("http://host.com/style/simple.kml");
-  ASSERT_TRUE(url_data_net_cache_->Fetch(kUrl));
+  ASSERT_TRUE(url_data_net_cache_->Fetch(kUrl) != 0);
   ASSERT_TRUE(url_data_net_cache_->RemoveOldest());
   ASSERT_EQ(kSize0, url_data_net_cache_->Size());
   ASSERT_FALSE(url_data_net_cache_->LookUp(kUrl));
@@ -202,11 +202,11 @@ TEST_F(NetCacheTest, TestOverflow) {
   for (size_t i = 0; i < kUrlDataNetCacheSize*2; ++i) {
     const string kUrl("http://host.com/" + ToString(i));
     MemoryFilePtr url_data = url_data_net_cache_->Fetch(kUrl);
-    ASSERT_TRUE(url_data);  // UrlDataNetFetcher never fails.
+    ASSERT_TRUE(url_data != 0);  // UrlDataNetFetcher never fails.
     // UrlDataNetFetcher simply uses the url as the content.
     ASSERT_EQ(kUrl, url_data->get_content());
     // The most recently Fetch()'ed url is guaranteed to bein the cache.
-    ASSERT_TRUE(url_data_net_cache_->LookUp(kUrl));
+    ASSERT_TRUE(url_data_net_cache_->LookUp(kUrl) != 0);
     const size_t want_size =
         i < kUrlDataNetCacheSize ? i + 1 : kUrlDataNetCacheSize;
     ASSERT_EQ(want_size, url_data_net_cache_->Size());
@@ -215,7 +215,7 @@ TEST_F(NetCacheTest, TestOverflow) {
   // the test range.
   for (size_t i = kUrlDataNetCacheSize; i < kUrlDataNetCacheSize*2; ++i) {
     const string kUrl("http://host.com/" + ToString(i));
-    ASSERT_TRUE(url_data_net_cache_->LookUp(kUrl));
+    ASSERT_TRUE(url_data_net_cache_->LookUp(kUrl) != 0);
   }
   // RemoveOldest() removes items one at a time.
   for (size_t i = 0; i < kUrlDataNetCacheSize; ++i) {

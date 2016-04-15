@@ -753,7 +753,7 @@ def TestColorStyle(colorstyle):
   color = kmlbase.Color32(0xf0f0c80f)
   colorstyle.set_color(color)
   assert colorstyle.has_color()
-  assert color == colorstyle.get_color()
+  assert color.to_string_argb() == colorstyle.get_color().to_string_argb()
   # Clear <color> and verify has_
   colorstyle.clear_color()
   assert not colorstyle.has_color()

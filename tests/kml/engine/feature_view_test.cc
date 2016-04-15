@@ -66,9 +66,9 @@ TEST(FeatureViewTest, TestComputeFeatureLookAt) {
   point->set_coordinates(coordinates);
   point_placemark->set_geometry(point);
 
-  ASSERT_TRUE(point_placemark);
+  ASSERT_TRUE(point_placemark != 0);
   const LookAtPtr point_lookat = ComputeFeatureLookAt(point_placemark);
-  ASSERT_TRUE(point_lookat);
+  ASSERT_TRUE(point_lookat != 0);
   ASSERT_DOUBLE_EQ(-122.0, point_lookat->get_longitude());
   ASSERT_DOUBLE_EQ(37.0, point_lookat->get_latitude());
   ASSERT_DOUBLE_EQ(0.0, point_lookat->get_altitude());
@@ -89,7 +89,7 @@ TEST(FeatureViewTest, TestComputeFeatureLookAt) {
   line_placemark->set_geometry(linestring);
 
   const LookAtPtr line_lookat = ComputeFeatureLookAt(line_placemark);
-  ASSERT_TRUE(line_lookat);
+  ASSERT_TRUE(line_lookat != 0);
   // We're looking at the center point of the line.
   ASSERT_DOUBLE_EQ(-121.5, line_lookat->get_longitude());
   ASSERT_DOUBLE_EQ(37.5, line_lookat->get_latitude());
@@ -116,7 +116,7 @@ TEST(FeatureViewTest, TestComputeFeatureLookAtFolder) {
   folder->add_feature(placemark);
   // Now an abstract view can be determined for the folder.
   LookAtPtr lookat = ComputeFeatureLookAt(folder);
-  ASSERT_TRUE(lookat);
+  ASSERT_TRUE(lookat != 0);
   ASSERT_DOUBLE_EQ(0.0, lookat->get_latitude());
   ASSERT_DOUBLE_EQ(0.0, lookat->get_longitude());
   // The range was clamped to 1000 meters.
@@ -140,7 +140,7 @@ TEST(FeatureViewTest, TestComputeFeatureLookAtFolder) {
 TEST(FeatureViewTest, TestComputeBboxLookAt) {
   Bbox bbox(36.59062, 34.98788, -82.00043, -90.06512);
   kmldom::LookAtPtr lookat = ComputeBboxLookAt(bbox);
-  ASSERT_TRUE(lookat);
+  ASSERT_TRUE(lookat != 0);
   // These fields are expected to be set to these values.
   ASSERT_DOUBLE_EQ(-86.032775, lookat->get_longitude());
   ASSERT_DOUBLE_EQ(35.78925, lookat->get_latitude());

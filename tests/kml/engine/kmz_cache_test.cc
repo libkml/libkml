@@ -114,7 +114,7 @@ TEST_F(KmzCacheTest, TestBasicSaveLookUpDelete) {
   const string kGoodKmz = string(DATADIR) + "/kmz/doc.kmz";
   string want_kml_data;
   KmzFilePtr kmz_file = KmzFile::OpenFromFile(kGoodKmz.c_str());
-  ASSERT_TRUE(kmz_file);
+  ASSERT_TRUE(kmz_file != 0);
   kmz_file->ReadKml(&want_kml_data);
 
   // Save this KmzFile into the cache under a given URL.
@@ -122,7 +122,7 @@ TEST_F(KmzCacheTest, TestBasicSaveLookUpDelete) {
 
   // Lookup the KmzFile with that same URL.
   KmzFilePtr lookup_kmz_file = kmz_cache_->LookUp(kUrl);
-  ASSERT_TRUE(lookup_kmz_file);
+  ASSERT_TRUE(lookup_kmz_file != 0);
 
   // Make sure the content of the KmzFile is as expected.
   // This KMZ test file is known to have one KML file.
@@ -158,7 +158,7 @@ TEST_F(KmzCacheTest, TestBasicFetchUrl) {
   const string kKmzTestFile(string(DATADIR) +
                                  kMockKmzNet[0].kmz_test_file);
   KmzFilePtr kmz_file = KmzFile::OpenFromFile(kKmzTestFile.c_str());
-  ASSERT_TRUE(kmz_file);
+  ASSERT_TRUE(kmz_file != 0);
   ASSERT_TRUE(kmz_file->ReadKml(&want_kml_data));
 
   ASSERT_EQ(want_kml_data, got_kml_data);
@@ -199,7 +199,7 @@ TEST_F(KmzCacheTest, TestBasicFetchFromCache) {
   const string kKmzTestFile(string(DATADIR) +
                                  kMockKmzNet[0].kmz_test_file);
   KmzFilePtr kmz_file = KmzFile::OpenFromFile(kKmzTestFile.c_str());
-  ASSERT_TRUE(kmz_file);
+  ASSERT_TRUE(kmz_file != 0);
   ASSERT_TRUE(kmz_file->ReadKml(&want_kml_data));
 
   ASSERT_EQ(want_kml_data, got_kml_data);

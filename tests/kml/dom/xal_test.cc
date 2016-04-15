@@ -93,42 +93,42 @@ TEST_F(XalAddressDetailsTest, TestParseDom) {
       File::JoinPaths(DATADIR, File::JoinPaths("xal", "gaddr.kml")));
   ASSERT_TRUE(File::ReadFileToString(kXalGaddr, &gaddr_content));
   ElementPtr root = kmldom::Parse(gaddr_content, NULL);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   KmlPtr kml = AsKml(root);
-  ASSERT_TRUE(kml);
+  ASSERT_TRUE(kml != 0);
   ASSERT_TRUE(kml->has_feature());
   DocumentPtr document = AsDocument(kml->get_feature());
   ASSERT_EQ(static_cast<size_t>(1), document->get_feature_array_size());
   PlacemarkPtr placemark = AsPlacemark(document->get_feature_array_at(0));
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   XalAddressDetailsPtr xaladdressdetails =
     AsXalAddressDetails(placemark->get_xaladdressdetails());
-  ASSERT_TRUE(xaladdressdetails);
+  ASSERT_TRUE(xaladdressdetails != 0);
   ASSERT_TRUE(xaladdressdetails->has_country());
   XalCountryPtr country = xaladdressdetails->get_country();
   ASSERT_TRUE(country->has_countrynamecode());
   ASSERT_EQ(string("US"), country->get_countrynamecode());
   XalAdministrativeAreaPtr administrativearea =
       country->get_administrativearea();
-  ASSERT_TRUE(administrativearea);
+  ASSERT_TRUE(administrativearea != 0);
   ASSERT_EQ(string("CA"),
       administrativearea->get_administrativeareaname());
   XalSubAdministrativeAreaPtr subadministrativearea =
       administrativearea->get_subadministrativearea();
-  ASSERT_TRUE(subadministrativearea);
+  ASSERT_TRUE(subadministrativearea != 0);
   ASSERT_EQ(string("Santa Clara"),
             subadministrativearea->get_subadministrativeareaname());
   XalLocalityPtr locality = subadministrativearea->get_locality();
-  ASSERT_TRUE(locality);
+  ASSERT_TRUE(locality != 0);
   ASSERT_EQ(string("Mountain View"), locality->get_localityname());
   XalThoroughfarePtr thoroughfare = locality->get_thoroughfare();
-  ASSERT_TRUE(thoroughfare);
+  ASSERT_TRUE(thoroughfare != 0);
   ASSERT_EQ(string("Amphitheatre Pkwy"),
             thoroughfare->get_thoroughfarename());
   ASSERT_EQ(string("1600"),
             thoroughfare->get_thoroughfarenumber());
   XalPostalCodePtr postalcode = locality->get_postalcode();
-  ASSERT_TRUE(postalcode);
+  ASSERT_TRUE(postalcode != 0);
   ASSERT_EQ(string("94043"), postalcode->get_postalcodenumber());
 }
 

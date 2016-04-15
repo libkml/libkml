@@ -128,7 +128,7 @@ TEST_F(CsvFileTest, TestParseCsvLine) {
   for (size_t i = 0; i < kLineCount; ++i) {
     PlacemarkPtr placemark = kmldom::AsPlacemark(
         folder->get_feature_array_at(i));
-    ASSERT_TRUE(placemark);
+    ASSERT_TRUE(placemark != 0);
     ComparePlacemark(placemark, i);
   }
 }

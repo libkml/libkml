@@ -91,10 +91,10 @@ TEST_F(ObjectTest, TestParse) {
       "<Placemark id=\"" + kId + "\" targetId=\"" + kTargetId + "\" />");
   string errors;
   ElementPtr root = Parse(kKml, &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
   const PlacemarkPtr placemark = AsPlacemark(root);
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   ASSERT_TRUE(placemark->has_id());
   ASSERT_TRUE(placemark->has_targetid());
   ASSERT_EQ(kId, placemark->get_id());

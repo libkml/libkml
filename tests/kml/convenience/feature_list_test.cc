@@ -138,7 +138,7 @@ TEST_F(FeatureListTest, TestSave) {
     // Verify that these are all Placemarks
     PlacemarkPtr placemark =
         kmldom::AsPlacemark(folder->get_feature_array_at(i));
-    ASSERT_TRUE(placemark);
+    ASSERT_TRUE(placemark != 0);
 
     // Verify that each is a proper Point Placemark with lat and lon.
     double lat, lon;

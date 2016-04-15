@@ -96,7 +96,7 @@ TEST_F(ElementFinderTest, TestBasicGetElementsById) {
   // Verify we got just what we asked for and in depth-first order.
   ASSERT_EQ(static_cast<size_t>(3), placemarks.size());
   ASSERT_EQ(kId0, AsPlacemark(placemarks[0])->get_id());
-  ASSERT_TRUE(AsPlacemark(placemarks[1]));
+  ASSERT_TRUE(AsPlacemark(placemarks[1]) != 0);
   ASSERT_EQ(kId1, AsPlacemark(placemarks[2])->get_id());
 
   // Ask for all the Points.
@@ -107,7 +107,7 @@ TEST_F(ElementFinderTest, TestBasicGetElementsById) {
   ASSERT_EQ(static_cast<size_t>(2), points.size());
   PointPtr point = AsPoint(points[0]);
   ASSERT_TRUE(point->has_coordinates());
-  ASSERT_TRUE(AsPoint(points[1]));
+  ASSERT_TRUE(AsPoint(points[1]) != 0);
 
   // Verify that no elements are found if there are none
   // of this type in the element hierarchy.

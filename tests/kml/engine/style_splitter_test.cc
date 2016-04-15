@@ -87,7 +87,7 @@ TEST_F(StyleSplitterTest, CallStyleSplitterMethodsInTypicalUsage) {
   const string kDocId("d");
   document->set_id(kDocId);
   ASSERT_TRUE(style_splitter_->NewElement(document));
-  ASSERT_TRUE(style_splitter_->get_document());
+  ASSERT_TRUE(style_splitter_->get_document() != 0);
   ASSERT_EQ(kDocId, style_splitter_->get_document()->get_id());
 
   // 2) On "<Placemark>" the parser creates a Placemark and calls NewElement().
@@ -107,7 +107,7 @@ TEST_F(StyleSplitterTest, CallStyleSplitterMethodsInTypicalUsage) {
   // as well.
   const string kId0("_0");
   ASSERT_EQ(static_cast<size_t>(1), shared_style_map_.size());
-  ASSERT_TRUE(shared_style_map_[kId0]);
+  ASSERT_TRUE(shared_style_map_[kId0] != 0);
   ASSERT_EQ(kId0, shared_style_map_[kId0]->get_id());
   ASSERT_EQ(static_cast<size_t>(1), document->get_styleselector_array_size());
   ASSERT_EQ(kId0, document->get_styleselector_array_at(0)->get_id());
@@ -227,12 +227,12 @@ TEST_F(StyleSplitterTest, TestNoDocument) {
   ElementPtr root = style_splitting_parser_->Parse(kNoStyleFolder, &errors);
   // Verify that this still parses just fine.
   FolderPtr folder = AsFolder(root);
-  ASSERT_TRUE(folder);
+  ASSERT_TRUE(folder != 0);
   ASSERT_TRUE(folder->has_name());
   ASSERT_FALSE(folder->has_description());
   ASSERT_EQ(static_cast<size_t>(1), folder->get_feature_array_size());
   PlacemarkPtr placemark = AsPlacemark(folder->get_feature_array_at(0));
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   // No <Document> to split this <Style> to so it remains in <Placemark>:
   ASSERT_TRUE(placemark->has_styleselector());
   ASSERT_EQ(kNoStyleFolder, SerializePretty(root));
@@ -254,9 +254,9 @@ TEST_F(StyleSplitterTest, TestBasicPlacemark) {
     "</Document>");
   ElementPtr root = style_splitting_parser_->Parse(kInlineStyle, &errors);
   DocumentPtr document = AsDocument(root);
-  ASSERT_TRUE(document);
+  ASSERT_TRUE(document != 0);
   PlacemarkPtr placemark = AsPlacemark(document->get_feature_array_at(0));
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   ASSERT_TRUE(placemark->has_name());
   ASSERT_FALSE(placemark->has_description());
   ASSERT_TRUE(placemark->has_styleurl());
@@ -265,7 +265,7 @@ TEST_F(StyleSplitterTest, TestBasicPlacemark) {
   ASSERT_EQ(static_cast<size_t>(1), shared_style_map_.size());
   ASSERT_EQ(static_cast<size_t>(1), document->get_styleselector_array_size());
   StylePtr style = AsStyle(document->get_styleselector_array_at(0));
-  ASSERT_TRUE(style);
+  ASSERT_TRUE(style != 0);
   ASSERT_TRUE(style->has_id());
   ASSERT_EQ(string("_0"), style->get_id());
   ASSERT_TRUE(style->has_linestyle());
@@ -301,16 +301,16 @@ TEST_F(StyleSplitterTest, TestIdCollision) {
       "  </Placemark>\n"
       "</Document>\n");
   DocumentPtr document = AsDocument(style_splitting_parser_->Parse(kKml, NULL));
-  ASSERT_TRUE(document);
+  ASSERT_TRUE(document != 0);
   PlacemarkPtr placemark = AsPlacemark(document->get_feature_array_at(0));
-  ASSERT_TRUE(placemark);
+  ASSERT_TRUE(placemark != 0);
   ASSERT_EQ(kKml, SerializePretty(document));
   ASSERT_FALSE(placemark->has_styleurl());
   ASSERT_TRUE(placemark->has_styleselector());
-  ASSERT_TRUE(AsStyle(placemark->get_styleselector()));
+  ASSERT_TRUE(AsStyle(placemark->get_styleselector()) != 0);
   ASSERT_EQ(static_cast<size_t>(1), shared_style_map_.size());
   style = AsStyle(shared_style_map_[kId]);
-  ASSERT_TRUE(style);
+  ASSERT_TRUE(style != 0);
   ASSERT_EQ(kId, style->get_id());
   ASSERT_EQ(static_cast<size_t>(0), document->get_styleselector_array_size());
 }
@@ -327,19 +327,19 @@ TEST_F(StyleSplitterTest, TestMultipleFeatures) {
   }
   const string kDocument(SerializePretty(document));
   document = AsDocument(style_splitting_parser_->Parse(kDocument, NULL));
-  ASSERT_TRUE(document);
+  ASSERT_TRUE(document != 0);
   ASSERT_EQ(kCount, document->get_styleselector_array_size());
   ASSERT_EQ(kCount, document->get_feature_array_size());
   for (size_t i = 0; i < kCount; ++i) {
     PlacemarkPtr placemark = AsPlacemark(document->get_feature_array_at(i));
-    ASSERT_TRUE(placemark);
+    ASSERT_TRUE(placemark != 0);
     ASSERT_EQ(ToString(i), placemark->get_name());
     ASSERT_FALSE(placemark->has_styleselector());
     ASSERT_TRUE(placemark->has_styleurl());
     const string kExpectedStyleId("_" + ToString(i));
     ASSERT_EQ(string("#") + kExpectedStyleId, placemark->get_styleurl());
     StylePtr style = AsStyle(document->get_styleselector_array_at(i));
-    ASSERT_TRUE(style);
+    ASSERT_TRUE(style != 0);
     ASSERT_EQ(kExpectedStyleId, style->get_id());
   }
 }

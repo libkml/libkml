@@ -187,7 +187,7 @@ void Kml22Test::AssertXmlNamespaceForRange(KmlDomType begin_dom_type,
   for (; element_type_id != end_id; ++element_type_id) {
     ElementPtr element = kml_factory->CreateElementById(
         static_cast<KmlDomType>(element_type_id));
-    ASSERT_TRUE(element);
+    ASSERT_TRUE(element != 0);
     ASSERT_EQ(xmlns_id, element->get_xmlns())
         << xsd_->ElementName(element_type_id);
   }

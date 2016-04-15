@@ -96,7 +96,7 @@ TEST_F(StyleInlinerTest, CallStyleInlinerMethodsInTypicalUsage) {
   // 1) <Document>
   DocumentPtr document = kml_factory_->CreateDocument();
   ASSERT_TRUE(style_inliner_->NewElement(document));
-  ASSERT_TRUE(style_inliner_->get_document());
+  ASSERT_TRUE(style_inliner_->get_document() != 0);
 
   // 2) <Style id="_0">
   StylePtr style = kml_factory_->CreateStyle();
@@ -207,7 +207,7 @@ TEST_F(StyleInlinerTest, TestFiles) {
 
     // Call the function under test.
     ElementPtr root = InlineStyles(input, &errors);
-    ASSERT_TRUE(root);
+    ASSERT_TRUE(root != 0);
     ASSERT_TRUE(errors.empty());
     string check;
     ASSERT_TRUE(ReadDataDirFileToString(kTestCases[i].check_subdir_,

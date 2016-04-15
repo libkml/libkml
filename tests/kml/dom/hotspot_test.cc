@@ -54,7 +54,7 @@ TEST_F(HotSpotTest, TestParse) {
   ElementPtr root = Parse(
     "<hotSpot x=\"32\" y=\"1\" xunits=\"pixels\" yunits=\"pixels\"/>",
     &errors);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_TRUE(errors.empty());
 #if 0
   const HotSpot* hotspot = AsHotSpot(root);

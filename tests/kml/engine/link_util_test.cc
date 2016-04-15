@@ -178,7 +178,7 @@ TEST_F(LinkUtilTest, TestGetLinkParentHref) {
 TEST_F(LinkUtilTest, TestFetchLink) {
   const string kBase("http://host.com/kmz/radar-animation.kmz");
   KmlFilePtr base_kml_file = kml_cache_->FetchKmlAbsolute(kBase);
-  ASSERT_TRUE(base_kml_file);
+  ASSERT_TRUE(base_kml_file != 0);
   ElementVector networklink_vector;
   GetElementsById(base_kml_file->get_root(), kmldom::Type_NetworkLink,
                   &networklink_vector);
@@ -186,10 +186,10 @@ TEST_F(LinkUtilTest, TestFetchLink) {
   ASSERT_EQ(static_cast<size_t>(1), networklink_vector.size());
   KmlFilePtr target_kml_file = FetchLink(base_kml_file,
                                          AsNetworkLink(networklink_vector[0]));
-  ASSERT_TRUE(target_kml_file);
+  ASSERT_TRUE(target_kml_file != 0);
   kmldom::DocumentPtr document =
       AsDocument(GetRootFeature(target_kml_file->get_root()));
-  ASSERT_TRUE(document);
+  ASSERT_TRUE(document != 0);
   // This is kmz/radar-animation.kmz/level00/0.kml.
   ASSERT_EQ(string("0130_256_-1"), document->get_name());
 }
@@ -197,7 +197,7 @@ TEST_F(LinkUtilTest, TestFetchLink) {
 TEST_F(LinkUtilTest, TestFetchIcon) {
   const string kBase("http://host.com/kmz/rumsey/kml/lc01.kmz");
   KmlFilePtr kml_file = kml_cache_->FetchKmlAbsolute(kBase);
-  ASSERT_TRUE(kml_file);
+  ASSERT_TRUE(kml_file != 0);
   ElementVector groundoverlay_vector;
   GetElementsById(kml_file->get_root(), kmldom::Type_GroundOverlay,
                   &groundoverlay_vector);

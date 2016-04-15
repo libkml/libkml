@@ -67,7 +67,7 @@ TEST_F(ElementCounterTest, TestEmpty) {
 
 TEST_F(ElementCounterTest, TestBasicParse) {
   ElementPtr root = parser_->Parse("<Placemark/>", NULL);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_EQ(static_cast<size_t>(1), element_count_map_.size());
   ASSERT_EQ(1, element_count_map_[kmldom::Type_Placemark]);
 }
@@ -75,7 +75,7 @@ TEST_F(ElementCounterTest, TestBasicParse) {
 TEST_F(ElementCounterTest, TestMultipleElements) {
   const string kKml("<Folder><Placemark/><Placemark/></Folder>");
   ElementPtr root = parser_->Parse(kKml, NULL);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_EQ(static_cast<size_t>(2), element_count_map_.size());
   ASSERT_EQ(1, element_count_map_[kmldom::Type_Folder]);
   ASSERT_EQ(2, element_count_map_[kmldom::Type_Placemark]);
@@ -84,11 +84,11 @@ TEST_F(ElementCounterTest, TestMultipleElements) {
 TEST_F(ElementCounterTest, TestRepeatedParse) {
   const string kXml("<Placemark/>");
   ElementPtr root = parser_->Parse(kXml, NULL);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_EQ(static_cast<size_t>(1), element_count_map_.size());
   ASSERT_EQ(1, element_count_map_[kmldom::Type_Placemark]);
   root = parser_->Parse(kXml, NULL);
-  ASSERT_TRUE(root);
+  ASSERT_TRUE(root != 0);
   ASSERT_EQ(static_cast<size_t>(1), element_count_map_.size());
   ASSERT_EQ(2, element_count_map_[kmldom::Type_Placemark]);
 }
@@ -104,7 +104,7 @@ TEST_F(ElementCounterTest, TestEachComplex) {
     }
     const string kXml(string("<") + xsd_->ElementName(i) + "/>");
     ElementPtr root = parser_->Parse(kXml, NULL);
-    ASSERT_TRUE(root);
+    ASSERT_TRUE(root != 0);
     ASSERT_EQ(type_id, root->Type());
     ASSERT_EQ(1, element_count_map_[type_id]);
   }

@@ -144,7 +144,7 @@ class ColorSerializer : public Serializer {
 
 // This exists because Serialize is public only on Element.
 static void CallSerializer(const ElementPtr& element, Serializer* serializer) {
-  ASSERT_TRUE(element);  // This is basically an internal check.
+  ASSERT_TRUE(element != 0);  // This is basically an internal check.
   ASSERT_TRUE(serializer);  // This is basically an internal check.
   element->Serialize(*serializer);
 }

@@ -91,9 +91,9 @@ TEST_F(XsdFileTest, TestFindElementTypeByName) {
   xsd_file_->add_element(CreateXsdElement(kMyElement, kPrefix + ":" + kMyType));
 
   const XsdElementPtr element = xsd_file_->FindElement(kMyElement);
-  ASSERT_TRUE(element);
+  ASSERT_TRUE(element != 0);
   const XsdTypePtr complex_type = xsd_file_->FindElementType(element);
-  ASSERT_TRUE(complex_type);
+  ASSERT_TRUE(complex_type != 0);
   ASSERT_EQ(kMyType, complex_type->get_name());
 }
 
@@ -154,7 +154,7 @@ TEST_F(XsdFileTest, TestResolveRef) {
 
   // Call the method under test for a good case.
   XsdElementPtr element = xsd_file_->ResolveRef(kPrefix + ":" + kMyElement);
-  ASSERT_TRUE(element);
+  ASSERT_TRUE(element != 0);
   ASSERT_EQ(kMyElement, element->get_name());
 
   // Call the method under test for some failure cases.
@@ -224,7 +224,7 @@ void XsdFileTest::AddTestElements() {
     attributes.SetString(kType, kTestElements[i].type);
     attributes.SetString(kAbstract, kTestElements[i].abstract);
     XsdElementPtr element = XsdElement::Create(attributes);
-    ASSERT_TRUE(element);
+    ASSERT_TRUE(element != 0);
     xsd_file_->add_element(element);
   }
 }
@@ -242,9 +242,9 @@ TEST_F(XsdFileTest, TestGetTypeHierarchy) {
   std::vector<XsdComplexTypePtr> hier;
   const XsdElementPtr element = xsd_file_->FindElement("Placemark");
   XsdTypePtr derived = xsd_file_->FindElementType(element);
-  ASSERT_TRUE(derived);
+  ASSERT_TRUE(derived != 0);
   XsdComplexTypePtr complex_type = XsdComplexType::AsComplexType(derived);
-  ASSERT_TRUE(complex_type);
+  ASSERT_TRUE(complex_type != 0);
   ASSERT_TRUE(xsd_file_->GetTypeHierarchy(complex_type, &hier));
   ASSERT_EQ(static_cast<size_t>(2), hier.size());
   ASSERT_EQ(string("FeatureType"), hier[0]->get_name());
@@ -359,7 +359,7 @@ TEST_F(XsdFileTest, TestFindChildElements) {
   const string kPlacemarkType("PlacemarkType");
   complex_type = XsdComplexType::AsComplexType(
       xsd_file_->FindType(kPlacemarkType));
-  ASSERT_TRUE(complex_type);
+  ASSERT_TRUE(complex_type != 0);
   ASSERT_EQ(kPlacemarkType, complex_type->get_name());
 
   // This has no children.
@@ -384,13 +384,13 @@ TEST_F(XsdFileTest, TestSearchTypeHierarchy) {
   InitTestXsd();
   const XsdComplexTypePtr& point_type =
       XsdComplexType::AsComplexType(xsd_file_->FindType("PointType"));
-  ASSERT_TRUE(point_type);
+  ASSERT_TRUE(point_type != 0);
   const XsdComplexTypePtr& geometry_type =
       XsdComplexType::AsComplexType(xsd_file_->FindType("GeometryType"));
-  ASSERT_TRUE(geometry_type);
+  ASSERT_TRUE(geometry_type != 0);
   const XsdComplexTypePtr& object_type =
       XsdComplexType::AsComplexType(xsd_file_->FindType("ObjectType"));
-  ASSERT_TRUE(object_type);
+  ASSERT_TRUE(object_type != 0);
   ASSERT_TRUE(xsd_file_->SearchTypeHierarchy(point_type, geometry_type));
   ASSERT_TRUE(xsd_file_->SearchTypeHierarchy(point_type, object_type));
 }
@@ -401,7 +401,7 @@ TEST_F(XsdFileTest, TestGetElementsOfType) {
   InitTestXsd();
   const XsdComplexTypePtr geometry_type =
       XsdComplexType::AsComplexType(xsd_file_->FindType("GeometryType"));
-  ASSERT_TRUE(geometry_type);
+  ASSERT_TRUE(geometry_type != 0);
   XsdElementVector geometry_elements;
   xsd_file_->GetElementsOfType(geometry_type, &geometry_elements);
   ASSERT_EQ(static_cast<size_t>(3), geometry_elements.size());

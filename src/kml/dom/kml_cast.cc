@@ -478,14 +478,14 @@ const StyleMapPtr AsStyleMap(const ElementPtr element) {
 }
 
 const TimeSpanPtr AsTimeSpan(const ElementPtr element) {
-  if (element && element->Type() == Type_TimeSpan) {
+  if (element && element->IsA(Type_TimeSpan)) {
     return boost::static_pointer_cast<TimeSpan>(element);
   }
   return NULL;
 }
 
 const TimeStampPtr AsTimeStamp(const ElementPtr element) {
-  if (element && element->Type() == Type_TimeStamp) {
+  if (element && element->IsA(Type_TimeStamp)) {
     return boost::static_pointer_cast<TimeStamp>(element);
   }
   return NULL;

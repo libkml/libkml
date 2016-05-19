@@ -155,7 +155,11 @@ TEST_F(KmlCastTest, TestCasts) {
       factory->CreateElementById(Type_GxSoundCue)) != 0);
   ASSERT_TRUE(AsGxTimeSpan(
       factory->CreateElementById(Type_GxTimeSpan)) != 0);
+  ASSERT_TRUE(AsTimeSpan(
+      factory->CreateElementById(Type_GxTimeSpan)) != 0);
   ASSERT_TRUE(AsGxTimeStamp(
+      factory->CreateElementById(Type_GxTimeStamp)) != 0);
+  ASSERT_TRUE(AsTimeStamp(
       factory->CreateElementById(Type_GxTimeStamp)) != 0);
   ASSERT_TRUE(AsTimePrimitive(
       factory->CreateElementById(Type_GxTimeSpan)) != 0);

@@ -100,6 +100,10 @@ endif()
 
 include_directories(${Boost_INCLUDE_DIRS})
 
+if(NOT BUILD_SHARED_LIBS)    
+    add_definitions(-DXML_STATIC) #for static expat    
+endif()
+
 #expat is dependency for kmlbase and kmldom
 super_find_package(EXPAT)
 include_directories(${EXPAT_INCLUDE_DIRS})

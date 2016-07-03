@@ -28,9 +28,37 @@
 #ifndef EXAMPLES_HELLONET_PROMPT_H__
 #define EXAMPLES_HELLONET_PROMPT_H__
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#else
 #include <termios.h>
+#endif
 #include <iostream>
 #include <string>
+
+// This function modifies the echo property of standard input
+void SetStdinEcho(bool enable)
+{
+#ifdef _WIN32
+    HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE); 
+    DWORD mode;
+    GetConsoleMode(hStdin, &mode);
+    if (!enable)
+        mode &= ~ENABLE_ECHO_INPUT;
+    else
+        mode |= ENABLE_ECHO_INPUT;
+    SetConsoleMode(hStdin, mode);
+#else
+    struct termios tty;
+    tcgetattr(STDIN_FILENO, &tty);
+    if (!enable)
+        tty.c_lflag &= ~ECHO;
+    else
+        tty.c_lflag |= ECHO;
+    (void)tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+#endif
+}
 
 // This class provides some static methods useful for prompting on a terminal.
 class Prompt {
@@ -39,18 +67,13 @@ class Prompt {
     std::cin.get();
     std::cout << prompt;
     std::cout << std::flush;
-    // Get the current state of the input terminal.
-    struct termios t;
-    tcgetattr(0, &t);
     // Flip off the ECHO bit.
-    t.c_lflag &= ~ECHO;
-    tcsetattr(0, TCSANOW, &t);
+    SetStdinEcho(false);
     // User can now type password safely.
     std::string input;
     std::getline(std::cin, input);
     // Flip ECHO back on.
-    t.c_lflag |= ECHO;
-    tcsetattr(0, TCSANOW, &t);
+    SetStdinEcho(true);
     std::cout << std::endl;
     return input;
   }

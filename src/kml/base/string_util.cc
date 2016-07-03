@@ -153,7 +153,7 @@ bool StringEndsWith(const string& str, const string& end) {
 }
 
 bool StringCaseEqual(const string& a, const string& b) {
-#ifdef WIN32
+#if defined(WIN32) && !defined(strncasecmp)
 # define strncasecmp(s1, s2, n) _strnicmp (s1, s2, n)
 #endif
   return a.size() == b.size() && strncasecmp(a.data(), b.data(), a.size()) == 0;

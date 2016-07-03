@@ -35,6 +35,9 @@ woven in by Terry Thorsen 1/2003.
  */
 
 
+#ifdef __MINGW32__
+#define Z_U4 unsigned long
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -55,7 +55,7 @@ if(NOT DEFINED PKGCONFIG_INSTALL_DIR)
   set(PKGCONFIG_INSTALL_DIR "${LIB_INSTALL_DIR}/pkgconfig")
 endif(NOT DEFINED PKGCONFIG_INSTALL_DIR)
 
-if(WIN32 AND NOT CYGWIN)
+if(WIN32 AND NOT CYGWIN AND NOT MINGW)
   set(DEF_INSTALL_CMAKE_DIR cmake)
 else()
   set(DEF_INSTALL_CMAKE_DIR lib/cmake/libkml)
@@ -141,7 +141,7 @@ else()
   string(TOUPPER ${CMAKE_BUILD_TYPE} CONFIG_TYPE)
 endif()
 
-if(NOT WIN32)
+if(NOT WIN32 OR MINGW)
   configure_file("${CMAKE_SOURCE_DIR}/cmake/libkml.pc.in"
     "${CMAKE_BINARY_DIR}/libkml.pc" @ONLY)
   install(FILES ${CMAKE_BINARY_DIR}/libkml.pc

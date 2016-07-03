@@ -1,5 +1,10 @@
-add_library(helloutil print.cc)
+add_library(helloutil STATIC print.cc)
 target_link_libraries(helloutil ${MINIZIP_LIBRARY})
+
+if(MINGW)
+  #supress ignored-qualifiers warning for mingw
+  set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/simplifylines.cc COMPILE_FLAGS "-Wno-ignored-qualifiers")
+endif()
 
 build_example(
   NAME createkml
@@ -27,7 +32,7 @@ build_example(
 
 build_example(
   NAME hellofeatures
-  DEPENDS kmldom kmlbase helloutil)
+  DEPENDS helloutil kmldom kmlbase)
 
 build_example(
   NAME hellofolder
@@ -39,7 +44,7 @@ build_example(
 
 build_example(
   NAME hellohref
-  DEPENDS kmldom kmlbase helloutil)
+  DEPENDS helloutil kmldom kmlbase)
 
 build_example(
   NAME hellokmz
@@ -47,7 +52,7 @@ build_example(
 
 build_example(
   NAME helloregion
-  DEPENDS kmldom kmlbase helloutil)
+  DEPENDS helloutil kmldom kmlbase)
 
 build_example(
   NAME helloworld

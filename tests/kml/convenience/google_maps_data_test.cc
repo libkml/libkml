@@ -36,6 +36,13 @@
 #include "kml/convenience/http_client_test_util.h"
 #include "kml/engine.h"
 
+#if defined(_WIN32) && !defined(setenv)
+// This code is safe, as the temporary string object will be destructed at the
+// end of the full expression
+#define setenv(name, value, overwrite) \
+    (putenv((string(name) + "=" + string(value)).c_str()))
+#endif
+
 // The following define is a convenience for testing inside Google.
 #ifdef GOOGLE_INTERNAL
 #include "kml/base/google_internal_test.h"

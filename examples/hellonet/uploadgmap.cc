@@ -27,12 +27,10 @@
 // Maps Data API.  The URI of feed to the new map is printed on output.
 // The created map has only the Placemarks from the original file.
 
-#include <termios.h>
 #include <iostream>
 #include <string>
 #include "boost/scoped_ptr.hpp"
 #include "curlfetch.h"
-#include "prompt.h"
 #include "kml/base/file.h"
 #include "kml/dom.h"
 #include "kml/engine.h"
@@ -40,6 +38,7 @@
 #include "kml/convenience/convenience.h"
 #include "kml/convenience/google_maps_data.h"
 #include "kml/convenience/http_client.h"
+#include "prompt.h"
 
 using kmlconvenience::GoogleMapsData;
 

@@ -13,7 +13,7 @@ kmz_check_links)
 
 foreach(TEST ${TESTS})
   build_test(
-    GROUP regionator
+    GROUP convenience
     NAME ${TEST}
     DEPENDS kmlconvenience)
 endforeach()

@@ -22,6 +22,11 @@ uri_parser
 zip_file
 expat_parser)
 
+if(MINGW)
+  #supress overflow warning for mingw
+  set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/expat_parser_test.cc COMPILE_FLAGS "-Wno-overflow")
+endif()
+
 foreach(TEST ${TESTS})
   build_test(
     GROUP base

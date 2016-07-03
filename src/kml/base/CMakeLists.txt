@@ -1,9 +1,14 @@
 file(GLOB SRCS "*.cc"
   contrib/minizip/unzip.c
-  contrib/minizip/iomem_simple.c)
+  contrib/minizip/iomem_simple.c
+  contrib/strptime.c)
 
 if(WIN32)
   list(REMOVE_ITEM SRCS "${CMAKE_CURRENT_SOURCE_DIR}/file_posix.cc")
+  if(MINGW)
+      #supress long-long warning for mingw
+      set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/time_util.cc COMPILE_FLAGS "-Wno-long-long")
+  endif()
 else()
   list(REMOVE_ITEM SRCS "${CMAKE_CURRENT_SOURCE_DIR}/file_win32.cc")
   #supress long-long warning for linux

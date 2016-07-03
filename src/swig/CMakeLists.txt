@@ -15,14 +15,18 @@ if(WITH_SWIG)
 endif()
 
 if(WITH_PYTHON)
-  find_package(PythonLibs REQUIRED)
+  find_package(PythonLibs 2.7 REQUIRED)
   if(NOT PYTHONLIBS_FOUND)
     message(FATAL_ERROR "Python Libraries not found.")
   endif()
 
-  find_package(PythonInterp REQUIRED)
+  find_package(PythonInterp 2.7 REQUIRED)
 
   include_directories(${PYTHON_INCLUDE_PATH})
+
+  if(WIN32 AND CMAKE_SIZEOF_VOID_P EQUAL 8)
+    add_definitions("-DMS_WIN64")
+  endif()
 
   if(NOT DEFINED PYTHON_INSTALL_DIR)
     execute_process(COMMAND
@@ -48,6 +52,7 @@ if(WITH_PYTHON)
 
     install(TARGETS
       _${MODULE_NAME}
+      LIBRARY DESTINATION ${PYTHON_INSTALL_DIR}
       DESTINATION ${PYTHON_INSTALL_DIR})
 
     install(FILES

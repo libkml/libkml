@@ -6,6 +6,8 @@ file(GLOB SRCS "*.cc"
 if(WIN32)
   list(REMOVE_ITEM SRCS "${CMAKE_CURRENT_SOURCE_DIR}/file_posix.cc")
   if(MINGW)
+      #use unicode functions from the windows api
+      add_definitions(-DUNICODE -D_UNICODE)
       #supress long-long warning for mingw
       set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/time_util.cc COMPILE_FLAGS "-Wno-long-long")
   endif()

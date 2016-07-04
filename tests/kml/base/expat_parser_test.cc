@@ -275,7 +275,7 @@ TEST_F(ExpatParserTest, TestUnicodeToUtf8) {
 #else
   // Verify we don't mangle UTF-8 start if we're just passing through.
   result_string.clear();
-  const XML_Char kutf8 = 0xe2 ;
+  const XML_Char kutf8 = 0xe2;
   xmlchar_to_utf8(&kutf8, &result_string);
   ASSERT_EQ("\xe2", result_string);
 #endif  // XML_UNICODE

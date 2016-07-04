@@ -23,12 +23,10 @@
 // OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <termios.h>
 #include <iostream>
 #include <string>
 #include "boost/scoped_ptr.hpp"
 #include "curlfetch.h"
-#include "prompt.h"
 #include "kml/base/file.h"
 #include "kml/dom.h"
 #include "kml/engine.h"
@@ -36,6 +34,7 @@
 #include "kml/convenience/convenience.h"
 #include "kml/convenience/google_maps_data.h"
 #include "kml/convenience/http_client.h"
+#include "prompt.h"
 
 using kmlconvenience::GoogleMapsData;
 

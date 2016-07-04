@@ -187,11 +187,10 @@ bool UriParser::UriToWindowsFilename(const string& uri,
 
 bool UriParser::FilenameToUri(const string& filename,
                               string* output) {
-#ifdef WIN32
+ if (filename.find('\\') != string::npos)
   return WindowsFilenameToUri(filename, output);
-#else
+ else
   return UnixFilenameToUri(filename, output);
-#endif
 }
 
 bool UriParser::UnixFilenameToUri(const string& filename,

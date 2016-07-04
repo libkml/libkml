@@ -19,14 +19,18 @@ if(WITH_PYTHON)
   if(NOT PYTHONLIBS_FOUND)
     message(FATAL_ERROR "Python Libraries not found.")
   endif()
-
+  
   find_package(PythonInterp REQUIRED)
 
   include_directories(${PYTHON_INCLUDE_PATH})
 
+  if(WIN32 AND CMAKE_SIZEOF_VOID_P EQUAL 8)
+    add_definitions("-DMS_WIN64")
+  endif()
+
   if(NOT DEFINED PYTHON_INSTALL_DIR)
     execute_process(COMMAND
-      ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(True)"
+      ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(True))"
       OUTPUT_VARIABLE PYTHON_INSTALL_DIR
       OUTPUT_STRIP_TRAILING_WHITESPACE )
   endif(NOT DEFINED PYTHON_INSTALL_DIR)
@@ -39,6 +43,9 @@ if(WITH_PYTHON)
     set_source_files_properties( ${CMAKE_CURRENT_BINARY_DIR}/${MODULE_NAME}PYTHON_wrap.cxx COMPILE_FLAGS "-Wno-long-long" )
     swig_add_module(${MODULE_NAME} python ${INTERFACE_FILE})
     swig_link_libraries(${MODULE_NAME} kmlbase kmlengine kmldom ${PYTHON_LIBRARIES})
+    if(PYTHON_VERSION_MAJOR EQUAL 3)
+      set_target_properties(_${MODULE_NAME} PROPERTIES COMPILE_OPTIONS -Wno-missing-field-initializers)
+    endif()
     add_custom_command(
       TARGET _${MODULE_NAME}
       POST_BUILD
@@ -48,6 +55,7 @@ if(WITH_PYTHON)
 
     install(TARGETS
       _${MODULE_NAME}
+      LIBRARY DESTINATION ${PYTHON_INSTALL_DIR}
       DESTINATION ${PYTHON_INSTALL_DIR})
 
     install(FILES

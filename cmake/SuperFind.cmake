@@ -61,6 +61,11 @@ function(super_find_package name)
       WORKING_DIRECTORY ${ep_base}/Build/${PKG_NAME} )
     include(${ep_base}/Build/${PKG_NAME}/${PKG_NAME}Config.cmake)    
   endif()
+
+  if(MINGW)
+    set(${PKG_NAME}_LIBRARIES ${${PKG_NAME}_LIBRARIES} PARENT_SCOPE)
+    set(${PKG_NAME}_LIBRARY ${${PKG_NAME}_LIBRARY} PARENT_SCOPE)
+  endif()
 endfunction()
 
 macro(add_dependencies_if_needed prefix tgt)  

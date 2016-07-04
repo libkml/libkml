@@ -66,7 +66,7 @@ const char* GoogleDocList::get_metafeed_uri() {
 }
 
 static string GetScope() {
-#ifdef _WIN32
+#if defined(_WIN32) && not defined(__MINGW32__)
   DWORD bufferSize = 65535; //Limit according to http://msdn.microsoft.com/en-us/library/ms683188.aspx
   std::wstring buff;
   buff.resize(bufferSize);

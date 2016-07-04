@@ -71,7 +71,7 @@ class LineStringVisitor : public kmlengine::FeatureVisitor {
       altitudemode_(kmldom::ALTITUDEMODE_CLAMPTOGROUND) {
   }
 
-  const int get_altitudemode() {
+  int get_altitudemode() {
     return altitudemode_;
   }
 

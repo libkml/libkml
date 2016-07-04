@@ -34,7 +34,9 @@
 #include "kml/base/file.h"
 #include <windows.h>
 #include <tchar.h>
+#ifndef __MINGW32__
 #include <xstring>
+#endif
 #include <algorithm>
 
 namespace kmlbase {

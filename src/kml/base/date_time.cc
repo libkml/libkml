@@ -29,12 +29,8 @@
 #include "boost/scoped_ptr.hpp"
 #include <stdlib.h>
 
-// TODO: fix this for real.
 #ifdef _WIN32
-char* strptime(const char* buf, const char* format, struct tm* tm) {
-  // Not yet implemented on this platform.
-  return NULL;
-}
+extern "C" char* strptime(const char* buf, const char* format, struct tm* tm);
 #endif
 
 namespace kmlbase {

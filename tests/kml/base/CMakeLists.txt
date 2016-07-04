@@ -22,6 +22,10 @@ uri_parser
 zip_file
 expat_parser)
 
+if(MINGW)
+  add_definitions(-DXML_UNICODE)
+endif()
+
 foreach(TEST ${TESTS})
   build_test(
     GROUP base

@@ -144,7 +144,7 @@ TEST(FeatureViewTest, TestComputeBboxLookAt) {
   // These fields are expected to be set to these values.
   ASSERT_DOUBLE_EQ(-86.032775, lookat->get_longitude());
   ASSERT_DOUBLE_EQ(35.78925, lookat->get_latitude());
-#ifdef _WIN64
+#if defined(_WIN64) || defined(__APPLE__)
   ASSERT_DOUBLE_EQ(712928.68603440293, lookat->get_range());
 #else
   ASSERT_DOUBLE_EQ(712928.68603440106, lookat->get_range());

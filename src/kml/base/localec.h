@@ -30,7 +30,11 @@
 #define _XOPEN_SOURCE 700
 #include <stdio.h>
 #include <stdlib.h>
+#ifndef __APPLE__
 #include <locale.h>
+#else
+#include <xlocale.h>
+#endif
 
 namespace kmlbase {
   

@@ -77,9 +77,9 @@ if(INSTALL_EXAMPLES)
 file(GLOB eg_files "${CMAKE_CURRENT_SOURCE_DIR}/*.cc")
 install(
   FILES ${eg_files}
-  DESTINATION examples/hellonet)
+  DESTINATION ${KML_EXAMPLES_DIR}/hellonet)
 
 install(
   FILES README curlfetch.h prompt.h
-  DESTINATION examples/hellonet)
+  DESTINATION ${KML_EXAMPLES_DIR}/hellonet)
 endif()

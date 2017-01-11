@@ -1,5 +1,5 @@
 if(INSTALL_EXAMPLES)
   file(GLOB eg_files "${CMAKE_CURRENT_SOURCE_DIR}/*.cc")
-  install(FILES ${eg_files} DESTINATION examples/xsd)
-  install(FILES kml-aliases.txt DESTINATION examples/xsd)
+  install(FILES ${eg_files} DESTINATION ${KML_EXAMPLES_DIR}/xsd)
+  install(FILES kml-aliases.txt DESTINATION ${KML_EXAMPLES_DIR}/xsd)
 endif()

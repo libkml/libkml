@@ -1,3 +1,3 @@
 if(INSTALL_EXAMPLES)
-  install( FILES kml-aliases.txt DESTINATION ${KML_EXAMPLES_DIR} COMPONENT Development)
+  install( FILES domviewer.py DESTINATION ${KML_EXAMPLES_DIR} COMPONENT Development)
 endif()

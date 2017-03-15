@@ -388,6 +388,12 @@ recurse:
 #endif
 				bp += 3;
 			} else {
+#ifdef WIN32
+#define MAX_TZNAME_BUFFER_SIZE	255
+				char buffer[MAX_TZNAME_BUFFER_SIZE + 1];
+				_get_tzname(0, buffer, MAX_TZNAME_BUFFER_SIZE, 0);
+				char** tzname = &buffer;
+#endif
 				ep = find_string(bp, &i,
 					       	 (const char * const *)tzname,
 					       	  NULL, 2);

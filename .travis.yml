@@ -4,10 +4,12 @@ compiler:
 
 before_script:
     - sudo apt-get update -qq
-    - sudo apt-get install swig python-dev cmake
+    - sudo apt-get install swig python-dev
     - SOURCE_DIR=`pwd`
-    - rm -fr /tmp/cmake-build/third-party/ 
     - cd /tmp
+    - wget https://cmake.org/files/v3.4/cmake-3.4.1-Linux-x86_64.tar.gz --no-check-certificate
+    - tar -xzf cmake-3.4.1-Linux-x86_64.tar.gz
+    - export PATH=/tmp/cmake-3.4.1-Linux-x86_64/bin:$PATH
     - wget https://downloads.sourceforge.net/project/boost/boost/1.63.0/boost_1_63_0.tar.gz -O boost_1_63_0.tar.gz
     - tar xf boost_1_63_0.tar.gz
     - wget https://github.com/google/googletest/archive/release-1.7.0.tar.gz -O gtest-1.7.0.tar.gz

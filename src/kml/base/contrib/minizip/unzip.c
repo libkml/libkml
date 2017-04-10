@@ -43,7 +43,10 @@ woven in by Terry Thorsen 1/2003.
 #include <zlib.h> //RR
 #include "unzip.h"
 #include "iomem_simple.h"
-#undef NOUNCRYPT
+
+#ifndef NOUNCRYPT
+#define NOUNCRYPT
+#endif
 
 #ifdef STDC
 #  include <stddef.h>

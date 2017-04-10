@@ -8,6 +8,8 @@ before_script:
     - SOURCE_DIR=`pwd`
     - rm -fr /tmp/cmake-build/third-party/ 
     - cd /tmp
+    - wget https://downloads.sourceforge.net/project/boost/boost/1.63.0/boost_1_63_0.tar.gz -O boost_1_63_0.tar.gz
+    - tar xf boost_1_63_0.tar.gz
     - wget https://github.com/google/googletest/archive/release-1.7.0.tar.gz -O gtest-1.7.0.tar.gz
     - tar xf gtest-1.7.0.tar.gz
     - mkdir gtest.build && cd gtest.build
@@ -20,7 +22,6 @@ script:
 - cd $SOURCE_DIR/../
 - mkdir libkml.build
 - cd libkml.build
-- cmake -DCMAKE_INSTALL_PREFIX=../../install $SOURCE_DIR -DBUILD_TESTING=ON
+- cmake -DCMAKE_INSTALL_PREFIX=/tmp/local -DBoost_DIR=/tmp $SOURCE_DIR -DBUILD_TESTING=ON
 - make
-- export LD_LIBRARY_PATH=/tmp/cmake-build/third-party/Build/MiniZip:/tmp/cmake-build/third-party/Build/UriParser
 - ctest

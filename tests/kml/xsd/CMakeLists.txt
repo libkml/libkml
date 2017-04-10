@@ -9,8 +9,9 @@ xsd_util
 xst_parser)
 
 foreach(TEST ${TESTS})
-  build_test(
+  build_target(
+    TEST
     GROUP xsd
-    NAME ${TEST}
+    NAME ${TEST}_test
     DEPENDS kmlxsd)
 endforeach()

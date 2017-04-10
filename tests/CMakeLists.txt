@@ -2,6 +2,9 @@ find_package(GoogleTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/tests)
 add_definitions("-DDATADIR=\"${LIBKML_DATA_DIR}\"")
+message(STATUS "GTEST_LIBRARY: ${GTEST_LIBRARY}")
+message(STATUS "GTEST_INCLUDE_DIR: ${GTEST_INCLUDE_DIR}")
+
 
 add_subdirectory(kml)
 if(WITH_SWIG)

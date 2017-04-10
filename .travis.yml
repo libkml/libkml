@@ -19,9 +19,6 @@ before_script:
     - sudo cp -rv /tmp/googletest-release-1.7.0/include/gtest /usr/local/include/
 
 script:
-- cd $SOURCE_DIR/../
-- mkdir libkml.build
-- cd libkml.build
-- cmake -DCMAKE_INSTALL_PREFIX=/tmp/local -DBoost_DIR=/tmp $SOURCE_DIR -DBUILD_TESTING=ON
-- make
+- cd $SOURCE_DIR/../ && mkdir libkml.build && cd libkml.build && export CMAKE_PREFIX_PATH=/tmp/boost_1_63_0
+- cmake -DCMAKE_INSTALL_PREFIX=/tmp/local $SOURCE_DIR -DBUILD_TESTING=ON && make
 - ctest

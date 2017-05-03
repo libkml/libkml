@@ -67,17 +67,25 @@ set(LIBKML_DATA_DIR  ${CMAKE_SOURCE_DIR}/testdata CACHE "Directory containing te
 
 #AM_CXXFLAGS = -Wall -Wextra -Wno-unused-parameter -pedantic -fno-rtti
 #AM_TEST_CXXFLAGS = -Wall -Wextra -Wno-unused-parameter -Werror -fno-rtti -DGTEST_HAS_RTTI=0
-if(CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-parameter -pedantic -fno-rtti")
-  set(TEST_FLAGS "-Wall -Wextra -Wno-unused-parameter -fno-rtti -DGTEST_HAS_RTTI=0")
+
+if(MSVC)
+  set(LIBKML_CXX_FLAGS  "/DUNICODE /D_UNICODE")
+  set(LIBKML_C_FLAGS    "/DUNICODE /D_UNICODE")
 else()
-  if(MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /DUNICODE /D_UNICODE")
-#    set(BUILD_SHARED_LIBS OFF)
-  endif()
+  set(LIBKML_CXX_FLAGS  "-fPIC")
+  set(LIBKML_C_FLAGS    "-fPIC")
 endif()
 
+if(CMAKE_COMPILER_IS_GNUCXX)
+  #-pedantic
+  set(LIBKML_CXX_FLAGS "${LIBKML_CXX_FLAGS} -Wall -Wextra -Wno-unused-parameter -fno-rtti")
+endif()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LIBKML_CXX_FLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LIBKML_C_FLAGS}")
+
 set(INSTALL_DIR "${CMAKE_INSTALL_PREFIX}" CACHE "install directory " PATH)
+
 set(LIBKML_TARGETS)
 
 include(LibKMLHelper)

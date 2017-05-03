@@ -33,9 +33,9 @@ function(build_target)
     
   endforeach()
 
-
   if(LIB_TEST)    
-    add_executable(${LIB_NAME} ${LIB_SRCS})   
+    add_executable(${LIB_NAME} ${LIB_SRCS})
+    set_target_properties(${LIB_NAME} PROPERTIES COMPILE_FLAGS "-DGTEST_HAS_RTTI=0")
     target_link_libraries(${LIB_NAME} ${GTEST_LIBRARY})    
     add_test(${LIB_NAME} ${CMAKE_BINARY_DIR}/bin/${LIB_NAME})
   else()

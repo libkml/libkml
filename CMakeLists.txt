@@ -1,4 +1,10 @@
-cmake_minimum_required(VERSION 2.8)
+if(WIN32)
+  cmake_minimum_required(VERSION 3.3)
+else()
+  cmake_minimum_required(VERSION 2.8)
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+endif()
+
 project(LibKML)
 
 set(VERSION_MAJOR "1")

@@ -14,7 +14,7 @@ else()
     INSTALL_COMMAND ""
     )
   
-  set(Boost_INCLUDE_DIR ${CMAKE_BINARY_DIR}/third_party/BOOST/src/BOOST CACHE PATH "boost include directory")
+  set(Boost_INCLUDE_DIR "${CMAKE_BINARY_DIR}/third_party/BOOST/src/BOOST")
   message(STATUS "Boost_INCLUDE_DIR = ${Boost_INCLUDE_DIR}")
 endif()
 

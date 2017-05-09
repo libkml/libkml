@@ -1,73 +1,104 @@
-macro(build_target)
-  cmake_parse_arguments(LIB  "" "NAME" "SRCS;INCS;LINKS;DEPENDS" ${ARGN} )
-  add_library(${LIB_NAME} ${LIB_SRCS})
+#TODO; s/INCS/HDRS/g
+function(build_target)
+  cmake_parse_arguments(LIB  "TEST" "NAME;GROUP" "SRCS;INCS;INCLUDES;LINKS;DEPENDS" ${ARGN} )
 
-  set(INTERFACE_LINKS)
-  set(PUBLIC_LINKS)
+  if(LIB_TEST)    
+    if(NOT LIB_SRCS)
+      set(LIB_SRCS "${LIB_NAME}.cc")
+    endif()
+
+    set(LIB_NAME ${LIB_GROUP}_${LIB_NAME})
+  endif()
+
+  set(${LIB_NAME}_INCLUDE_DIRS)
+  set(${LIB_NAME}_LINK_LIBS)
   foreach(LIB_DEPEND ${LIB_DEPENDS})
-    if(${LIB_DEPEND} MATCHES "^kml")
-      list(APPEND INTERFACE_LINKS ${LIB_DEPEND})
+    if(NOT TARGET ${LIB_DEPEND})
+      message(FATAL_ERROR "${LIB_DEPEND} not a target")
+      break()
     endif()
-    add_dependencies(${LIB_NAME} ${LIB_DEPEND})
-  endforeach()
-  
-  foreach(LIB_LINK ${LIB_LINKS})
-    if(NOT ${LIB_LINK} MATCHES "^kml")
-      list(APPEND PUBLIC_LINKS ${LIB_LINK})
-    endif()
-  endforeach()
-  target_link_libraries(${LIB_NAME} ${PUBLIC_LINKS})
-  if(INTERFACE_LINKS)
-    if(MINGW OR APPLE)
-      target_link_libraries(${LIB_NAME} ${INTERFACE_LINKS})
+    
+    get_target_property(${LIB_DEPEND}_IDIRS ${LIB_DEPEND} INTERFACE_INCLUDE_DIRECTORIES)
+    foreach(${LIB_DEPEND}_IDIR ${${LIB_DEPEND}_IDIRS})
+      if(EXISTS "${${LIB_DEPEND}_IDIR}" )
+	list(APPEND ${LIB_NAME}_INCLUDE_DIRS "${${LIB_DEPEND}_IDIR}")
+      endif()	
+    endforeach()
+
+    if(LIB_DEPEND MATCHES "(MINIZIP|URIPARSER)")
+      list(APPEND LIB_SRCS $<TARGET_OBJECTS:${LIB_DEPEND}>)
     else()
-      target_link_libraries(${LIB_NAME} LINK_INTERFACE_LIBRARIES ${INTERFACE_LINKS})
+      list(APPEND ${LIB_NAME}_LINK_LIBS ${LIB_DEPEND})
     endif()
-  endif()
-  if(VERSION_STRING)
-    set_target_properties(${LIB_NAME} PROPERTIES
-      VERSION   "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
-      SOVERSION "${VERSION_MAJOR}")
-  endif()
-  string(LENGTH ${LIB_NAME} ${LIB_NAME}_LEN)
-  MATH(EXPR ${LIB_NAME}_END "${${LIB_NAME}_LEN} - 3")
-  string(SUBSTRING ${LIB_NAME} 3 ${${LIB_NAME}_END} ${LIB_NAME}_INCLUDE_DIR)
-  install(
-    FILES ${LIB_INCS}
-    DESTINATION ${INCLUDE_INSTALL_DIR}/${${LIB_NAME}_INCLUDE_DIR})
+    
+  endforeach()
 
-  install_target(${LIB_NAME})
-
-endmacro(build_target)
-
-macro(install_target _target)
-  install(TARGETS ${_target}
-    EXPORT LibKMLTargets
-    RUNTIME DESTINATION ${BIN_INSTALL_DIR}
-    LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-    ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
-  
-  list(LENGTH LIBKML_TARGETS LIBKML_TARGETS_LENGTH)
-  if(LIBKML_TARGETS_LENGTH LESS 1)
-    set(LIBKML_TARGETS "${_target}" PARENT_SCOPE)
+  if(LIB_TEST)    
+    add_executable(${LIB_NAME} ${LIB_SRCS})
+    set_target_properties(${LIB_NAME} PROPERTIES COMPILE_FLAGS "-DGTEST_HAS_RTTI=0")
+    target_link_libraries(${LIB_NAME} ${GTEST_LIBRARY})    
+    add_test(${LIB_NAME} ${CMAKE_BINARY_DIR}/bin/${LIB_NAME})
   else()
-    set(LIBKML_TARGETS "${LIBKML_TARGETS};${_target}" PARENT_SCOPE)
+    add_library(${LIB_NAME} ${LIB_SRCS})
+  endif()
+
+
+  #  message("${LIB_NAME}_LINK_LIBS=${${LIB_NAME}_LINK_LIBS}")
+  target_link_libraries(${LIB_NAME} ${${LIB_NAME}_LINK_LIBS})
+  
+  if(${LIB_NAME}_INCLUDE_DIRS)
+    list(REMOVE_DUPLICATES ${LIB_NAME}_INCLUDE_DIRS ) 
+  endif()
+  
+  target_include_directories(${LIB_NAME} PUBLIC ${${LIB_NAME}_INCLUDE_DIRS})
+  target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src)
+  target_include_directories(${LIB_NAME} PUBLIC ${Boost_INCLUDE_DIR})
+  if(NOT Boost_Found)
+    add_dependencies(${LIB_NAME} BOOST)
+  endif()
+
+  if(LIB_TEST)
+    target_include_directories(${LIB_NAME} PUBLIC ${GTEST_INCLUDE_DIR})
+  endif()
+  
+  if(LIB_DEPENDS)
+    add_dependencies(${LIB_NAME} ${LIB_DEPENDS})
+  endif()
+ 
+
+  if(LIB_DEFS)
+    foreach(LIB_DEF ${LIB_DEFS})
+      target_compile_definitions(${LIB_NAME} PUBLIC "${LIB_DEF}")
+    endforeach()
+  endif()
+  
+
+  if(NOT LIB_TEST)
+    if(VERSION_STRING)
+      set_target_properties(${LIB_NAME} PROPERTIES
+	VERSION   "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
+	SOVERSION "${VERSION_MAJOR}")
     endif()
-endmacro(install_target)
+  
+    string(REPLACE "kml" "" INCLUDE_DEST_DIR ${LIB_NAME} )
+    
+    install(FILES ${LIB_INCS}
+      DESTINATION ${INCLUDE_INSTALL_DIR}/${INCLUDE_DEST_DIR})
+    
+    install(TARGETS ${LIB_NAME}
+      RUNTIME DESTINATION ${BIN_INSTALL_DIR}
+      LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+      ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+      )
+
+endif()
+
+
+endfunction(build_target)
 
 function(build_test)
   cmake_parse_arguments(TEST  "" "GROUP;NAME" "DEPENDS" ${ARGN} )
-  add_executable(${TEST_GROUP}_${TEST_NAME}_test ${TEST_NAME}_test.cc)
-  add_dependencies(${TEST_GROUP}_${TEST_NAME}_test ${TEST_DEPENDS})
-  set(TEST_LINKS)
-  foreach(TEST_D ${TEST_DEPENDS})
-    get_target_property(LINK_PROP ${TEST_D} LINK_INTERFACE_LIBRARIES)
-    if(LINK_PROP)
-      list(APPEND TEST_LINKS ${LINK_PROP})
-    endif()
-  endforeach()
-  target_link_libraries(${TEST_GROUP}_${TEST_NAME}_test ${TEST_LINKS} ${TEST_DEPENDS} ${GTEST_LIBRARY})
-  add_test(${TEST_GROUP}_${TEST_NAME} ${CMAKE_BINARY_DIR}/bin/${TEST_GROUP}_${TEST_NAME}_test)
+  message(FATAL_ERROR "TEST_GROUP=${TEST_GROUP} | TEST_NAME=${TEST_NAME}")
 endfunction(build_test)
 
 function(build_example)
@@ -78,17 +109,3 @@ function(build_example)
 endfunction(build_example)
 
 
-macro(include_project_vars _project _lib)
-  set(${_project}_INCLUDE_DIR "${INSTALL_DIR}/include")
-  if(WIN32)
-    set(_suffix ${CMAKE_LINK_LIBRARY_SUFFIX})
-  else(UNIX)
-    if(BUILD_SHARED_LIBS)
-      set(_suffix ${CMAKE_SHARED_LIBRARY_SUFFIX})
-    else()
-      set(_suffix ".a")
-    endif()
-  endif(WIN32)
-  set(${_project}_LIBRARY "${INSTALL_DIR}/lib/${_lib}${_suffix}")
-  include_directories(${${_project}_INCLUDE_DIR})
-endmacro()

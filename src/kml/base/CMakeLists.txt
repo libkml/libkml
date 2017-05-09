@@ -1,15 +1,16 @@
-file(GLOB SRCS "*.cc"
-  contrib/minizip/unzip.c
-  contrib/minizip/iomem_simple.c)
+file(GLOB SRCS "*.cc" 
+  contrib/minizip/unzip.c   
+  contrib/minizip/iomem_simple.c
+  )
 
 if(WIN32)
   list(APPEND SRCS contrib/strptime.c)
   list(REMOVE_ITEM SRCS "${CMAKE_CURRENT_SOURCE_DIR}/file_posix.cc")
   if(MINGW)
-      #use unicode functions from the windows api
-      add_definitions(-DUNICODE -D_UNICODE)
-      #supress long-long warning for mingw
-      set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/time_util.cc COMPILE_FLAGS "-Wno-long-long")
+    #use unicode functions from the windows api
+    add_definitions(-DUNICODE -D_UNICODE)
+    #supress long-long warning for mingw
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/time_util.cc COMPILE_FLAGS "-Wno-long-long")
   endif()
 else()
   list(REMOVE_ITEM SRCS "${CMAKE_CURRENT_SOURCE_DIR}/file_win32.cc")
@@ -17,6 +18,9 @@ else()
   set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/zip_file.cc COMPILE_FLAGS "-Wno-long-long")
 endif()
 
+if(CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
+  list(REMOVE_ITEM SRCS "${CMAKE_CURRENT_SOURCE_DIR}/localec.cc")
+endif()
 set(INCS
   attributes.h
   csv_splitter.h
@@ -48,5 +52,5 @@ build_target(
   NAME kmlbase
   SRCS ${SRCS}
   INCS ${INCS}
-  DEPENDS ${KMLBASE_DEPENDS}
-  LINKS ${ZLIB_LIBRARY} ${MINIZIP_LIBRARIES} ${URIPARSER_LIBRARY} ${EXPAT_LIBRARY} )
+  DEPENDS ZLIB MINIZIP URIPARSER EXPAT
+  )

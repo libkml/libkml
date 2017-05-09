@@ -26,9 +26,25 @@ if(MINGW)
   add_definitions(-DXML_UNICODE)
 endif()
 
-foreach(TEST ${TESTS})
-  build_test(
-    GROUP base
-    NAME ${TEST}
-    DEPENDS kmlbase)
-endforeach()
+   # build_target(
+   #   TEST
+   #   GROUP base
+   #   NAME attributes_test
+   #   DEPENDS kmlbase
+   #   )
+
+   
+#   add_executable(abc attributes_test.cc)
+   
+ #  target_link_libraries(abc ${GTEST_LIBRARY})
+    
+
+ foreach(TEST ${TESTS})
+   build_target(
+     TEST
+     GROUP base
+     NAME ${TEST}_test
+     DEPENDS kmlbase
+     )
+
+ endforeach()

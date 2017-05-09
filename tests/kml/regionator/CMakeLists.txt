@@ -4,8 +4,8 @@ regionator_qid
 regionator_util)
 
 foreach(TEST ${TESTS})
-  build_test(
+  build_target(TEST
     GROUP regionator
-    NAME ${TEST}
+    NAME ${TEST}_test
     DEPENDS kmlregionator)
 endforeach()

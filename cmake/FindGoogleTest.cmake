@@ -12,8 +12,7 @@ endif ()
 
 
 if (NOT GTEST_INCLUDE_DIR)
-    find_path(GTEST_INCLUDE_DIR NAMES gtest.h PATH_SUFFIXES gtest)
-    set(GTEST_INCLUDE_DIR ${GTEST_INCLUDE_DIR}/gtest CACHE PATH "Google Test includes")
+    find_path(GTEST_INCLUDE_DIR NAMES gtest/gtest.h)
 endif ()
 
 find_library(GTESTMAIN_LIB NAMES gtest_main)
@@ -27,7 +26,7 @@ endif ()
 
 if (GTEST_FOUND)
    if (NOT GTEST_FIND_QUIETLY)
-      message(STATUS "Found Google Test Framework: ${GTEST_LIBRARY}")
+     message(STATUS "Found Google Test Framework: ${GTEST_LIBRARY}")
    endif ()
 else ()
    if (NOT GTEST_FIND_QUIETLY)

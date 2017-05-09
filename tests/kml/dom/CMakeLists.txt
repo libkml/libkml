@@ -51,10 +51,11 @@ xsd
 visitor
 visitor_driver)
 
-foreach(TEST ${TESTS})
-  build_test(
+foreach(t ${TESTS})
+  build_target(
+    TEST
     GROUP dom
-    NAME ${TEST}
+    NAME ${t}_test
     DEPENDS kmldom)
 endforeach()
 

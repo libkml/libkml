@@ -27,6 +27,7 @@ set(INCS
   old_schema_parser_observer.h
   parse_old_schema.h
   schema_parser_observer.h
+  shared_schema_parser_observer.h
   shared_style_parser_observer.h
   style_inliner.h
   style_merger.h

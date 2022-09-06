@@ -49,6 +49,7 @@ using kmldom::KmlFactory;
 using kmldom::KmlPtr;
 using kmldom::ObjectPtr;
 using kmldom::PlacemarkPtr;
+using kmldom::SchemaPtr;
 using kmldom::StyleMapPtr;
 using kmldom::StyleSelectorPtr;
 
@@ -188,6 +189,35 @@ TEST_F(KmlFileTest, TestBasicGetSharedStyleById) {
   ASSERT_EQ(kFolderStyleId, object->get_id());
   // ...but is not found as a shared style.
   ASSERT_FALSE(kml_file_->GetSharedStyleById(kFolderStyleId));
+}
+
+// Verify NULL is returned for a non-existent shared style.
+TEST_F(KmlFileTest, TestNullGetSharedSchemaById) {
+  kml_file_ = KmlFile::CreateFromParse("<kml/>", nullptr);
+  ASSERT_FALSE(kml_file_->GetSharedSchemaById("nonesuch-schema"));
+}
+
+// Verify a basic shared schema is found.
+TEST_F(KmlFileTest, TestBasicGetSharedSchemaById) {
+  // Use ParseFromString to insert shared styles into the shared style map.
+  const std::string kSchemaId1("my_awesome_schema");
+  const std::string kSchemaId2("another_schema");
+  kml_file_ = KmlFile::CreateFromParse(
+    "<Document>"
+      "<Schema id=\"" + kSchemaId1 + "\"/>"
+      "<Schema id=\"" + kSchemaId2 + "\"/>"
+    "</Document>", NULL);
+  ASSERT_TRUE(kml_file_);  // Verify the parse succeeded.
+
+  // Verify both schemas were found.
+  SchemaPtr schema1 = kml_file_->GetSharedSchemaById(kSchemaId1);
+  ASSERT_NE(schema1, nullptr);
+  ASSERT_TRUE(AsSchema(schema1));  // Verify it's a <Schema>
+  ASSERT_EQ(kSchemaId1, schema1->get_id());
+  SchemaPtr schema2 = kml_file_->GetSharedSchemaById(kSchemaId2);
+  ASSERT_NE(schema2, nullptr);
+  ASSERT_TRUE(AsSchema(schema2));  // Verify it's a <Schema>
+  ASSERT_EQ(kSchemaId2, schema2->get_id());
 }
 
 // This is an internal helper function to verify that the passed element

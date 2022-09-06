@@ -97,6 +97,10 @@ TEST_F(OldSchemaParserObserverTest, TestDestructor) {
   ASSERT_EQ(kSchema0Name_, schema_name_map_[kSchema0Name_]->get_name());
   ASSERT_EQ(kSchema1Name_, schema_name_map_[kSchema1Name_]->get_name());
 }
-#endif
+#else  // #if 0
+// We need to have at least one test present for things to link correctly.
+TEST_F(OldSchemaParserObserverTest, Placeholder) {
+}
+#endif  // !#if 0
 
 }  // end namespace kmlengine

@@ -129,6 +129,14 @@ class KmlFile : public kmlbase::XmlFile {
     return shared_style_map_;
   }
 
+  // This returns the shared Schema Element with the given id. Returns null if
+  // no Schema with this id exists as a shared schema in the KML file.
+  kmldom::SchemaPtr GetSharedSchemaById(const std::string& id) const;
+
+  const SharedSchemaMap& get_shared_schema_map() const {
+    return shared_schema_map_;
+  }
+
   // This returns the all Elements that may have link children.  See
   // GetLinkParents() for more information.
   const ElementVector& get_link_parent_vector() const {
@@ -174,6 +182,7 @@ class KmlFile : public kmlbase::XmlFile {
   // TODO: use XmlElement's id map.
   ObjectIdMap object_id_map_;
   SharedStyleMap shared_style_map_;
+  SharedSchemaMap shared_schema_map_;
   ElementVector link_parent_vector_;
   KmlCache* kml_cache_;
   bool strict_parse_;

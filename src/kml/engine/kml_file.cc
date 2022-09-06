@@ -30,7 +30,8 @@
 #include "kml/engine/find_xml_namespaces.h"
 #include "kml/engine/id_mapper.h"
 #include "kml/engine/kmz_file.h"
-#include "kml/dom.h"
+#include "kml/engine/shared_schema_parser_observer.h"
+#include "kml/engine/shared_style_parser_observer.h"
 #include "kml/dom/xml_serializer.h"
 
 using kmlbase::FindXmlNamespaceAndPrefix;
@@ -115,6 +116,9 @@ bool KmlFile::ParseFromString(const string& kml, string* errors) {
   SharedStyleParserObserver shared_style_parser_observer(&shared_style_map_,
                                                          strict_parse_);
   parser.AddObserver(&shared_style_parser_observer);
+  SharedSchemaParserObserver shared_schema_parser_observer(&shared_schema_map_,
+                                                           strict_parse_);
+  parser.AddObserver(&shared_schema_parser_observer);
 
   // Create a ParserObserver to save the parent of all <Link> and <Icon>
   // elements found in the KML file.  See get_link_parents.h for more info.
@@ -220,6 +224,11 @@ kmldom::StyleSelectorPtr KmlFile::GetSharedStyleById(
     const string& id) const {
   SharedStyleMap::const_iterator find = shared_style_map_.find(id);
   return find != shared_style_map_.end() ? find->second : NULL;
+}
+
+kmldom::SchemaPtr KmlFile::GetSharedSchemaById(const std::string& id) const {
+  SharedSchemaMap::const_iterator find = shared_schema_map_.find(id);
+  return find != shared_schema_map_.end() ? find->second : nullptr;
 }
 
 }  // end namespace kmlengine

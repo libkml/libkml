@@ -41,6 +41,10 @@ typedef std::vector<kmldom::ElementPtr> ElementVector;
 // id to a kmldom::StyleSelectorPtr.
 typedef std::map<string, kmldom::StyleSelectorPtr> SharedStyleMap;
 
+// The SharedSchemaParserObserver class uses this data structure to map the XML
+// id to a kmldom::SchemaPtr.
+typedef std::map<std::string, kmldom::SchemaPtr> SharedSchemaMap;
+
 // The ObjectIdParserObserver class uses this data structure to map the XML
 // id to a kmldom::ObjectPtr.
 typedef std::map<string, kmldom::ObjectPtr> ObjectIdMap;

@@ -34,7 +34,8 @@ class KmlFeatureListSaverTest : public testing::Test {
 
 TEST_F(KmlFeatureListSaverTest, TestBasicSaveToFeatureList) {
   FeatureList feature_list;
-  KmlFeatureListSaver kml_saver(&feature_list, NULL, NULL);
+  KmlFeatureListSaver kml_saver(&feature_list, nullptr, nullptr, nullptr,
+                                nullptr);
   kmldom::KmlFactory* kml_factory = kmldom::KmlFactory::GetFactory();
   kmldom::PlacemarkPtr placemark = kml_factory->CreatePlacemark();
   const string id("placemark-id");
@@ -60,7 +61,8 @@ TEST_F(KmlFeatureListSaverTest, TestBasicSaveToFeatureList) {
 TEST_F(KmlFeatureListSaverTest, TestBasicSaveToSharedStyleMap) {
   FeatureList feature_list;
   kmlengine::SharedStyleMap shared_style_map;
-  KmlFeatureListSaver kml_saver(&feature_list, &shared_style_map, NULL);
+  KmlFeatureListSaver kml_saver(&feature_list, &shared_style_map, nullptr,
+                                nullptr, nullptr);
   kmldom::KmlFactory* kml_factory = kmldom::KmlFactory::GetFactory();
   kmldom::StylePtr style = kml_factory->CreateStyle();
   const string id("style-id");
@@ -76,7 +78,8 @@ TEST_F(KmlFeatureListSaverTest, TestBasicSaveToSharedStyleMap) {
 TEST_F(KmlFeatureListSaverTest, TestBasicStyleUrlChange) {
   FeatureList feature_list;
   const string kStyleKml("styles-are-here.kml");
-  KmlFeatureListSaver kml_saver(&feature_list, NULL, kStyleKml.c_str());
+  KmlFeatureListSaver kml_saver(&feature_list, nullptr, kStyleKml.c_str(),
+                                nullptr, nullptr);
   kmldom::KmlFactory* kml_factory = kmldom::KmlFactory::GetFactory();
   kmldom::FolderPtr folder = kml_factory->CreateFolder();
   kmldom::PlacemarkPtr placemark = kml_factory->CreatePlacemark();
@@ -84,6 +87,37 @@ TEST_F(KmlFeatureListSaverTest, TestBasicStyleUrlChange) {
   placemark->set_styleurl(kStyleId);
   ASSERT_FALSE(kml_saver.EndElement(folder, placemark));
   ASSERT_EQ(kStyleKml + kStyleId, placemark->get_styleurl());
+}
+
+TEST_F(KmlFeatureListSaverTest, TestBasicSaveToSharedSchemaMap) {
+  FeatureList feature_list;
+  kmlengine::SharedSchemaMap shared_schema_map;
+  KmlFeatureListSaver kml_saver(&feature_list, nullptr, nullptr,
+                                &shared_schema_map, nullptr);
+  kmldom::KmlFactory* kml_factory = kmldom::KmlFactory::GetFactory();
+  kmldom::SchemaPtr schema = kml_factory->CreateSchema();
+  const std::string id("mySchemaId");
+  schema->set_id(id);
+  kmldom::DocumentPtr document = kml_factory->CreateDocument();
+  // Verify that a Schema is not given to a Document...
+  ASSERT_FALSE(kml_saver.EndElement(document, schema));
+  // ...and that it winds up in the SharedSchemaMap.
+  ASSERT_EQ(static_cast<size_t>(1), shared_schema_map.size());
+  ASSERT_EQ(id, shared_schema_map[id]->get_id());
+}
+
+TEST_F(KmlFeatureListSaverTest, TestBasicSchemaUrlChange) {
+  FeatureList feature_list;
+  const std::string kSchemaKml("all_schemas.kml");
+  KmlFeatureListSaver kml_saver(&feature_list, nullptr, nullptr, nullptr,
+                                kSchemaKml.c_str());
+  kmldom::KmlFactory* kml_factory = kmldom::KmlFactory::GetFactory();
+  kmldom::ExtendedDataPtr ext_data = kml_factory->CreateExtendedData();
+  kmldom::SchemaDataPtr schema_data = kml_factory->CreateSchemaData();
+  const std::string kSchemaId("#mySchemaId");
+  schema_data->set_schemaurl(kSchemaId);
+  ASSERT_TRUE(kml_saver.EndElement(ext_data, schema_data));
+  ASSERT_EQ(kSchemaKml + kSchemaId, schema_data->get_schemaurl());
 }
 
 }  // end namespace kmlconvenience

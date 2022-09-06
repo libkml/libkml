@@ -51,12 +51,18 @@ class KmlFeatureListSaver : public kmldom::ParserObserver {
  public:
   KmlFeatureListSaver(FeatureList* feature_list,
                       kmlengine::SharedStyleMap* shared_style_map,
-                      const char* style_base)
+                      const char* style_base,
+                      kmlengine::SharedSchemaMap* shared_schema_map,
+                      const char* schema_base)
     : feature_list_(feature_list),
       shared_style_map_(shared_style_map),
+      shared_schema_map_(shared_schema_map),
       in_update_(false) {
     if (style_base) {
       style_base_ = string(style_base);
+    }
+    if (schema_base) {
+      schema_base_ = string(schema_base);
     }
   }
 
@@ -96,6 +102,23 @@ class KmlFeatureListSaver : public kmldom::ParserObserver {
         return false;
       }
     }
+    if (child->IsA(kmldom::Type_SchemaData)) {
+      kmldom::SchemaDataPtr schemadata = kmldom::AsSchemaData(child);
+      if (!schema_base_.empty() && schemadata->has_schemaurl()) {
+        const string& schemaurl = schemadata->get_schemaurl();
+        if (schemaurl.size() > 2 && schemaurl[0] == '#') {
+          schemadata->set_schemaurl(schema_base_ + schemaurl);
+        }
+      }
+    }
+    if (shared_schema_map_ && child->IsA(kmldom::Type_Schema) &&
+        parent->IsA(kmldom::Type_Document)) {
+      const kmldom::SchemaPtr sp = kmldom::AsSchema(child);
+      if (sp->has_id()) {
+        (*shared_schema_map_)[sp->get_id()] = sp;
+        return false;
+      }
+    }
     return true;
   }
 
@@ -103,6 +126,8 @@ class KmlFeatureListSaver : public kmldom::ParserObserver {
   FeatureList* feature_list_;
   kmlengine::SharedStyleMap* shared_style_map_;
   string style_base_;
+  kmlengine::SharedSchemaMap* shared_schema_map_;
+  string schema_base_;
   bool in_update_;
 };
 

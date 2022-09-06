@@ -23,6 +23,7 @@ object_id_parser_observer
 old_schema_parser_observer
 parse_old_schema
 schema_parser_observer
+shared_schema_parser_observer
 shared_style_parser_observer
 style_inliner
 style_merger

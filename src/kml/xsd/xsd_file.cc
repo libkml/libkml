@@ -50,7 +50,7 @@ XsdFile* XsdFile::CreateFromParse(const string& xsd_data,
 
 // TODO: mem_fun might help avoid this functor
 typedef std::pair<string, XsdElementPtr> NameElementPair;
-struct GetElement : public std::unary_function<NameElementPair, void> {
+struct GetElement {
   GetElement(XsdElementVector* elements)
     : elements_(elements) {
   }

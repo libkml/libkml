@@ -137,7 +137,7 @@ class Color32 {
     if (color_abgr.size() > 0 && color_abgr[offset] == '#') {
       offset ++;
     }
-    size_t length = color_abgr.size() >= 8 + offset ? 8 : color_abgr.size();
+    size_t length = color_abgr.size() >= 8 + offset ? 8 : color_abgr.size() - offset;
     for(size_t i = offset; i < length + offset; ++i) {
       out = out * 16;
       if (color_abgr[i] >= '0' && color_abgr[i] <= '9') {

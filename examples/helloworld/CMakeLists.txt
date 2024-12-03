@@ -1,5 +1,5 @@
 add_library(helloutil STATIC print.cc)
-target_link_libraries(helloutil ${MINIZIP_LIBRARY})
+target_link_libraries(helloutil MiniZip::MiniZip)
 
 build_example(
   NAME createkml

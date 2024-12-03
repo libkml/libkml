@@ -5,6 +5,10 @@
 #  URIPARSER_LIBRARY     - uriparser library file
 #  URIPARSER_FOUND       - TRUE if uriparser is found
 
+# Targets:
+
+#  UriParser::UriParser
+
 if (URIPARSER_INCLUDE_DIR)
  #check cache 
   set(URIPARSER_FIND_QUIETLY TRUE)
@@ -26,6 +30,14 @@ if (URIPARSER_FOUND)
    if (NOT URIPARSER_FIND_QUIETLY)
       message(STATUS "Found UriParser library: ${URIPARSER_LIBRARY}")
    endif ()
+
+   if(NOT TARGET UriParser::UriParser)
+      add_library(UriParser::UriParser UNKNOWN IMPORTED)
+      set_target_properties(UriParser::UriParser PROPERTIES
+         INTERFACE_INCLUDE_DIRECTORIES "${URIPARSER_INCLUDE_DIR}"
+         IMPORTED_LOCATION "${URIPARSER_LIBRARY}"
+         )
+   endif()
 else ()
    if (NOT URIPARSER_FIND_QUIETLY)
       message(FATAL_ERROR "Could NOT find UriParser library")

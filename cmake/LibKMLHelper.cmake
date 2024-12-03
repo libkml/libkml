@@ -10,19 +10,14 @@ macro(build_target)
     endif()
     add_dependencies(${LIB_NAME} ${LIB_DEPEND})
   endforeach()
-  
   foreach(LIB_LINK ${LIB_LINKS})
     if(NOT ${LIB_LINK} MATCHES "^kml")
       list(APPEND PUBLIC_LINKS ${LIB_LINK})
     endif()
   endforeach()
-  target_link_libraries(${LIB_NAME} ${PUBLIC_LINKS})
+  target_link_libraries(${LIB_NAME} PUBLIC ${PUBLIC_LINKS})
   if(INTERFACE_LINKS)
-    if(MINGW OR APPLE)
-      target_link_libraries(${LIB_NAME} ${INTERFACE_LINKS})
-    else()
-      target_link_libraries(${LIB_NAME} LINK_INTERFACE_LIBRARIES ${INTERFACE_LINKS})
-    endif()
+    target_link_libraries(${LIB_NAME} INTERFACE ${INTERFACE_LINKS})
   endif()
   if(VERSION_STRING)
     set_target_properties(${LIB_NAME} PROPERTIES
@@ -41,12 +36,14 @@ macro(build_target)
 endmacro(build_target)
 
 macro(install_target _target)
+  include(GNUInstallDirs)
   install(TARGETS ${_target}
     EXPORT LibKMLTargets
     RUNTIME DESTINATION ${BIN_INSTALL_DIR}
     LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-    ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
-  
+    ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
   list(LENGTH LIBKML_TARGETS LIBKML_TARGETS_LENGTH)
   if(LIBKML_TARGETS_LENGTH LESS 1)
     set(LIBKML_TARGETS "${_target}" PARENT_SCOPE)

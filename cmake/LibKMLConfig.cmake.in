@@ -1,34 +1,10 @@
-# Compute paths
-get_filename_component(LIBKML_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+@PACKAGE_INIT@
 
-set(LIBKML_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+include(${CMAKE_CURRENT_LIST_DIR}/LibKMLTargets.cmake)
 
-if(NOT TARGET foo AND NOT LIBKML_BINARY_DIR)
-  include("${LIBKML_CMAKE_DIR}/LibKMLTargets.cmake")
-endif()
-
-set(BUILD_SHARED_LIBS @BUILD_SHARED_LIBS@)
-
-set(LIBKML_LIBRARIES)
-
-foreach(targ @LIBKML_TARGETS@)
-  if(MSVC)
-    if(BUILD_SHARED_LIBS)
-      get_target_property(LIB_LIB_FILENAME ${targ} IMPORTED_IMPLIB_@CONFIG_TYPE@)
-    else(BUILD_SHARED_LIBS)
-      get_target_property(LIB_LIB_FILENAME ${targ} IMPORTED_LOCATION_@CONFIG_TYPE@)
-    endif(BUILD_SHARED_LIBS)
-  else()
-    get_target_property(LIB_LIB_FILENAME ${targ} IMPORTED_LOCATION_@CONFIG_TYPE@)
-  endif()
- 
-  get_target_property(LIB_LINK_FILENAME ${targ} IMPORTED_LINK_INTERFACE_LIBRARIES_@CONFIG_TYPE@)
-  
-  string(REGEX MATCH "^kml" matched ${LIB_LINK_FILENAME})
-  if(NOT matched)
-    list(APPEND LIBKML_LIBRARIES ${LIB_LINK_FILENAME})
-  endif()
-  list(APPEND LIBKML_LIBRARIES ${LIB_LIB_FILENAME})
-endforeach()
-
-set(LIBKML_FOUND TRUE)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
+include(CMakeFindDependencyMacro)
+find_dependency(EXPAT REQUIRED)
+find_dependency(MiniZip REQUIRED)
+find_dependency(UriParser REQUIRED)
+find_dependency(ZLIB REQUIRED)

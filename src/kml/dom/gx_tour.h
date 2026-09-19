@@ -65,7 +65,7 @@ class GxTour : public Feature {
     SetComplexChild(gx_playlist, &gx_playlist_);
   }
   void clear_gx_playlist() {
-    set_gx_playlist(NULL);
+    set_gx_playlist(GxPlaylistPtr());
   }
 
   // Visitor API methods, see visitor.h.

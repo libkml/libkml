@@ -565,7 +565,7 @@ class GxTrack : public AltitudeGeometryCommon {
     SetComplexChild(model, &model_);
   }
   bool has_model() const { return model_ != NULL; }
-  void clear_model() { set_model(NULL); }
+  void clear_model() { set_model(ModelPtr()); }
 
   // <ExtendedData>
   const ExtendedDataPtr& get_extendeddata() const { return extendeddata_; }

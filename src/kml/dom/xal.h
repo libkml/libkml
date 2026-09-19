@@ -67,7 +67,7 @@ class XalAddressDetails : public BasicElement<Type_XalAddressDetails> {
   void set_country(const XalCountryPtr& country) {
     SetComplexChild(country, &country_);
   }
-  void clear_country() { set_country(NULL); }
+  void clear_country() { set_country(XalCountryPtr()); }
 
  private:
   XalAddressDetails();
@@ -107,7 +107,7 @@ class XalAdministrativeArea : public BasicElement<Type_XalAdministrativeArea> {
     SetComplexChild(locality, &locality_);
   }
 
-  void clear_locality() { set_locality(NULL); }
+  void clear_locality() { set_locality(XalLocalityPtr()); }
   // <xal:SubAdministrativeArea>
   const XalSubAdministrativeAreaPtr& get_subadministrativearea() const {
     return subadministrativearea_;
@@ -119,7 +119,7 @@ class XalAdministrativeArea : public BasicElement<Type_XalAdministrativeArea> {
       const XalSubAdministrativeAreaPtr& subadministrativearea) {
     SetComplexChild(subadministrativearea, &subadministrativearea_);
   }
-  void clear_subadministrativearea() { set_subadministrativearea(NULL); }
+  void clear_subadministrativearea() { set_subadministrativearea(XalSubAdministrativeAreaPtr()); }
 
  private:
   XalAdministrativeArea();
@@ -202,7 +202,7 @@ class XalLocality : public BasicElement<Type_XalLocality> {
   void set_thoroughfare(const XalThoroughfarePtr& thoroughfare) {
     SetComplexChild(thoroughfare, &thoroughfare_);
   }
-  void clear_thoroughfare() { set_thoroughfare(NULL); }
+  void clear_thoroughfare() { set_thoroughfare(XalThoroughfarePtr()); }
 
   // <xal:PostalCode>
   const XalPostalCodePtr& get_postalcode() const { return postalcode_; }
@@ -210,7 +210,7 @@ class XalLocality : public BasicElement<Type_XalLocality> {
   void set_postalcode(const XalPostalCodePtr& postalcode) {
     SetComplexChild(postalcode, &postalcode_);
   }
-  void clear_postalcode() { set_postalcode(NULL); }
+  void clear_postalcode() { set_postalcode(XalPostalCodePtr()); }
 
  private:
   XalLocality();

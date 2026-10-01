@@ -28,7 +28,30 @@
 
 #include "boost/intrusive_ptr.hpp"
 
+namespace kmlbase {
+class Referent;
+void intrusive_ptr_add_ref(Referent* r);
+void intrusive_ptr_release(Referent* r);
+}  // end namespace kmlbase
+
 namespace kmldom {
+
+// boost::intrusive_ptr finds intrusive_ptr_add_ref() and intrusive_ptr_release()
+// by argument-dependent lookup. For a type that is only forward-declared, the
+// base class kmlbase::Referent is unknown, so the kmlbase functions are not
+// found; this happens when a constexpr constructor or destructor is
+// instantiated in an inline member function (C++20). These templates are
+// found through namespace kmldom instead and only need the complete type when
+// they are instantiated.
+template <class T>
+inline void intrusive_ptr_add_ref(T* p) {
+  kmlbase::intrusive_ptr_add_ref(p);
+}
+
+template <class T>
+inline void intrusive_ptr_release(T* p) {
+  kmlbase::intrusive_ptr_release(p);
+}
 
 class Element;
 class Field;
